@@ -17,6 +17,8 @@ class Product {
 
     getprice():Int{ price * 119 / 100 };
 
+    getHardWiredPrice():Int {price};
+
     toString():String {
         name.concat("(").concat(model).concat(",").concat(additionalData).concat(")")
     };

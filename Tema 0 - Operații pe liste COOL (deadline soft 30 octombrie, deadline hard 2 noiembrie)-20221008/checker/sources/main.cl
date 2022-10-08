@@ -362,9 +362,10 @@ class Main inherits IO{
 
                                     if filter.filter(li.getHead()) then
                                         li <- li.getTail()
-                                    else
-                                        li.filterBy(filter)
-                                    fi;
+                                    else 0 fi;
+                                    
+                                    li <- li.filterBy(filter);
+                                    lists.replace(li, index - 1);
                                 })
                             );
                         }

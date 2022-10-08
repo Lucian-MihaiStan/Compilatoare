@@ -3,7 +3,7 @@ class Comparator {
     compareTo(o1 : Object, o2 : Object):Int {0};
 };
 
-class Filter {
+class Filter inherits IO {
     filter(o : Object):Bool {true};
 };
 
@@ -47,6 +47,7 @@ class RankFilter inherits Filter {
                     io : IO => { isRank <- false; io; };
                     o : Object => { isRank <- false; o; };
                 esac;
+
                 not isRank;
             })
         )
@@ -55,10 +56,26 @@ class RankFilter inherits Filter {
 
 class SamePriceFilter inherits Filter {
     filter(o : Object) : Bool {{
-        if isvoid o then
-            abort()
-        else 0 fi;
-        false;
+        (
+            let
+                isFilter : Bool <- false
+            in ({
+                if isvoid o then
+                    abort()
+                else 0 fi;
+
+                case o of
+                    soda : Soda => { 
+                        isFilter <- (soda.getprice() = (new Product.init("", "", "", soda.getHardWiredPrice())).getprice()); soda; };
+                    coffee : Coffee => { isFilter <- (coffee.getprice() = (new Product.init("", "", "", coffee.getHardWiredPrice())).getprice()); coffee; };
+                    laptop : Laptop => { isFilter <- (laptop.getprice() = (new Product.init("", "", "", laptop.getHardWiredPrice())).getprice()); laptop; };
+                    router : Router => { isFilter <- (router.getprice() = (new Product.init("", "", "", router.getHardWiredPrice())).getprice()); router; };
+                    obj : Object => isFilter <- false;
+                esac;
+
+                not isFilter;
+            })
+        );
     }};
 };
 

@@ -191,6 +191,15 @@ class List inherits IO {
         self;
     }};
 
+    replace(obj : Object, index : Int) : SELF_TYPE {{
+        if index = 0 then
+            head <- obj
+        else
+            replace(obj, index - 1)
+        fi;
+        self;
+    }};
+
     sortBy():SELF_TYPE {
         self (* TODO *)
     };
