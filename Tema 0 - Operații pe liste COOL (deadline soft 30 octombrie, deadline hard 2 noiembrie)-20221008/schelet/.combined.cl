@@ -420,7 +420,6 @@ class Main inherits IO{
                     elemBuilder : ElementBuilder
                 in 
                 ({
-
                     if printIndex = 0 then {
                         while not index = size loop
                         {
@@ -429,14 +428,14 @@ class Main inherits IO{
                             stringBuilder <- currentList.toString();
 
                             stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
-                            elemBuilder <- new ElementBuilder.init(index, stringBuilder);
+                            elemBuilder <- new ElementBuilder.init(index, stringBuilder.concat(" ]"));
 
                             builderList.add(elemBuilder);
                             index <- index + 1;
                         }
                         pool;
 
-                        out_string(builderList.printList(size).concat(" ]\n"));
+                        out_string(builderList.printList(size).concat(" \n"));
                     } else {
                         stringBuilder <- tConv.dList(lists.getIndex(printIndex - 1)).toString();
                         stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
@@ -597,22 +596,18 @@ class Main inherits IO{
                             currentList.add(newObject);
                         }
                         else if headToken = "print" then {
-                            (
-                                let
-                                    printIndex : Int
-                                in ({
-                                    if tokensList.size() = 1 then
-                                        print(0)
-                                    else {
-                                        print(atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1))));
-                                    }
-                                    fi;
-                                })
-                            );
+                            if tokensList.size() = 0 then
+                                print(0)
+                            else
+                                print(atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1))))
+                            fi;
                         }
-                        else 
-                            abort()
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        else if headToken = "load" then currentList <- new List
+                        else {
+                            out_string(somestr);
+                            abort();
+                        }
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then

@@ -1,1 +1,4 @@
-[ Soda(a,a), Coffee(b,b), Laptop(c,c), Router(d,d), Private(a), Corporal(b), Sergent(c), Officer(d), String(abcd), Int(10), Bool(true), IO() ]
+0: [ Soda(a,a), Soda(b,b), Soda(c,c) ]
+1: [ Coffee(a,a), Coffee(b,b), Coffee(c,c) ]
+2: [ Private(a), Private(b), Private(c) ]
+ 
