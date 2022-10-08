@@ -92,13 +92,23 @@ class List inherits IO {
     toString():String {
         (
             let 
-                consString : String
+                consString : String,
+                atoiConverter : A2I <- new A2I
             in 
             ({
                 case head of
-                    s : String => consString <- "[".concat(s).concat("]");
-                    p : Product => consString <- p.toString();
-                    r : Rank => consString <- r.toString();
+                    s : String => consString <- "String(".concat(s).concat("), ");
+                    p : Product => consString <- p.toString().concat(", ");
+                    r : Rank => consString <- r.toString().concat(", ");
+                    i : Int => consString <- "Int(".concat(atoiConverter.i2a(i)).concat("), ");
+                    b : Bool => {
+                        if b = true then
+                            consString <- "Bool(true), "
+                        else 
+                            consString <- "Bool(false), "
+                        fi;
+                    };
+                    io : IO => consString <- "IO(), ";
                     o : Object => { abort(); ""; };
                 esac;
 
@@ -106,6 +116,7 @@ class List inherits IO {
                     consString <- consString.concat(tail.toString());
                 }
                 else 0 fi;
+
                 consString;
             })
         )
@@ -139,5 +150,38 @@ class List inherits IO {
         }
         fi
     };
+
+    printList(size : Int) : String {{
+        (
+            let 
+                stringBuilder : String <- new String,
+                tmp : ElementBuilder,
+                intConv : A2I <- new A2I,
+                index : Int <- 0,
+                tConv : DynamicCast <- new DynamicCast
+            in ({
+                if isvoid head then
+                    abort()
+                else 0 fi;
+                
+                if size = 1 then
+                    stringBuilder <- (tConv.dElemBuilder(head)).getElement()
+                else {
+                    while not index = size loop {
+                        tmp <- tConv.dElemBuilder(getIndex(index));
+                        
+                        if isvoid tmp then
+                            abort()
+                        else 0 fi;
+                        
+                        stringBuilder <- stringBuilder.concat(intConv.i2a(tmp.getIndex())).concat(": ").concat(tmp.getElement()).concat("\n");
+
+                        index <- index + 1;
+                    } pool;
+                } fi;
+                stringBuilder;
+            })
+        );
+    }};
 
 };

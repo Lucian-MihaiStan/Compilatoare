@@ -4,11 +4,13 @@
 class Product {
     name : String;
     model : String;
+    additionalData : String;
     price : Int;
 
-    init(n : String, m: String, p : Int):SELF_TYPE {{
+    init(n : String, m: String, a : String, p : Int):SELF_TYPE {{
         name <- n;
         model <- m;
+        additionalData <- a;
         price <- p;
         self;
     }};
@@ -16,7 +18,7 @@ class Product {
     getprice():Int{ price * 119 / 100 };
 
     toString():String {
-        name.concat("(").concat(model).concat(",").concat(")")
+        name.concat("(").concat(model).concat(",").concat(additionalData).concat(")")
     };
 };
 
@@ -47,14 +49,16 @@ class Router inherits Product {};
  ****************************)
 class Rank {
     name : String;
+    personName : String;
 
-    init(n : String):String {
-        name <- n
-    };
+    init(n : String, p : String):SELF_TYPE {{
+        name <- n;
+        personName <- p;
+        self;
+    }};
 
     toString():String {
-        -- Hint: what are the default methods of Object?
-        "TODO: implement me"
+        name.concat("(").concat(personName).concat(")")
     };
 };
 

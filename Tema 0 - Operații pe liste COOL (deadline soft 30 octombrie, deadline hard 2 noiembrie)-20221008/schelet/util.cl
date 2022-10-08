@@ -31,4 +31,29 @@ class DynamicCast {
         esac
     };
 
+    dElemBuilder(o : Object) : ElementBuilder {
+        case o of
+            e : ElementBuilder => e;
+        esac
+    };
+
+};
+
+class ElementBuilder {
+    index : Int;
+    elem : String;
+
+    init(i : Int, l : String) : SELF_TYPE {{
+        index <- i;
+        elem <- l;
+        self;
+    }};
+
+    getElement() : String {
+        elem
+    };
+
+    getIndex() : Int {
+        index
+    };
 };

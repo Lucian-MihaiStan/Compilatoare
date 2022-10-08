@@ -200,13 +200,23 @@ class List inherits IO {
     toString():String {
         (
             let 
-                consString : String
+                consString : String,
+                atoiConverter : A2I <- new A2I
             in 
             ({
                 case head of
-                    s : String => consString <- "[".concat(s).concat("]");
-                    p : Product => consString <- p.toString();
-                    r : Rank => consString <- r.toString();
+                    s : String => consString <- "String(".concat(s).concat("), ");
+                    p : Product => consString <- p.toString().concat(", ");
+                    r : Rank => consString <- r.toString().concat(", ");
+                    i : Int => consString <- "Int(".concat(atoiConverter.i2a(i)).concat("), ");
+                    b : Bool => {
+                        if b = true then
+                            consString <- "Bool(true), "
+                        else 
+                            consString <- "Bool(false), "
+                        fi;
+                    };
+                    io : IO => consString <- "IO(), ";
                     o : Object => { abort(); ""; };
                 esac;
 
@@ -214,6 +224,7 @@ class List inherits IO {
                     consString <- consString.concat(tail.toString());
                 }
                 else 0 fi;
+
                 consString;
             })
         )
@@ -247,6 +258,39 @@ class List inherits IO {
         }
         fi
     };
+
+    printList(size : Int) : String {{
+        (
+            let 
+                stringBuilder : String <- new String,
+                tmp : ElementBuilder,
+                intConv : A2I <- new A2I,
+                index : Int <- 0,
+                tConv : DynamicCast <- new DynamicCast
+            in ({
+                if isvoid head then
+                    abort()
+                else 0 fi;
+                
+                if size = 1 then
+                    stringBuilder <- (tConv.dElemBuilder(head)).getElement()
+                else {
+                    while not index = size loop {
+                        tmp <- tConv.dElemBuilder(getIndex(index));
+                        
+                        if isvoid tmp then
+                            abort()
+                        else 0 fi;
+                        
+                        stringBuilder <- stringBuilder.concat(intConv.i2a(tmp.getIndex())).concat(": ").concat(tmp.getElement()).concat("\n");
+
+                        index <- index + 1;
+                    } pool;
+                } fi;
+                stringBuilder;
+            })
+        );
+    }};
 
 };
 class StringTokenizer {
@@ -358,63 +402,46 @@ class Main inherits IO{
     tConv : DynamicCast <- new DynamicCast;
     tokenizer : StringTokenizer <- new StringTokenizer;
 
-    main():Object {
-        {
-            
+    main():Object {{
             loopingCommand();
 
-            looping <- true;
+    }};
 
-            (
-                let
-                    command : String
-                in
-                ({
-                    while looping loop {
-                        command <- in_string();
-
-                        if command = "load" then
-                            loopingCommand()
-                        else if command = "print" then
-                            print()
-                        else if command = "merge" then 
-                            merge()
-                        else if command = "filterBy" then
-                            filterBy()
-                        else if command = "sortBy" then
-                            sortBy()
-                        else 
-                            abort()
-                        fi fi fi fi fi;
-                    } pool;
-                })
-            );
-        }
-    };
-
-    print(): Object { 
+    print(printIndex : Int): Object { 
         {
             (
                 let
                     size : Int <- lists.size(),
                     index : Int <- 0,
                     currentList : List,
-                    obj : Object
+                    obj : Object, 
+                    stringBuilder : String,
+                    builderList : List <- new List,
+                    elemBuilder : ElementBuilder
                 in 
                 ({
-                    while not index = size loop
-                    {
-                        currentList <- tConv.dList(lists.getIndex(index));
-                        if size = 1 then
-                            out_string(currentList.toString().concat("\n"))
-                        else {
-                            out_int(index + 1);
-                            out_string(": ".concat(currentList.toString()));
+
+                    if printIndex = 0 then {
+                        while not index = size loop
+                        {
+                            currentList <- tConv.dList(lists.getIndex(index));
+                            
+                            stringBuilder <- currentList.toString();
+
+                            stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
+                            elemBuilder <- new ElementBuilder.init(index, stringBuilder);
+
+                            builderList.add(elemBuilder);
+                            index <- index + 1;
                         }
-                        fi;
-                        index <- index + 1;
-                    }
-                    pool;
+                        pool;
+
+                        out_string(builderList.printList(size).concat(" ]\n"));
+                    } else {
+                        stringBuilder <- tConv.dList(lists.getIndex(printIndex - 1)).toString();
+                        stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
+                        out_string(stringBuilder.concat(" ]\n"));
+                    } fi;
                 })
             );
             0;
@@ -442,6 +469,7 @@ class Main inherits IO{
                 token : String, headToken : String,
                 currentList : List <- new List,
                 exitCon : Int,
+                head : Object,
                 newObject : Object,
                 atoiConverter : A2I <- new A2I
             in (
@@ -454,7 +482,7 @@ class Main inherits IO{
                     {
                         if not currentList.isEmpty() then
                             lists.add(currentList)
-                        else 0 fi; 
+                        else 0 fi;
                         exitCon <- 1;
                     }
                     else 0 fi;
@@ -463,9 +491,9 @@ class Main inherits IO{
                         exitCon <- 1
                     else 0 fi;
 
-                    if somestr = "\n" then
-                        exitCon <- 1
-                    else 0 fi;
+                    -- if somestr = "\n" then
+                    --     exitCon <- 1
+                    -- else 0 fi;
 
                     if exitCon = 0 then
                     {
@@ -485,52 +513,113 @@ class Main inherits IO{
                                 else 0 fi;
 
                             }
-
                             fi;
                         } pool;
+                        
+                        if tokensList.isEmpty() then
+                            head <- somestr
+                        else
+                            head <- tokensList.getHead()
+                        fi;
 
-                        headToken <- tConv.dCString(tokensList.getHead());
+                        headToken <- tConv.dCString(head);
 
-                        if headToken = "Soda" then
+                        if headToken = "Soda" then {
                             newObject <- new Soda.init(
+                                tConv.dCString(tokensList.getIndex(0)),
                                 tConv.dCString(tokensList.getIndex(1)),
                                 tConv.dCString(tokensList.getIndex(2)),
                                 atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
-                            )
-                        else if headToken = "Coffee" then
+                            );
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Coffee" then {
                             newObject <- new Coffee.init(
+                                tConv.dCString(tokensList.getIndex(0)),
                                 tConv.dCString(tokensList.getIndex(1)),
                                 tConv.dCString(tokensList.getIndex(2)),
                                 atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
-                            )
-                        else if headToken = "Laptop" then
+                            );
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Laptop" then {
                             newObject <- new Laptop.init(
+                                tConv.dCString(tokensList.getIndex(0)),
                                 tConv.dCString(tokensList.getIndex(1)),
                                 tConv.dCString(tokensList.getIndex(2)),
                                 atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
-                            )
-                        else if headToken = "Router" then
+                            );
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Router" then {
                             newObject <- new Router.init(
+                                tConv.dCString(tokensList.getIndex(0)),
                                 tConv.dCString(tokensList.getIndex(1)),
                                 tConv.dCString(tokensList.getIndex(2)),
                                 atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
-                            )
-                        else if headToken = "Private" then
-                            newObject <- new Private.init(tConv.dCString(tokensList.getIndex(1)))
-                        else if headToken = "Corporal" then
-                            newObject <- new Corporal.init(tConv.dCString(tokensList.getIndex(1)))
-                        else if headToken = "Sergent" then
-                            newObject <- new Sergent.init(tConv.dCString(tokensList.getIndex(1)))
-                        else if headToken = "Officer" then
-                            newObject <- new Officer.init(tConv.dCString(tokensList.getIndex(1)))
+                            );
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Private" then {
+                            newObject <- new Private.init(tConv.dCString(tokensList.getIndex(0)), tConv.dCString(tokensList.getIndex(1)));
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Corporal" then {
+                            newObject <- new Corporal.init(tConv.dCString(tokensList.getIndex(0)), tConv.dCString(tokensList.getIndex(1)));
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Sergent" then {
+                            newObject <- new Sergent.init(tConv.dCString(tokensList.getIndex(0)), tConv.dCString(tokensList.getIndex(1)));
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Officer" then {
+                            newObject <- new Officer.init(tConv.dCString(tokensList.getIndex(0)), tConv.dCString(tokensList.getIndex(1)));
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "String" then {
+                            newObject <- tokensList.getIndex(1);
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Int" then {
+                            newObject <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "Bool" then {
+                            if tConv.dCString(tokensList.getIndex(1)) = "true" then
+                                newObject <- true
+                            else
+                                newObject <- false
+                            fi;
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "IO" then {
+                            newObject <- new IO;
+                            currentList.add(newObject);
+                        }
+                        else if headToken = "print" then {
+                            (
+                                let
+                                    printIndex : Int
+                                in ({
+                                    if tokensList.size() = 1 then
+                                        print(0)
+                                    else {
+                                        print(atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1))));
+                                    }
+                                    fi;
+                                })
+                            );
+                        }
                         else 
                             abort()
-                        fi fi fi fi fi fi fi fi;
-
-                        currentList.add(newObject);
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
-                    else 
-                        looping <- false
+                    else
+                        if not somestr = "END" then
+                            looping <- false
+                        else {
+                            exitCon <- 0;
+                        } fi
                     fi;
                 } pool
             )
@@ -544,11 +633,13 @@ class Main inherits IO{
 class Product {
     name : String;
     model : String;
+    additionalData : String;
     price : Int;
 
-    init(n : String, m: String, p : Int):SELF_TYPE {{
+    init(n : String, m: String, a : String, p : Int):SELF_TYPE {{
         name <- n;
         model <- m;
+        additionalData <- a;
         price <- p;
         self;
     }};
@@ -556,7 +647,7 @@ class Product {
     getprice():Int{ price * 119 / 100 };
 
     toString():String {
-        name.concat("(").concat(model).concat(",").concat(")")
+        name.concat("(").concat(model).concat(",").concat(additionalData).concat(")")
     };
 };
 
@@ -587,14 +678,16 @@ class Router inherits Product {};
  ****************************)
 class Rank {
     name : String;
+    personName : String;
 
-    init(n : String):String {
-        name <- n
-    };
+    init(n : String, p : String):SELF_TYPE {{
+        name <- n;
+        personName <- p;
+        self;
+    }};
 
     toString():String {
-        -- Hint: what are the default methods of Object?
-        "TODO: implement me"
+        name.concat("(").concat(personName).concat(")")
     };
 };
 
@@ -637,4 +730,29 @@ class DynamicCast {
         esac
     };
 
+    dElemBuilder(o : Object) : ElementBuilder {
+        case o of
+            e : ElementBuilder => e;
+        esac
+    };
+
+};
+
+class ElementBuilder {
+    index : Int;
+    elem : String;
+
+    init(i : Int, l : String) : SELF_TYPE {{
+        index <- i;
+        elem <- l;
+        self;
+    }};
+
+    getElement() : String {
+        elem
+    };
+
+    getIndex() : Int {
+        index
+    };
 };
