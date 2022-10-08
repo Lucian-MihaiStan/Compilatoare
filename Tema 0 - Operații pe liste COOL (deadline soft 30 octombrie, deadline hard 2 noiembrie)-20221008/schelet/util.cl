@@ -7,7 +7,60 @@ class Filter {
     filter(o : Object):Bool {true};
 };
 
-(* TODO: implement specified comparators and filters*)
+class ProductFilter inherits Filter {
+    filter(o : Object) : Bool {
+        (
+            let 
+                isProduct : Bool <- false
+            in ({
+                if isvoid o then
+                    abort()
+                else 0 fi;
+
+                case o of
+                    p : Product => { isProduct <- true; p; };
+                    s : String => { isProduct <- false; s; };
+                    i : Int => { isProduct <- false; i; };
+                    io : IO => { isProduct <- false; io; };
+                    o : Object => { isProduct <- false; o; };
+                esac;
+                not isProduct;
+            })
+        )
+    };
+};
+
+class RankFilter inherits Filter {
+    filter(o : Object) : Bool {
+        (
+            let
+                isRank : Bool <- false
+            in ({
+                if isvoid o then
+                    abort()
+                else 0 fi;
+                
+                case o of 
+                    r : Rank => { isRank <- true ; r; };
+                    s : String => { isRank <- false; s; };
+                    i : Int => { isRank <- false; i; };
+                    io : IO => { isRank <- false; io; };
+                    o : Object => { isRank <- false; o; };
+                esac;
+                not isRank;
+            })
+        )
+    };
+};  
+
+class SamePriceFilter inherits Filter {
+    filter(o : Object) : Bool {{
+        if isvoid o then
+            abort()
+        else 0 fi;
+        false;
+    }};
+};
 
 class DynamicCast {
 

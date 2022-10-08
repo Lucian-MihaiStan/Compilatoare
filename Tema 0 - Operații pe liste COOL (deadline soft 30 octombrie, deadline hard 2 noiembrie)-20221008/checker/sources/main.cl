@@ -338,11 +338,41 @@ class Main inherits IO{
                                 })
                             );
                         }
+                        else if headToken = "filterBy" then {
+                            (
+                                let
+                                    index : Int,
+                                    li : List,
+                                    filter : Filter,
+                                    filterStr : String
+                                in ({
+                                    index <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                                    li <- tConv.dList(lists.getIndex(index - 1));
+                                    
+                                    filterStr <- tConv.dCString(tokensList.getIndex(2));
+                                    if filterStr = "ProductFilter" then
+                                        filter <- new ProductFilter
+                                    else if filterStr = "RankFilter" then
+                                        filter <- new RankFilter
+                                    else if filterStr = "SamePriceFilter" then
+                                        filter <- new SamePriceFilter
+                                    else 
+                                        abort()
+                                    fi fi fi;
+
+                                    if filter.filter(li.getHead()) then
+                                        li <- li.getTail()
+                                    else
+                                        li.filterBy(filter)
+                                    fi;
+                                })
+                            );
+                        }
                         else {
                             out_string(somestr);
                             abort();
                         }
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then

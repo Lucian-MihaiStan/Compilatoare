@@ -179,9 +179,17 @@ class List inherits IO {
         self (* TODO *)
     };
 
-    filterBy():SELF_TYPE {
-        self (* TODO *)
-    };
+    filterBy(filter : Filter):SELF_TYPE {{
+        if not isvoid tail then {
+            if filter.filter(tail.getHead()) then {
+                tail <- tail.getTail();
+                self.filterBy(filter);
+            }
+            else tail <- tail.filterBy(filter) fi;   
+        }
+        else 0 fi;
+        self;
+    }};
 
     sortBy():SELF_TYPE {
         self (* TODO *)

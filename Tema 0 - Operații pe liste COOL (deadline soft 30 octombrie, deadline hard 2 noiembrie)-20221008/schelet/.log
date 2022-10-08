@@ -1,5 +1,1 @@
-[ String(e1), String(e2) ]
-[ String(d1), String(d2), String(e1), String(e2) ]
-[ String(c1), String(c2), String(d1), String(d2), String(e1), String(e2) ]
-[ String(b1), String(b2), String(c1), String(c2), String(d1), String(d2), String(e1), String(e2) ]
-[ String(a1), String(a2), String(b1), String(b2), String(c1), String(c2), String(d1), String(d2), String(e1), String(e2) ]
+[ Soda(a,1), Soda(a,2), Soda(a,3), Soda(a,4), Coffee(b,1), Coffee(b,2), Coffee(b,3), Coffee(b,4) ]

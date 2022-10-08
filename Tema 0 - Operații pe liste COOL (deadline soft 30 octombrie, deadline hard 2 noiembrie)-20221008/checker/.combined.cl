@@ -287,9 +287,17 @@ class List inherits IO {
         self (* TODO *)
     };
 
-    filterBy():SELF_TYPE {
-        self (* TODO *)
-    };
+    filterBy(filter : Filter):SELF_TYPE {{
+        if not isvoid tail then {
+            if filter.filter(tail.getHead()) then {
+                tail <- tail.getTail();
+                self.filterBy(filter);
+            }
+            else tail <- tail.filterBy(filter) fi;   
+        }
+        else 0 fi;
+        self;
+    }};
 
     sortBy():SELF_TYPE {
         self (* TODO *)
@@ -686,11 +694,41 @@ class Main inherits IO{
                                 })
                             );
                         }
+                        else if headToken = "filterBy" then {
+                            (
+                                let
+                                    index : Int,
+                                    li : List,
+                                    filter : Filter,
+                                    filterStr : String
+                                in ({
+                                    index <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                                    li <- tConv.dList(lists.getIndex(index - 1));
+                                    
+                                    filterStr <- tConv.dCString(tokensList.getIndex(2));
+                                    if filterStr = "ProductFilter" then
+                                        filter <- new ProductFilter
+                                    else if filterStr = "RankFilter" then
+                                        filter <- new RankFilter
+                                    else if filterStr = "SamePriceFilter" then
+                                        filter <- new SamePriceFilter
+                                    else 
+                                        abort()
+                                    fi fi fi;
+
+                                    if filter.filter(li.getHead()) then
+                                        li <- li.getTail()
+                                    else
+                                        li.filterBy(filter)
+                                    fi;
+                                })
+                            );
+                        }
                         else {
                             out_string(somestr);
                             abort();
                         }
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then
@@ -785,7 +823,60 @@ class Filter {
     filter(o : Object):Bool {true};
 };
 
-(* TODO: implement specified comparators and filters*)
+class ProductFilter inherits Filter {
+    filter(o : Object) : Bool {
+        (
+            let 
+                isProduct : Bool <- false
+            in ({
+                if isvoid o then
+                    abort()
+                else 0 fi;
+
+                case o of
+                    p : Product => { isProduct <- true; p; };
+                    s : String => { isProduct <- false; s; };
+                    i : Int => { isProduct <- false; i; };
+                    io : IO => { isProduct <- false; io; };
+                    o : Object => { isProduct <- false; o; };
+                esac;
+                not isProduct;
+            })
+        )
+    };
+};
+
+class RankFilter inherits Filter {
+    filter(o : Object) : Bool {
+        (
+            let
+                isRank : Bool <- false
+            in ({
+                if isvoid o then
+                    abort()
+                else 0 fi;
+                
+                case o of 
+                    r : Rank => { isRank <- true ; r; };
+                    s : String => { isRank <- false; s; };
+                    i : Int => { isRank <- false; i; };
+                    io : IO => { isRank <- false; io; };
+                    o : Object => { isRank <- false; o; };
+                esac;
+                not isRank;
+            })
+        )
+    };
+};  
+
+class SamePriceFilter inherits Filter {
+    filter(o : Object) : Bool {{
+        if isvoid o then
+            abort()
+        else 0 fi;
+        false;
+    }};
+};
 
 class DynamicCast {
 
