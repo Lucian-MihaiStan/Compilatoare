@@ -16,7 +16,7 @@ class Product {
     getprice():Int{ price * 119 / 100 };
 
     toString():String {
-        "TODO: implement me"
+        name.concat("(").concat(model).concat(",").concat(")")
     };
 };
 

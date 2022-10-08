@@ -44,6 +44,10 @@ class List inherits IO {
         )
     };
 
+    isEmpty() : Bool {
+        isvoid head 
+    };
+
     setTail(l : List) : SELF_TYPE {
         {
             tail <- l;
@@ -62,6 +66,29 @@ class List inherits IO {
         tail
     };
 
+    size() : Int {
+        {
+            (
+                let sz : Int
+                in 
+                ({
+                    if isEmpty() then
+                        sz <- 0
+                    else
+                    {
+                        if isvoid tail then
+                            sz <- sz + 1
+                        else
+                            sz <- sz + 1 + tail.size()
+                        fi;
+                    }
+                    fi;
+                    sz;
+                })
+            );
+        }
+    };
+
     toString():String {
         (
             let 
@@ -70,6 +97,8 @@ class List inherits IO {
             ({
                 case head of
                     s : String => consString <- "[".concat(s).concat("]");
+                    p : Product => consString <- p.toString();
+                    r : Rank => consString <- r.toString();
                     o : Object => { abort(); ""; };
                 esac;
 

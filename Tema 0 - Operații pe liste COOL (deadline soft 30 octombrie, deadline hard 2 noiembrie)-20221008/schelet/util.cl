@@ -25,4 +25,10 @@ class DynamicCast {
         esac
     };
 
+    dList(o : Object) : List {
+        case o of 
+            l : List => l;
+        esac
+    };
+
 };
