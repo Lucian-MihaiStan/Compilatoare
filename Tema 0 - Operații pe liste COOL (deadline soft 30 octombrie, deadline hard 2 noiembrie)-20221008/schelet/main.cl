@@ -313,20 +313,28 @@ class Main inherits IO{
                                     li1 : List,
                                     li2 : List
                                 in ({
-
                                     index1 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
                                     index2 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(2)));
 
                                     li1 <- tConv.dList(lists.getIndex(index1 - 1));
-
                                     li2 <- tConv.dList(lists.getIndex(index2 - 1));
 
                                     li1 <- li1.append(li2);
 
-                                    lists.remove(index1 - 1);
-                                    lists.remove(index2 - 1);
+                                    if index1 - 1 = 0 then  
+                                        lists = new List
+                                    else
+                                        lists.remove(index1 - 1)
+                                    fi;
+
+                                    if index2 - 2 = 0 then
+                                        lists = new List
+                                    else
+                                        lists.remove(index2 - 2)
+                                    fi;
 
                                     lists.add(li1);
+
                                 })
                             );
                         }

@@ -132,36 +132,27 @@ class List inherits IO {
     }};
 
     remove(index : Int) : SELF_TYPE {{
-        if isvoid head then
-            abort()
-        else 0 fi;
-
-        if index = 1 then
-            tail <- tail.getTail()
-        else 
-            remove(index - 1)
-        fi; 
-
-        self;
-    }};
-
-    appendListToEnd(newList : List, prevTail : List) : List {
         (
             let
-                newTail : List
+                tConv : DynamicCast <- new DynamicCast
             in ({
-                if isvoid prevTail.getTail() then
-                    newTail <- prevTail.setTail(newList)
-                else {
-                    newTail <- prevTail.appendListToEnd(newList, prevTail.getTail());
-                    prevTail.setTail(newTail);
-                    newTail <- prevTail;
+                if isvoid head then
+                    abort()
+                else 0 fi;
+
+                if index = 1 then {
+                    -- out_string("removed=".concat(tConv.dList(tail.getHead()).toString()).concat("\n"));
+                    tail <- tail.getTail();
                 }
-                fi;
-                newTail;
+                else 
+                    tail.remove(index - 1)
+                fi; 
+
+                self;
+
             })
-        )
-    };
+        );
+    }};
 
     add(o : Object):SELF_TYPE {
         {
@@ -172,6 +163,24 @@ class List inherits IO {
             fi;
             self;
         }
+    };
+
+    appendListToEnd(newList : List, prevTail : List) : List {
+        (
+            let
+                newTail : List
+            in ({
+                if isvoid prevTail then
+                    newTail <- newList
+                else {
+                    newTail <- prevTail.appendListToEnd(newList, prevTail.getTail());
+                    prevTail.setTail(newTail);
+                    newTail <- prevTail;
+                }
+                fi;
+                newTail;
+            })
+        )
     };
 
     addObjectToEnd(o : Object, l : List) : List {
@@ -242,7 +251,8 @@ class List inherits IO {
         (
             let 
                 consString : String,
-                atoiConverter : A2I <- new A2I
+                atoiConverter : A2I <- new A2I,
+                tConv : DynamicCast <- new DynamicCast
             in 
             ({
                 case head of
@@ -260,7 +270,9 @@ class List inherits IO {
                     io : IO => consString <- "IO(), ";
                     o : Object => { abort(); ""; };
                 esac;
-
+                
+                -- out_string(tConv.dCString(head).concat("\n"));
+                
                 if not isvoid tail then {
                     consString <- consString.concat(tail.toString());
                 }
@@ -475,7 +487,7 @@ class Main inherits IO{
                         }
                         pool;
 
-                        out_string(builderList.printList(size).concat(""));
+                        out_string(builderList.printList(size));
                     } else {
                         stringBuilder <- tConv.dList(lists.getIndex(printIndex - 1)).toString();
                         stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
@@ -649,20 +661,28 @@ class Main inherits IO{
                                     li1 : List,
                                     li2 : List
                                 in ({
-
                                     index1 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
                                     index2 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(2)));
 
                                     li1 <- tConv.dList(lists.getIndex(index1 - 1));
-
                                     li2 <- tConv.dList(lists.getIndex(index2 - 1));
 
                                     li1 <- li1.append(li2);
 
-                                    lists.remove(index1 - 1);
-                                    lists.remove(index2 - 1);
+                                    if index1 - 1 = 0 then  
+                                        lists = new List
+                                    else
+                                        lists.remove(index1 - 1)
+                                    fi;
+
+                                    if index2 - 2 = 0 then
+                                        lists = new List
+                                    else
+                                        lists.remove(index2 - 2)
+                                    fi;
 
                                     lists.add(li1);
+
                                 })
                             );
                         }
