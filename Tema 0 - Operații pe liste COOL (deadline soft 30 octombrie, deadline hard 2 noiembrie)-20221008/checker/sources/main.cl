@@ -109,7 +109,6 @@ class Main inherits IO{
 
     main():Object {{
             loopingCommand();
-
     }};
 
     print(printIndex : Int): Object { 
@@ -140,7 +139,7 @@ class Main inherits IO{
                         }
                         pool;
 
-                        out_string(builderList.printList(size).concat(" \n"));
+                        out_string(builderList.printList(size));
                     } else {
                         stringBuilder <- tConv.dList(lists.getIndex(printIndex - 1)).toString();
                         stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
@@ -182,6 +181,8 @@ class Main inherits IO{
                     token <- "";
                     hasNextToken <- true;
 
+                    tokensList <- new List;
+                    
                     if somestr = "END" then
                     {
                         if not currentList.isEmpty() then
@@ -194,10 +195,6 @@ class Main inherits IO{
                     if somestr = "" then
                         exitCon <- 1
                     else 0 fi;
-
-                    -- if somestr = "\n" then
-                    --     exitCon <- 1
-                    -- else 0 fi;
 
                     if exitCon = 0 then
                     {
@@ -308,17 +305,43 @@ class Main inherits IO{
                             fi;
                         }
                         else if headToken = "load" then currentList <- new List
+                        else if headToken = "merge" then {
+                            (
+                                let
+                                    index1 : Int,
+                                    index2 : Int,
+                                    li1 : List,
+                                    li2 : List
+                                in ({
+
+                                    index1 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                                    index2 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(2)));
+
+                                    li1 <- tConv.dList(lists.getIndex(index1 - 1));
+
+                                    li2 <- tConv.dList(lists.getIndex(index2 - 1));
+
+                                    li1 <- li1.append(li2);
+
+                                    lists.remove(index1 - 1);
+                                    lists.remove(index2 - 1);
+
+                                    lists.add(li1);
+                                })
+                            );
+                        }
                         else {
                             out_string(somestr);
                             abort();
                         }
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then
                             looping <- false
                         else {
                             exitCon <- 0;
+                            tokensList <- new List;
                         } fi
                     fi;
                 } pool

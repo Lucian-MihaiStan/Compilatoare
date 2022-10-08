@@ -14,6 +14,47 @@ class List inherits IO {
         )
     };
 
+    append(l : List) : List {{
+        if isvoid tail then
+            tail <- l
+        else 
+            tail <- appendListToEnd(l, tail)
+        fi;
+        self;
+    }};
+
+    remove(index : Int) : SELF_TYPE {{
+        if isvoid head then
+            abort()
+        else 0 fi;
+
+        if index = 1 then
+            tail <- tail.getTail()
+        else 
+            remove(index - 1)
+        fi; 
+
+        self;
+    }};
+
+    appendListToEnd(newList : List, prevTail : List) : List {
+        (
+            let
+                newTail : List
+            in ({
+                if isvoid prevTail.getTail() then
+                    newTail <- prevTail.setTail(newList)
+                else {
+                    newTail <- prevTail.appendListToEnd(newList, prevTail.getTail());
+                    prevTail.setTail(newTail);
+                    newTail <- prevTail;
+                }
+                fi;
+                newTail;
+            })
+        )
+    };
+
     add(o : Object):SELF_TYPE {
         {
             if isvoid head then

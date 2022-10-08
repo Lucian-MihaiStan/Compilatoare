@@ -122,6 +122,47 @@ class List inherits IO {
         )
     };
 
+    append(l : List) : List {{
+        if isvoid tail then
+            tail <- l
+        else 
+            tail <- appendListToEnd(l, tail)
+        fi;
+        self;
+    }};
+
+    remove(index : Int) : SELF_TYPE {{
+        if isvoid head then
+            abort()
+        else 0 fi;
+
+        if index = 1 then
+            tail <- tail.getTail()
+        else 
+            remove(index - 1)
+        fi; 
+
+        self;
+    }};
+
+    appendListToEnd(newList : List, prevTail : List) : List {
+        (
+            let
+                newTail : List
+            in ({
+                if isvoid prevTail.getTail() then
+                    newTail <- prevTail.setTail(newList)
+                else {
+                    newTail <- prevTail.appendListToEnd(newList, prevTail.getTail());
+                    prevTail.setTail(newTail);
+                    newTail <- prevTail;
+                }
+                fi;
+                newTail;
+            })
+        )
+    };
+
     add(o : Object):SELF_TYPE {
         {
             if isvoid head then
@@ -404,7 +445,6 @@ class Main inherits IO{
 
     main():Object {{
             loopingCommand();
-
     }};
 
     print(printIndex : Int): Object { 
@@ -428,14 +468,14 @@ class Main inherits IO{
                             stringBuilder <- currentList.toString();
 
                             stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
-                            elemBuilder <- new ElementBuilder.init(index, stringBuilder.concat(" ]"));
+                            elemBuilder <- new ElementBuilder.init(index + 1, stringBuilder.concat(" ]"));
 
                             builderList.add(elemBuilder);
                             index <- index + 1;
                         }
                         pool;
 
-                        out_string(builderList.printList(size).concat(" \n"));
+                        out_string(builderList.printList(size).concat(""));
                     } else {
                         stringBuilder <- tConv.dList(lists.getIndex(printIndex - 1)).toString();
                         stringBuilder <- "[ ".concat(stringBuilder.substr(0, stringBuilder.length() - 2));
@@ -477,6 +517,8 @@ class Main inherits IO{
                     token <- "";
                     hasNextToken <- true;
 
+                    tokensList <- new List;
+                    
                     if somestr = "END" then
                     {
                         if not currentList.isEmpty() then
@@ -489,10 +531,6 @@ class Main inherits IO{
                     if somestr = "" then
                         exitCon <- 1
                     else 0 fi;
-
-                    -- if somestr = "\n" then
-                    --     exitCon <- 1
-                    -- else 0 fi;
 
                     if exitCon = 0 then
                     {
@@ -603,17 +641,43 @@ class Main inherits IO{
                             fi;
                         }
                         else if headToken = "load" then currentList <- new List
+                        else if headToken = "merge" then {
+                            (
+                                let
+                                    index1 : Int,
+                                    index2 : Int,
+                                    li1 : List,
+                                    li2 : List
+                                in ({
+
+                                    index1 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                                    index2 <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(2)));
+
+                                    li1 <- tConv.dList(lists.getIndex(index1 - 1));
+
+                                    li2 <- tConv.dList(lists.getIndex(index2 - 1));
+
+                                    li1 <- li1.append(li2);
+
+                                    lists.remove(index1 - 1);
+                                    lists.remove(index2 - 1);
+
+                                    lists.add(li1);
+                                })
+                            );
+                        }
                         else {
                             out_string(somestr);
                             abort();
                         }
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then
                             looping <- false
                         else {
                             exitCon <- 0;
+                            tokensList <- new List;
                         } fi
                     fi;
                 } pool
