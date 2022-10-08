@@ -8,3 +8,21 @@ class Filter {
 };
 
 (* TODO: implement specified comparators and filters*)
+
+class DynamicCast {
+
+    dCString(o : Object) : String {
+        case o of
+            s : String => s;
+            obj : Object => { abort(); ""; };
+        esac
+    };
+
+    dCInt(o : Object) : Int {
+        case o of
+            i : Int => i;
+            obj : Object => { abort(); 0; };
+        esac
+    };
+
+};

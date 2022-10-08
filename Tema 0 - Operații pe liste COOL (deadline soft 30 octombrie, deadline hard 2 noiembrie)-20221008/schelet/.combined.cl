@@ -106,16 +106,88 @@ numbers are handled correctly.
     };
 
 };
-class List {
+class List inherits IO {
+    head : Object;
+    tail : List;
 
-    (* TODO: store data *)
+    cons(h : Object):List {
+        (
+            let list : List
+            in (
+                {
+                    list <- new List;
+                    list.setHead(h);
+                }
+            )
+        )
+    };
 
     add(o : Object):SELF_TYPE {
-        self (* TODO *)
+        {
+            if isvoid head then
+                head <- o
+            else
+                tail <- addObjectToEnd(o, tail)
+            fi;
+            self;
+        }
+    };
+
+    addObjectToEnd(o : Object, l : List) : List {
+        (
+            let
+                newList : List
+            in ({
+                if isvoid l then
+                    newList <- cons(o)
+                else {
+                    newList <- l.addObjectToEnd(o, l.getTail());
+                    l.setTail(newList);
+                    newList <- l;
+                }
+                fi;
+                newList;
+            })
+
+        )
+    };
+
+    setTail(l : List) : SELF_TYPE {
+        {
+            tail <- l;
+            self;
+        }
+    };
+    
+    setHead(h : Object) : SELF_TYPE {
+        {
+            head <- h;
+            self;
+        }
+    };
+
+    getTail() : List {
+        tail
     };
 
     toString():String {
-        "[TODO: implement me]"
+        (
+            let 
+                consString : String
+            in 
+            ({
+                case head of
+                    s : String => consString <- "[".concat(s).concat("]");
+                    o : Object => { abort(); ""; };
+                esac;
+
+                if not isvoid tail then {
+                    consString <- consString.concat(tail.toString());
+                }
+                else 0 fi;
+                consString;
+            })
+        )
     };
 
     merge(other : List):SELF_TYPE {
@@ -129,7 +201,26 @@ class List {
     sortBy():SELF_TYPE {
         self (* TODO *)
     };
-};class StringTokenizer inherits IO {
+
+    getHead() : Object {
+        head
+    };
+
+    getIndex(index : Int) : Object {
+        if index = 0 then
+            head
+        else 
+        {
+            if isvoid tail then
+                abort()
+            else 0 fi;
+            tail.getIndex(index - 1);
+        }
+        fi
+    };
+
+};
+class StringTokenizer {
 
     content : String;
     delimiter : String;
@@ -232,60 +323,129 @@ class List {
 };
 
 class Main inherits IO{
-    -- lists : List;
+    lists : List;
     looping : Bool <- true;
     somestr : String;
 
     main():Object {
-        (
-            let 
-                tokenizer : StringTokenizer <- new StringTokenizer, 
-                token : String, 
-                hasNextToken : Bool,
-                exitCon : Int
-            in (
-                while looping loop {
-                    -- out_string("Your name: ");
-                    somestr <- in_string();
-                    token <- "";
-                    hasNextToken <- true;
+        {
 
-                    if somestr = "END" then
-                        exitCon <- 1
-                    else 0 fi;
+            (
+                let 
+                    tokenizer : StringTokenizer <- new StringTokenizer,
+                    token : String, 
+                    hasNextToken : Bool,
+                    tConv : DynamicCast <- new DynamicCast,
+                    tokensList : List,
+                    headToken : String,
+                    exitCon : Int,
+                    newObject : Object,
+                    atoiConverter : A2I <- new A2I,
+                    isFirstToken : Bool <- true
+                in (
+                    while looping loop {
+                        -- out_string("Your name: ");
+                        somestr <- in_string();
+                        token <- "";
+                        hasNextToken <- true;
+                        isFirstToken <- true;
 
-                    if somestr = "" then
-                        exitCon <- 1
-                    else 0 fi;
+                        if somestr = "END" then
+                            exitCon <- 1
+                        else 0 fi;
 
-                    if somestr = "\n" then
-                        exitCon <- 1
-                    else 0 fi;
+                        if somestr = "" then
+                            exitCon <- 1
+                        else 0 fi;
 
-                    if exitCon = 1 then
-                        looping <- false
-                    else
-                    {
-                        tokenizer.reset();
-                        tokenizer.withContent(somestr).withDelimiter(" ");
-                        
-                        while hasNextToken loop {
-                            if token = somestr then
-                                hasNextToken <- false
+                        if somestr = "\n" then
+                            exitCon <- 1
+                        else 0 fi;
+
+                        if exitCon = 1 then
+                            looping <- false
+                        else
+                        {
+                            tokenizer.reset();
+                            tokenizer.withContent(somestr).withDelimiter(" ");
+                            
+                            tokensList <- new List;
+
+                            while hasNextToken loop {
+                                if token = somestr then
+                                    hasNextToken <- false
+                                else 
+                                {
+                                    token <- tokenizer.nextToken();
+                                    if not token = somestr then
+                                        tokensList.add(token)
+                                    else 0 fi;
+
+                                }
+
+                                fi;
+                            } pool;
+
+                            headToken <- tConv.dCString(tokensList.getHead());
+
+                            if headToken = "Soda" then
+                                newObject <- new Soda.init(
+                                    tConv.dCString(tokensList.getIndex(1)),
+                                    tConv.dCString(tokensList.getIndex(2)),
+                                    atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
+                                )
+                            else if headToken = "Coffee" then
+                                newObject <- new Coffee.init(
+                                    tConv.dCString(tokensList.getIndex(1)),
+                                    tConv.dCString(tokensList.getIndex(2)),
+                                    atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
+                                )
+                            else if headToken = "Laptop" then
+                                newObject <- new Laptop.init(
+                                    tConv.dCString(tokensList.getIndex(1)),
+                                    tConv.dCString(tokensList.getIndex(2)),
+                                    atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
+                                )
+                            else if headToken = "Router" then
+                                newObject <- new Router.init(
+                                    tConv.dCString(tokensList.getIndex(1)),
+                                    tConv.dCString(tokensList.getIndex(2)),
+                                    atoiConverter.a2i(tConv.dCString(tokensList.getIndex(3)))
+                                )
+                            else if headToken = "Private" then
+                                newObject <- new Private.init(tConv.dCString(tokensList.getIndex(1)))
+                            else if headToken = "Corporal" then
+                                newObject <- new Corporal.init(tConv.dCString(tokensList.getIndex(1)))
+                            else if headToken = "Sergent" then
+                                newObject <- new Sergent.init(tConv.dCString(tokensList.getIndex(1)))
+                            else if headToken = "Officer" then
+                                newObject <- new Officer.init(tConv.dCString(tokensList.getIndex(1)))
                             else 
-                            {
-                                token <- tokenizer.nextToken();
-                                out_string(token.concat("\n"));
-                            }
-                            fi;
-                        } pool;
-                    }
-                    fi;
+                                abort()
+                            fi fi fi fi fi fi fi fi;
 
-                } pool
-            )
-        )
+                        }
+                        fi;
 
+                    } pool
+                )
+            );
+
+            looping <- true;
+
+            (
+                let
+                    command : String
+
+                in
+                ({
+                    while looping loop {
+                        command <- in_string();
+                        out_string(command.concat("\n"));
+                    } pool;
+                })
+            );
+        }
     };
 };(*******************************
  *** Classes Product-related ***
@@ -363,3 +523,21 @@ class Filter {
 };
 
 (* TODO: implement specified comparators and filters*)
+
+class DynamicCast {
+
+    dCString(o : Object) : String {
+        case o of
+            s : String => s;
+            obj : Object => { abort(); ""; };
+        esac
+    };
+
+    dCInt(o : Object) : Int {
+        case o of
+            i : Int => i;
+            obj : Object => { abort(); 0; };
+        esac
+    };
+
+};
