@@ -107,30 +107,34 @@ class Main inherits IO{
 
     main():Object {
         (
-            let tokenizer : StringTokenizer <- new StringTokenizer, token : String, hasNextToken : Bool, empty : Int, newLine : Int, exitCon : Int
+            let 
+                tokenizer : StringTokenizer <- new StringTokenizer, 
+                token : String, 
+                hasNextToken : Bool,
+                exitCon : Int,
+                atoiConverter : A2I <- new A2I
             in (
                 while looping loop {
                     -- out_string("Your name: ");
                     somestr <- in_string();
                     token <- "";
                     hasNextToken <- true;
-                    empty <- 0;
-                    newLine <- 0;
-                    exitCon <- 0;
+
+                    if somestr = "END" then
+                        exitCon <- 1
+                    else 0 fi;
 
                     if somestr = "" then
-                        empty <- 1
+                        exitCon <- 1
                     else 0 fi;
 
                     if somestr = "\n" then
-                        newLine <- 1
+                        exitCon <- 1
                     else 0 fi;
 
-                    exitCon <- newLine + empty;
-
-                    if exitCon = 1 then 
+                    if exitCon = 1 then
                         looping <- false
-                    else 
+                    else
                     {
                         tokenizer.reset();
                         tokenizer.withContent(somestr).withDelimiter(" ");
