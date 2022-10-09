@@ -32,10 +32,8 @@ class List inherits IO {
                     abort()
                 else 0 fi;
 
-                if index = 1 then {
-                    -- out_string("removed=".concat(tConv.dList(tail.getHead()).toString()).concat("\n"));
-                    tail <- tail.getTail();
-                }
+                if index = 1 then
+                    tail <- tail.getTail()
                 else 
                     tail.remove(index - 1)
                 fi; 
@@ -160,6 +158,7 @@ class List inherits IO {
                         fi;
                     };
                     io : IO => consString <- "IO(), ";
+                    dE : DummyElement => consString <- ", ";
                     o : Object => { abort(); ""; };
                 esac;
                 

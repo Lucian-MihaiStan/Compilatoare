@@ -24,6 +24,9 @@ class Product {
     };
 };
 
+class DummyElement {  
+};
+
 class Edible inherits Product {
     -- VAT tax is lower for foods
     getprice():Int { price * 109 / 100 };

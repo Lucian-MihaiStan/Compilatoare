@@ -344,7 +344,8 @@ class Main inherits IO{
                                     index : Int,
                                     li : List,
                                     filter : Filter,
-                                    filterStr : String
+                                    filterStr : String,
+                                    shouldRemove : Bool <- false
                                 in ({
                                     index <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
                                     li <- tConv.dList(lists.getIndex(index - 1));
@@ -360,11 +361,22 @@ class Main inherits IO{
                                         abort()
                                     fi fi fi;
 
+                                    li <- li.filterBy(filter);
+                                    
                                     if filter.filter(li.getHead()) then
-                                        li <- li.getTail()
+                                        if li.size() = 1 then
+                                            shouldRemove <- true
+                                        else 
+                                            li <- li.getTail()
+                                        fi
                                     else 0 fi;
                                     
-                                    li <- li.filterBy(filter);
+                                    if shouldRemove then {
+                                        li <- new List;
+                                        li.add(new DummyElement);
+                                    }
+                                    else 0 fi;
+
                                     lists.replace(li, index - 1);
                                 })
                             );
