@@ -993,7 +993,21 @@ class RankComparator inherits Comparator {
 };
 
 class AlphabeticComparator inherits Comparator {
-    compareTo(o1 : Object, o2 : Object):Int {0};
+    compareTo(o1 : Object, o2 : Object):Int {(
+        let
+            tConv : DynamicCast <- new DynamicCast,
+            s1 : String <- tConv.dCString(o1),
+            s2 : String <- tConv.dCString(o2)
+        in ({
+            if s1 < s2 then
+                0 - 1
+            else if s1 = s2 then
+                0
+            else  
+                1
+            fi fi;
+        })
+    )};
 };
 
 class Filter inherits IO {

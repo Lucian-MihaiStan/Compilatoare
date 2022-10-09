@@ -56,7 +56,13 @@ class AlphabeticComparator inherits Comparator {
             s1 : String <- tConv.dCString(o1),
             s2 : String <- tConv.dCString(o2)
         in ({
-            
+            if s1 < s2 then
+                0 - 1
+            else if s1 = s2 then
+                0
+            else  
+                1
+            fi fi;
         })
     )};
 };
