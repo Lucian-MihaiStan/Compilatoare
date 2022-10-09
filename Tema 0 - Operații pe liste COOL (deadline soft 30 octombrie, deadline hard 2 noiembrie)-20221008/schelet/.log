@@ -1,2 +1,1 @@
-[ Soda(a,a1), Soda(a,ConstPrice), Soda(a,a3), Soda(a,a4), Router(b1,always), Router(b2,always), Laptop(cx,never), Coffee(d1,always), Coffee(d2,always) ]
-[  ]
+[ Soda(a,129), Coffee(b,238), Router(c,357), Laptop(d,975), Soda(e,565), Coffee(f,714), Soda(e2,674), Router(g,833), Laptop(h,1451) ]

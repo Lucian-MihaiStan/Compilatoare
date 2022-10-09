@@ -307,9 +307,59 @@ class List inherits IO {
         self;
     }};
 
-    sortBy():SELF_TYPE {
-        self (* TODO *)
-    };
+    sortBy(comp : Comparator, asc : Bool):SELF_TYPE {{
+        (
+            let
+                i : Int <- 0,
+                j : Int <- 0,
+                e1 : Object,
+                e2 : Object,
+                aux : Object,
+                size : Int <- size() 
+            in ({
+
+                while i < size - 1 loop {
+                    j <- 0;
+                    while j < size - i - 1 loop {
+                        e1 <- getIndex(j);
+                        e2 <- getIndex(j + 1);
+
+                        if asc = true then
+                            if not comp.compareTo(e1, e2) <= 0 then {
+                                aux <- e1;
+                                setAtIndex(j, e2);
+                                setAtIndex(j + 1, aux);
+                            } else 0 fi
+                        else
+                            if comp.compareTo(e1, e2) < 0 then {
+                                aux <- e1;
+                                setAtIndex(j, e2);
+                                setAtIndex(j + 1, aux);
+                            } else 0 fi
+                        fi;
+                        j <- j + 1;
+                    } pool;
+                    i <- i + 1;
+                } pool;
+                self;
+            })
+        );
+        self;
+    }};
+
+    setAtIndex(index : Int, obj : Object) : SELF_TYPE {{
+        if index = 0 then
+            head <- obj
+        else
+        {
+            if isvoid tail then
+                abort()
+            else 0 fi;
+            tail.setAtIndex(index - 1, obj);
+        }
+        fi;
+        self;
+    }};
 
     getHead() : Object {
         head
@@ -745,11 +795,46 @@ class Main inherits IO{
                                 })
                             );
                         }
+                        else if headToken = "sortBy" then {
+                            (
+                                let 
+                                    type : String,
+                                    index : Int,
+                                    compStr : String,
+                                    comparator : Comparator,
+                                    li : List,
+                                    asc : Bool
+                                in ({
+                                    index <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                                    compStr <- tConv.dCString(tokensList.getIndex(2));
+
+                                    if compStr = "PriceComparator" then
+                                        comparator <- new PriceComparator
+                                    else if compStr = "RankComparator" then
+                                        comparator <- new RankComparator
+                                    else if compStr = "AlphabeticComparator" then
+                                        comparator <- new AlphabeticComparator
+                                    else
+                                        abort()
+                                    fi fi fi;
+
+                                    type <- tConv.dCString(tokensList.getIndex(3));
+                                    if type = "ascendent" then
+                                        asc <- true
+                                    else
+                                        asc <- false
+                                    fi;
+ 
+                                    li <- tConv.dList(lists.getIndex(index - 1));
+                                    li.sortBy(comparator, asc);
+                                })
+                            );
+                        }
                         else {
                             out_string(somestr);
                             abort();
                         }
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then
@@ -781,6 +866,8 @@ class Product {
         price <- p;
         self;
     }};
+
+    getName():String {name};
 
     getprice():Int{ price * 119 / 100 };
 
@@ -841,7 +928,36 @@ class Corporal inherits Private {};
 class Sergent inherits Corporal {};
 
 class Officer inherits Sergent {};(* Think of these as abstract classes *)
-class Comparator {
+class Comparator inherits IO {
+    compareTo(o1 : Object, o2 : Object):Int {0};
+};
+
+class PriceComparator inherits Comparator {
+    compareTo(o1 : Object, o2 : Object):Int {
+        (
+            let 
+                tConv : DynamicCast <- new DynamicCast,
+                p1 : Int <- new Product.init("", "", "", tConv.dcProduct(o1).getHardWiredPrice()).getprice(),
+                p2 : Int <- new Product.init("", "", "", tConv.dcProduct(o2).getHardWiredPrice()).getprice(),
+                dif : Int <- 0
+            in ({
+                dif <- (p1 - p2);
+                if dif = 0 then
+                    if tConv.dcProduct(o1).getName() < tConv.dcProduct(o2).getName() then
+                        dif <- dif - 1
+                    else dif <- 1 fi
+                else 0 fi;
+                dif;
+            })
+        )
+    };
+};
+
+class RankComparator inherits Comparator {
+    compareTo(o1 : Object, o2 : Object):Int {0};
+};
+
+class AlphabeticComparator inherits Comparator {
     compareTo(o1 : Object, o2 : Object):Int {0};
 };
 
@@ -934,6 +1050,13 @@ class DynamicCast {
         case o of
             i : Int => i;
             obj : Object => { abort(); 0; };
+        esac
+    };
+
+    dcProduct(o : Object) : Product {
+        case o of 
+            p : Product => { p; };
+            obj : Object => { abort(); new Product; };
         esac
     };
 

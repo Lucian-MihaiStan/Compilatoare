@@ -381,11 +381,46 @@ class Main inherits IO{
                                 })
                             );
                         }
+                        else if headToken = "sortBy" then {
+                            (
+                                let 
+                                    type : String,
+                                    index : Int,
+                                    compStr : String,
+                                    comparator : Comparator,
+                                    li : List,
+                                    asc : Bool
+                                in ({
+                                    index <- atoiConverter.a2i(tConv.dCString(tokensList.getIndex(1)));
+                                    compStr <- tConv.dCString(tokensList.getIndex(2));
+
+                                    if compStr = "PriceComparator" then
+                                        comparator <- new PriceComparator
+                                    else if compStr = "RankComparator" then
+                                        comparator <- new RankComparator
+                                    else if compStr = "AlphabeticComparator" then
+                                        comparator <- new AlphabeticComparator
+                                    else
+                                        abort()
+                                    fi fi fi;
+
+                                    type <- tConv.dCString(tokensList.getIndex(3));
+                                    if type = "ascendent" then
+                                        asc <- true
+                                    else
+                                        asc <- false
+                                    fi;
+ 
+                                    li <- tConv.dList(lists.getIndex(index - 1));
+                                    li.sortBy(comparator, asc);
+                                })
+                            );
+                        }
                         else {
                             out_string(somestr);
                             abort();
                         }
-                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
+                        fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi fi;
                     }
                     else
                         if not somestr = "END" then

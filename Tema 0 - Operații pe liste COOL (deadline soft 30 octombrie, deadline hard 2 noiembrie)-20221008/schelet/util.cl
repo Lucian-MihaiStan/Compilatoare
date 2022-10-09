@@ -1,5 +1,34 @@
 (* Think of these as abstract classes *)
-class Comparator {
+class Comparator inherits IO {
+    compareTo(o1 : Object, o2 : Object):Int {0};
+};
+
+class PriceComparator inherits Comparator {
+    compareTo(o1 : Object, o2 : Object):Int {
+        (
+            let 
+                tConv : DynamicCast <- new DynamicCast,
+                p1 : Int <- new Product.init("", "", "", tConv.dcProduct(o1).getHardWiredPrice()).getprice(),
+                p2 : Int <- new Product.init("", "", "", tConv.dcProduct(o2).getHardWiredPrice()).getprice(),
+                dif : Int <- 0
+            in ({
+                dif <- (p1 - p2);
+                if dif = 0 then
+                    if tConv.dcProduct(o1).getName() < tConv.dcProduct(o2).getName() then
+                        dif <- dif - 1
+                    else dif <- 1 fi
+                else 0 fi;
+                dif;
+            })
+        )
+    };
+};
+
+class RankComparator inherits Comparator {
+    compareTo(o1 : Object, o2 : Object):Int {0};
+};
+
+class AlphabeticComparator inherits Comparator {
     compareTo(o1 : Object, o2 : Object):Int {0};
 };
 
@@ -92,6 +121,13 @@ class DynamicCast {
         case o of
             i : Int => i;
             obj : Object => { abort(); 0; };
+        esac
+    };
+
+    dcProduct(o : Object) : Product {
+        case o of 
+            p : Product => { p; };
+            obj : Object => { abort(); new Product; };
         esac
     };
 

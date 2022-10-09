@@ -199,9 +199,59 @@ class List inherits IO {
         self;
     }};
 
-    sortBy():SELF_TYPE {
-        self (* TODO *)
-    };
+    sortBy(comp : Comparator, asc : Bool):SELF_TYPE {{
+        (
+            let
+                i : Int <- 0,
+                j : Int <- 0,
+                e1 : Object,
+                e2 : Object,
+                aux : Object,
+                size : Int <- size() 
+            in ({
+
+                while i < size - 1 loop {
+                    j <- 0;
+                    while j < size - i - 1 loop {
+                        e1 <- getIndex(j);
+                        e2 <- getIndex(j + 1);
+
+                        if asc = true then
+                            if not comp.compareTo(e1, e2) <= 0 then {
+                                aux <- e1;
+                                setAtIndex(j, e2);
+                                setAtIndex(j + 1, aux);
+                            } else 0 fi
+                        else
+                            if comp.compareTo(e1, e2) < 0 then {
+                                aux <- e1;
+                                setAtIndex(j, e2);
+                                setAtIndex(j + 1, aux);
+                            } else 0 fi
+                        fi;
+                        j <- j + 1;
+                    } pool;
+                    i <- i + 1;
+                } pool;
+                self;
+            })
+        );
+        self;
+    }};
+
+    setAtIndex(index : Int, obj : Object) : SELF_TYPE {{
+        if index = 0 then
+            head <- obj
+        else
+        {
+            if isvoid tail then
+                abort()
+            else 0 fi;
+            tail.setAtIndex(index - 1, obj);
+        }
+        fi;
+        self;
+    }};
 
     getHead() : Object {
         head

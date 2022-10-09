@@ -15,6 +15,8 @@ class Product {
         self;
     }};
 
+    getName():String {name};
+
     getprice():Int{ price * 119 / 100 };
 
     getHardWiredPrice():Int {price};
