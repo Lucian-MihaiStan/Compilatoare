@@ -15,6 +15,11 @@ class Product {
         self;
     }};
 
+    initSimple(p: Int):SELF_TYPE {{
+        price <- p;
+        self;
+    }};
+
     getName():String {name};
 
     getprice():Int{ price * 119 / 100 };
@@ -22,7 +27,14 @@ class Product {
     getHardWiredPrice():Int {price};
 
     toString():String {
-        name.concat("(").concat(model).concat(",").concat(additionalData).concat(")")
+        name.concat("(").concat(model).concat(",").concat(additionalData)
+        -- .concat(",").concat(new A2I.i2a(getprice()))
+        -- .concat(",").concat(new A2I.i2a(getHardWiredPrice()))
+        .concat(")")
+    };
+
+    getAdditionalData() : String  {
+        additionalData
     };
 };
 
