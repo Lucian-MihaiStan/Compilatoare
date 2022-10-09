@@ -931,15 +931,17 @@ class Rank {
     toString():String {
         name.concat("(").concat(personName).concat(")")
     };
+
+    getRank():Int {0};
 };
 
-class Private inherits Rank {};
+class Private inherits Rank { getRank():Int {1}; };
 
-class Corporal inherits Private {};
+class Corporal inherits Private { getRank():Int {2}; };
 
-class Sergent inherits Corporal {};
+class Sergent inherits Corporal { getRank():Int {3}; };
 
-class Officer inherits Sergent {};(* Think of these as abstract classes *)
+class Officer inherits Sergent { getRank():Int {4}; };(* Think of these as abstract classes *)
 class Comparator inherits IO {
     compareTo(o1 : Object, o2 : Object):Int {0};
 };
@@ -979,7 +981,15 @@ class PriceComparator inherits Comparator {
 };
 
 class RankComparator inherits Comparator {
-    compareTo(o1 : Object, o2 : Object):Int {0};
+    compareTo(o1 : Object, o2 : Object):Int {(
+        let
+            tConv : DynamicCast <- new DynamicCast,
+            r1 : Int <- tConv.dCRank(o1).getRank(),
+            r2 : Int <- tConv.dCRank(o2).getRank()
+        in ({
+            r1 - r2;
+        })
+    )};
 };
 
 class AlphabeticComparator inherits Comparator {
@@ -1068,6 +1078,12 @@ class DynamicCast {
         case o of
             s : String => s;
             obj : Object => { abort(); ""; };
+        esac
+    };
+
+    dCRank(o : Object) : Rank {
+        case o of
+            r : Rank => r;
         esac
     };
 
