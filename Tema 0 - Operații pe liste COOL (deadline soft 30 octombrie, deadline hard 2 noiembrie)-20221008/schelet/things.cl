@@ -27,10 +27,7 @@ class Product {
     getHardWiredPrice():Int {price};
 
     toString():String {
-        name.concat("(").concat(model).concat(",").concat(additionalData)
-        -- .concat(",").concat(new A2I.i2a(getprice()))
-        -- .concat(",").concat(new A2I.i2a(getHardWiredPrice()))
-        .concat(")")
+        name.concat("(").concat(model).concat(",").concat(additionalData).concat(")")
     };
 
     getAdditionalData() : String  {

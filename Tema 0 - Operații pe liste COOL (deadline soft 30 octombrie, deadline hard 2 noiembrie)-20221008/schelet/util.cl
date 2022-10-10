@@ -8,28 +8,15 @@ class PriceComparator inherits Comparator {
         (
             let 
                 tConv : DynamicCast <- new DynamicCast,
-                -- p1 : Int <- new Product.initSimple(tConv.dcProduct(o1).getHardWiredPrice()).getprice(),
-                -- p2 : Int <- new Product.initSimple(tConv.dcProduct(o2).getHardWiredPrice()).getprice(),
                 p1 : Int <- tConv.dcProduct(o1).getprice(),
                 p2 : Int <- tConv.dcProduct(o2).getprice(),
                 dif : Int <- 0
             in ({
-                -- out_string(tConv.dcProduct(o1).toString().concat(" "));
-                -- out_int(p1);
-                -- out_string(" ");
-
-                -- out_string(tConv.dcProduct(o2).toString().concat(" "));
-                -- out_int(p2);
-                -- out_string("\n");
                 dif <- (p1 - p2);
-                if dif = 0 then {
-                    if not tConv.dcProduct(o1).getAdditionalData() < tConv.dcProduct(o2).getAdditionalData() then {
-                        dif <- dif - 1;
-                        -- out_string("DADA\n");
-                    }
-                    else dif <- 1 fi;
-                    -- out_string("dif=0");
-                }
+                if dif = 0 then
+                    if not tConv.dcProduct(o1).getAdditionalData() < tConv.dcProduct(o2).getAdditionalData() then
+                        dif <- dif - 1
+                    else dif <- 1 fi
                 else 0 fi;
                 dif;
             })
@@ -43,9 +30,7 @@ class RankComparator inherits Comparator {
             tConv : DynamicCast <- new DynamicCast,
             r1 : Int <- tConv.dCRank(o1).getRank(),
             r2 : Int <- tConv.dCRank(o2).getRank()
-        in ({
-            r1 - r2;
-        })
+        in (r1 - r2)
     )};
 };
 
@@ -55,15 +40,15 @@ class AlphabeticComparator inherits Comparator {
             tConv : DynamicCast <- new DynamicCast,
             s1 : String <- tConv.dCString(o1),
             s2 : String <- tConv.dCString(o2)
-        in ({
+        in (
             if s1 < s2 then
                 0 - 1
             else if s1 = s2 then
                 0
             else  
                 1
-            fi fi;
-        })
+            fi fi
+        )
     )};
 };
 
@@ -88,6 +73,7 @@ class ProductFilter inherits Filter {
                     io : IO => { isProduct <- false; io; };
                     o : Object => { isProduct <- false; o; };
                 esac;
+
                 not isProduct;
             })
         )
