@@ -1,2 +1,43 @@
 if 123 x 2.2e-5 /* abc /* xyz */
 efg */ "ab\"c"
++
+-
+* AAA
+/
+==
+<=
+<
+x = y;
+x_underscore;
+if
+then
+else
+fi
+
+true
+false
+
+Int int;
+Float float;
+Bool bool;
+
+(
+)
+{
+}
+
+// dublu comentariu single line
+// comentariu cu \n la final
+
+3.0
+
+.5
+
+25.23
+123.1
+0.1
+3.1213
+
+
+
+// leave this at the end of the file to test comment at the end of the file

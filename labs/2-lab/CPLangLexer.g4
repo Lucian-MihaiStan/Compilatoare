@@ -12,6 +12,12 @@ lexer grammar CPLangLexer;
 /* Cuvânt cheie.
  */
 IF : 'if';
+THEN : 'then';
+ELSE : 'else';
+FI : 'fi';
+
+TRUE : 'true';
+FALSE : 'false';
 
 /* Număr întreg.
  * 
@@ -20,6 +26,33 @@ IF : 'if';
  */
 fragment DIGIT : [0-9];
 INT : DIGIT+;
+
+FLOAT : (DIGIT)*? '.' DIGIT+;
+
+PLUS : '+';
+MINUS : '-';
+MULTIPLY : '*';
+DIVIDE : '/';
+
+EQUAL_EQUAL : '==';
+EQUAL_ASSIGN : '=';
+LESS : '<';
+LESS_EQUAL : '<=';
+
+DOT_COMMA : ';';
+
+/*
+Tipurile de date predefinite (singurele de altfel)
+*/
+Int : 'Int';
+Float : 'Float';
+Bool : 'Bool';
+
+OPEN_PAR : '(';
+CLOSE_PAR : ')';
+
+OPEN_BRACE : '{';
+CLOSE_BRACE : '}';
 
 /* Identificator.
  */
@@ -45,6 +78,8 @@ REAL : DIGITS FRACTION EXPONENT;
  */
 STRING : '"' ('\\"' | .)*? '"'
     { System.out.println("there are no strings in CPLang, but shhh.."); };
+
+LINE_COMMENT : ('//' ((LINE_COMMENT | .)*?) ('\n' | EOF)) -> skip;
 
 BLOCK_COMMENT : '/*' (BLOCK_COMMENT | .)*? '*/' -> skip;
 
