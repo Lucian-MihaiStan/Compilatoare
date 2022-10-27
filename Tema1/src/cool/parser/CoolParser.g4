@@ -9,5 +9,12 @@ options {
 }
 
 program
-    :   EOF 
-    ; 
+    :
+        (class SEMI)+ EOF
+    ;
+
+class
+    :
+        CLASS
+    ;
+
