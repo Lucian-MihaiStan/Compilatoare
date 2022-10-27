@@ -1,4 +1,4 @@
-// Generated from C:/Users/stanl/Documents/Uni/cpl/Tema1/src/cool/lexer\CoolLexer.g4 by ANTLR 4.10.1
+// Generated from C:/Users/stanl/Documents/Uni/cpl/Tema1/out/production/Tema1/cool/lexer\CoolLexer.g4 by ANTLR 4.10.1
 
     package cool.lexer;	
 

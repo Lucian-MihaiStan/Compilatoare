@@ -1,2 +1,4 @@
 ERROR=1
 WS=2
+SEMI=3
+CLASS=4

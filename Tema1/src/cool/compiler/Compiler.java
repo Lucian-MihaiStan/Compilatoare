@@ -3,7 +3,7 @@ package cool.compiler;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
-import cool.lexer.*;
+//import cool.lexer.*;
 import cool.parser.*;
 
 import java.io.*;
