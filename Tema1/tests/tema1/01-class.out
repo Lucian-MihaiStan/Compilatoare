@@ -1,8 +1,2 @@
 ANTLR Tool version 4.10.1 used for code generation does not match the current runtime version 4.11.1
 ANTLR Tool version 4.10.1 used for code generation does not match the current runtime version 4.11.1
-"01-class.cl", line 1:1, Syntax error: mismatched input 'class' expecting CLASS
-line 1:8 token recognition error at: '{'
-line 1:9 token recognition error at: '}'
-line 3:19 token recognition error at: '{'
-line 3:20 token recognition error at: '}'
-Compilation halted

@@ -1,6 +1,1 @@
-"20-error-invalid-character.cl", line 1:1, Syntax error: mismatched input 'class' expecting CLASS
-line 1:8 token recognition error at: '{'
-line 2:6 token recognition error at: ':'
 line 2:13 token recognition error at: '#'
-line 3:0 token recognition error at: '}'
-Compilation halted

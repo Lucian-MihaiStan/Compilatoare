@@ -3,7 +3,7 @@ lexer grammar CoolLexer;
 tokens { ERROR }
 
 @header{
-    package cool.lexer;	
+    package cool.parser;
 }
 
 @members{    
@@ -33,24 +33,52 @@ OF : ('o' | 'O') ('f' | 'F') ;
 NOT : ('n' | 'N') ('o' | 'O') ('t' | 'T') ;
 TRUE : 't' ('r' | 'R') ('u' | 'U') ('e' | 'E') ;
 
+/* parentheses */
+LPAREN : '(' ;
+RPAREN : ')' ;
+
+/* braces */
+LBRACE : '{' ;
+RBRACE : '}' ;
+
+COMMA : ',' ;
+COLON : ':' ;
 SEMI : ';' ;
 
-fragment UPPER_CASE_LETTER : [A-Z];
-fragment LOWER_CASE_LETTER : [a-z];
+ASSIGN : '<-' ;
+RESULTS_CASE : '=>' ;
+
+PLUS : '+' ;
+MINUS : '-' ;
+MULTIPLY : '*' ;
+DIVIDE : '/' ;
+TILDA : '~' ;
+
+LT : '<' ;
+LE : '<=' ;
+EQ : '=' ;
+
+QUOTE : '"';
+
+fragment UPPER_CASE_LETTER : [A-Z] ;
+fragment LOWER_CASE_LETTER : [a-z] ;
 
 /*Identifiers*/
 
-/* TYPE ID */
-TYPE_ID : UPPER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT)*;
+/* type identifier */
+TYPE : UPPER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT)* ;
 
-/* OBJECT ID */
-OBJECT_ID : LOWER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT)*;
+
+/* object identifier */
+ID : LOWER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT)* ;
 
 /*
     Integer
 */
-fragment DIGIT : [0-9];
-INT : DIGIT+;
+fragment DIGIT : [0-9] ;
+INT : DIGIT+ ;
+
+STRING : QUOTE .*? QUOTE;
 
 
 WS

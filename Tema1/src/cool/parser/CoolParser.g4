@@ -16,7 +16,7 @@ formal : ID COLON TYPE;
 
 feature
     :
-        ID LPAREN (formal (COMMA formal))? RPAREN COLON TYPE LBRACE expr RBRACE
+        ID LPAREN (formal (COMMA formal)*)? RPAREN COLON TYPE LBRACE expr RBRACE
         | ID COLON TYPE (ASSIGN expr)?
     ;
 
