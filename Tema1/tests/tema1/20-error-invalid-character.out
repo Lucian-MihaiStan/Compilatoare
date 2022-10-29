@@ -1,1 +1,3 @@
-line 2:13 token recognition error at: '#'
+program
+  class
+    A

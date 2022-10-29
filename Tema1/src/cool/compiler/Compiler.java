@@ -1,5 +1,9 @@
 package cool.compiler;
 
+import cool.tree.ASTNode;
+import cool.tree.ASTVisitor;
+import cool.tree.RfClass;
+import cool.tree.RfProgram;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -7,6 +11,8 @@ import org.antlr.v4.runtime.tree.*;
 import cool.parser.*;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Compiler {
@@ -119,7 +125,62 @@ public class Compiler {
             System.err.println("Compilation halted");
             return;
         }
-        
-        // TODO Print tree
+
+        var astConstructionVisitor = new CoolParserBaseVisitor<ASTNode>() {
+
+            /**
+             * class : CLASS TYPE (INHERITS TYPE)? LBRACE (feature SEMI)* RBRACE ;
+             */
+            @Override
+            public ASTNode visitClass(CoolParser.ClassContext ctx) {
+                return new RfClass(ctx.TYPE(), ctx.start);
+            }
+
+            /**
+             * program : (class SEMI)+ EOF ;
+             */
+            @Override
+            public ASTNode visitProgram(CoolParser.ProgramContext ctx) {
+                List<CoolParser.ClassContext> classContexts = ctx.class_();
+                List<RfClass> rfClasses = new ArrayList<>();
+                for(CoolParser.ClassContext antlrClass : classContexts)
+                    rfClasses.add((RfClass) visit(antlrClass));
+
+                return new RfProgram(rfClasses, ctx.start);
+            }
+        };
+
+        var ast = astConstructionVisitor.visit(globalTree);
+
+
+
+        var printVisitor = new ASTVisitor<Void>() {
+
+            int indent = 0;
+
+            @Override
+            public Void visit(RfProgram rfProgram) {
+                printIndent("program");
+                indent++;
+                rfProgram.getRfClasses().forEach(rfClass -> { rfClass.accept(this); });
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfClass rfClass) {
+                printIndent("class");
+                indent++;
+                rfClass.getTypes().forEach(rfType -> { printIndent(rfType.getSymbol().getText()); });
+                indent--;
+                return null;
+            }
+
+            void printIndent(String str) {
+                System.out.println("  ".repeat(Math.max(0, indent)) + str);
+            }
+        };
+
+        ast.accept(printVisitor);
     }
 }

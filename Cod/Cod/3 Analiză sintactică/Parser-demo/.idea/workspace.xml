@@ -4,25 +4,58 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4c2851e-9f30-4827-aa80-b2e88f958600" name="Default Changelist" comment="" />
+    <list default="true" id="d4c2851e-9f30-4827-aa80-b2e88f958600" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Parser-demo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Parser-demo.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/01-class.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/01-class.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/02-attribute-no-init.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/02-attribute-no-init.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/03-attribute-init.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/03-attribute-init.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/04-method.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/04-method.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/05-literal-id.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/05-literal-id.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/06-arithmetic.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/06-arithmetic.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/07-relational.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/07-relational.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/08-assignment.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/08-assignment.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/09-new-isvoid.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/09-new-isvoid.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/11-if.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/11-if.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/12-while.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/12-while.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/13-let.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/13-let.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/14-case.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/14-case.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/15-block.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/15-block.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/16-string-special-chars.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/16-string-special-chars.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/20-error-invalid-character.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/20-error-invalid-character.out" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="1jEX6JOsinoFyEOnpaPl25AbV6V" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../antlr-4.8-complete.jar" />
-    <property name="project.structure.last.edited" value="Modules" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="preferences.general" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/stanl/Documents/Uni/cpl/antlr-4.11.1-complete.jar",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\UPB\CPL\Idea\Parser-demo\src" />
@@ -51,41 +84,33 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1603370047300</updated>
+      <workItem from="1667055967430" duration="5704000" />
     </task>
     <servers />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603374627276">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1603374627276" />
-    <state x="666" y="261" key="FileChooserDialogImpl" timestamp="1603373928592">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="666" y="261" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1603373928592" />
-    <state width="1899" height="282" key="GridCell.Tab.0.bottom" timestamp="1603377209001">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1603377209001" />
-    <state width="1899" height="282" key="GridCell.Tab.0.center" timestamp="1603377209001">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1603377209001" />
-    <state width="1899" height="282" key="GridCell.Tab.0.left" timestamp="1603377209001">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1603377209001" />
-    <state width="1899" height="282" key="GridCell.Tab.0.right" timestamp="1603377209001">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1603377209001" />
-    <state x="440" y="94" key="SettingsEditor" timestamp="1603373934619">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1603373934619" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1603376619141">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1603376619141" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/ASTNode.java</url>
+          <line>21</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
