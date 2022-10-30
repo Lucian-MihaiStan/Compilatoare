@@ -8,10 +8,12 @@ import java.util.List;
 public class RfClass extends ASTNode {
 
     private final List<TerminalNode> types;
+    private final List<RfFeature> rfFeatures;
 
-    public RfClass(List<TerminalNode> type, Token token) {
+    public RfClass(List<TerminalNode> type, List<RfFeature> rfFeatures, Token token) {
+        super(token);
         this.types = type;
-        this.token = token;
+        this.rfFeatures = rfFeatures;
     }
 
     @Override
@@ -21,5 +23,9 @@ public class RfClass extends ASTNode {
 
     public List<TerminalNode> getTypes() {
         return types;
+    }
+
+    public List<RfFeature> getRfFeatures() {
+        return rfFeatures;
     }
 }

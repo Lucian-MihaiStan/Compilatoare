@@ -1,9 +1,7 @@
 package cool.compiler;
 
-import cool.tree.ASTNode;
-import cool.tree.ASTVisitor;
-import cool.tree.RfClass;
-import cool.tree.RfProgram;
+import com.sun.jdi.Field;
+import cool.tree.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -128,12 +126,68 @@ public class Compiler {
 
         var astConstructionVisitor = new CoolParserBaseVisitor<ASTNode>() {
 
+            @Override
+            public ASTNode visitInt(CoolParser.IntContext ctx) {
+                return new RfInt(ctx.getText(), ctx.start);
+            }
+
+            @Override
+            public ASTNode visitString(CoolParser.StringContext ctx) {
+                return new RfString(ctx.getText(), ctx.start);
+            }
+
+            @Override
+            public ASTNode visitBool_expr(CoolParser.Bool_exprContext ctx) {
+                return new RfBool(ctx.getText(), ctx.start);
+            }
+
+            @Override
+            public ASTNode visitId(CoolParser.IdContext ctx) {
+                return new RfId(ctx.getText(), ctx.start);
+            }
+
+            @Override
+            public ASTNode visitFormal(CoolParser.FormalContext ctx) {
+                return new RfArgument(ctx.ID().getSymbol().getText(), ctx.TYPE().getSymbol().getText(), ctx.start);
+            }
+
+            /**
+             * ID LPAREN (formal (COMMA formal)*)? RPAREN COLON TYPE LBRACE expr RBRACE
+             */
+            @Override
+            public ASTNode visitMethod(CoolParser.MethodContext ctx) {
+                List<RfArgument> args = new ArrayList<>();
+                ctx.formal().forEach(arg -> args.add((RfArgument) visit(arg)));
+
+                CoolParser.ExprContext methodBody = ctx.expr();
+                RfExpression rfMethodBody = (RfExpression) visit(methodBody);
+
+                return new RfMethod(ctx.ID().getSymbol().getText(), ctx.TYPE().getSymbol().getText(), args, rfMethodBody, ctx.start);
+            }
+
+            /**
+             * ID COLON TYPE (ASSIGN expr)?
+             */
+            @Override
+            public ASTNode visitField(CoolParser.FieldContext ctx) {
+                TerminalNode fieldName = ctx.ID();
+                TerminalNode fieldType = ctx.TYPE();
+
+                CoolParser.ExprContext expr = ctx.expr();
+                RfExpression rfExpression = expr != null ? (RfExpression) visit(expr) : null;
+
+                return new RfField(fieldName.getSymbol().getText(), fieldType.getSymbol().getText(), rfExpression, ctx.start);
+            }
+
             /**
              * class : CLASS TYPE (INHERITS TYPE)? LBRACE (feature SEMI)* RBRACE ;
              */
             @Override
             public ASTNode visitClass(CoolParser.ClassContext ctx) {
-                return new RfClass(ctx.TYPE(), ctx.start);
+                List<RfFeature> rfFeatures = new ArrayList<>();
+                for (CoolParser.FeatureContext feature : ctx.feature())
+                    rfFeatures.add((RfFeature) visit(feature));
+                return new RfClass(ctx.TYPE(), rfFeatures, ctx.start);
             }
 
             /**
@@ -152,8 +206,6 @@ public class Compiler {
 
         var ast = astConstructionVisitor.visit(globalTree);
 
-
-
         var printVisitor = new ASTVisitor<Void>() {
 
             int indent = 0;
@@ -162,7 +214,7 @@ public class Compiler {
             public Void visit(RfProgram rfProgram) {
                 printIndent("program");
                 indent++;
-                rfProgram.getRfClasses().forEach(rfClass -> { rfClass.accept(this); });
+                rfProgram.getRfClasses().forEach(rfClass -> rfClass.accept(this));
                 indent--;
                 return null;
             }
@@ -172,6 +224,76 @@ public class Compiler {
                 printIndent("class");
                 indent++;
                 rfClass.getTypes().forEach(rfType -> { printIndent(rfType.getSymbol().getText()); });
+                rfClass.getRfFeatures().forEach(rfFeature -> rfFeature.accept(this));
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfField rfField) {
+                printIndent("attribute");
+                indent++;
+                printIndent(rfField.getFieldName());
+                printIndent(rfField.getFieldType());
+                RfExpression rfExpression = rfField.getRfExpression();
+                if (rfExpression != null)
+                    rfExpression.accept(this);
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfInt rfInt) {
+                printIndent(rfInt.getValue().toString());
+                return null;
+            }
+
+            @Override
+            public Void visit(RfString rfString) {
+                String value = rfString.getValue();
+                if (value.startsWith("\"") && value.endsWith("\""))
+                    value = value.substring(1, value.length() - 1);
+                printIndent(value);
+                return null;
+            }
+
+            @Override
+            public Void visit(RfBool rfBool) {
+                printIndent(rfBool.getValue().toString());
+                return null;
+            }
+
+            @Override
+            public Void visit(RfId rfId) {
+                printIndent(rfId.getValue());
+                return null;
+            }
+
+            @Override
+            public Void visit(RfArgument rfArgument) {
+                printIndent("formal");
+                indent++;
+                printIndent(rfArgument.getName());
+                printIndent(rfArgument.getType());
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfMethod rfMethod) {
+                printIndent("method");
+                indent++;
+                printIndent(rfMethod.getName());
+
+                List<RfArgument> rfArgs = rfMethod.getArgs();
+                rfArgs.forEach(arg -> arg.accept(this));
+
+                printIndent(rfMethod.getReturnType());
+
+                RfExpression rfMethodBody = rfMethod.getRfMethodBody();
+                if (rfMethodBody != null)
+                    rfMethodBody.accept(this);
+
                 indent--;
                 return null;
             }

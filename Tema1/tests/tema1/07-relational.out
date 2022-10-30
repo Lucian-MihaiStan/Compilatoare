@@ -1,3 +1,14 @@
 program
   class
     A
+    attribute
+      n
+      Int
+    attribute
+      b
+      Bool
+      n
+    attribute
+      c
+      Bool
+      false

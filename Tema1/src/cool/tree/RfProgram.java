@@ -9,8 +9,8 @@ public class RfProgram extends ASTNode {
     private final List<RfClass> rfClasses;
 
     public RfProgram(List<RfClass> rfClasses, Token token) {
+        super(token);
         this.rfClasses = rfClasses;
-        this.token = token;
     }
 
     @Override

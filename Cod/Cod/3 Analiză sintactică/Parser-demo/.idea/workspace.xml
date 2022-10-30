@@ -5,11 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4c2851e-9f30-4827-aa80-b2e88f958600" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Parser-demo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Parser-demo.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/01-class.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/01-class.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.g4" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.interp" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tester/Tester1.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tester/Tester1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfClass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfProgram.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/02-attribute-no-init.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/02-attribute-no-init.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/03-attribute-init.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/03-attribute-init.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/04-method.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/04-method.out" afterDir="false" />
@@ -84,7 +93,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1603370047300</updated>
-      <workItem from="1667055967430" duration="5704000" />
+      <workItem from="1667055967430" duration="7074000" />
     </task>
     <servers />
   </component>

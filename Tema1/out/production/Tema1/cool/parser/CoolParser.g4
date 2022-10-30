@@ -16,36 +16,38 @@ formal : ID COLON TYPE;
 
 feature
     :
-        ID LPAREN (formal (COMMA formal)*)? RPAREN COLON TYPE LBRACE expr RBRACE
-        | ID COLON TYPE (ASSIGN expr)?
+        ID LPAREN (formal (COMMA formal)*)? RPAREN COLON TYPE LBRACE expr RBRACE    #method
+        | ID COLON TYPE (ASSIGN expr)?                                              #field
     ;
 
 expr
     :
-        ID ASSIGN expr
+        ID ASSIGN expr                                                                          #id_assign_expr
         /* | expr[@TYPE].ID( [ expr [[, expr]]∗ ] ) */
-        | ID LPAREN (expr (COMMA expr)*)? RPAREN
-        | IF expr THEN expr ELSE expr FI
-        | WHILE expr LOOP expr POOL
-        | LBRACE (expr SEMI)+ RBRACE
-        | LET ID COLON TYPE (ASSIGN expr)? (COMMA ID COLON TYPE (ASSIGN expr)?)* IN expr
-        | CASE expr OF (ID COLON TYPE RESULTS_CASE expr SEMI)+ ESAC
-        | NEW TYPE
-        | ISVOID expr
-        | expr PLUS expr
-        | expr MINUS expr
-        | expr MULTIPLY expr
-        | expr DIVIDE expr
-        | TILDA expr
-        | expr LT expr
-        | expr LE expr
-        | expr EQ expr
-        | NOT expr
-        | LPAREN expr RPAREN
-        | ID
-        | INT
-        | STRING
-        | TRUE
-        | FALSE
+        | ID LPAREN (expr (COMMA expr)*)? RPAREN                                                #id_lparen_expr_comma
+        | IF expr THEN expr ELSE expr FI                                                        #if
+        | WHILE expr LOOP expr POOL                                                             #while
+        | LBRACE (expr SEMI)+ RBRACE                                                            #body
+        | LET ID COLON TYPE (ASSIGN expr)? (COMMA ID COLON TYPE (ASSIGN expr)?)* IN expr        #let
+        | CASE expr OF (ID COLON TYPE RESULTS_CASE expr SEMI)+ ESAC                             #case
+        | NEW TYPE                                                                              #new
+        | ISVOID expr                                                                           #isvoidcheck
+        | expr PLUS expr                                                                        #plus
+        | expr MINUS expr                                                                       #minus
+        | expr MULTIPLY expr                                                                    #multiply
+        | expr DIVIDE expr                                                                      #divide
+        | TILDA expr                                                                            #tilda
+        | expr LT expr                                                                          #lt
+        | expr LE expr                                                                          #le
+        | expr EQ expr                                                                          #eq
+        | NOT expr                                                                              #not
+        | LPAREN expr RPAREN                                                                    #body_expr
+        | ID                                                                                    #id
+        | INT                                                                                   #int
+        | STRING                                                                                #string
+        | bool                                                                                  #bool_expr
+//        | TRUE                                                                                  #true
+//        | FALSE                                                                                 #false
     ;
 
+bool : TRUE | FALSE ;

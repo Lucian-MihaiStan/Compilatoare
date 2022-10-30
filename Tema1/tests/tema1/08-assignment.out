@@ -1,3 +1,23 @@
 program
   class
     A
+    attribute
+      x
+      Int
+    method
+      f
+      formal
+        y
+        Int
+      Int
+      y
+    method
+      f
+      formal
+        y
+        Int
+      formal
+        z
+        Int
+      Int
+      z

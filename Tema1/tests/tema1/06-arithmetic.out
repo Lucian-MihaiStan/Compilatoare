@@ -1,3 +1,6 @@
 program
   class
     A
+    attribute
+      n
+      Int
