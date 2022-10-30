@@ -19,4 +19,10 @@ public interface ASTVisitor<T> {
     T visit(RfBool rfBool);
 
     T visit(RfId rfId);
+
+    T visit(RfArithmeticExpression rfArithmeticExpression);
+
+    T visit(RfParenExpression rfParenExpression);
+
+    T visit(RfBitNegExpression rfBitNegExpression);
 }

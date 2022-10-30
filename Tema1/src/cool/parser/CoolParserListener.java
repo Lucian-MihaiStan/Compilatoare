@@ -64,17 +64,17 @@ public interface CoolParserListener extends ParseTreeListener {
 	 */
 	void exitField(CoolParser.FieldContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code tilda}
+	 * Enter a parse tree produced by the {@code paren_expr}
 	 * labeled alternative in {@link CoolParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterTilda(CoolParser.TildaContext ctx);
+	void enterParen_expr(CoolParser.Paren_exprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code tilda}
+	 * Exit a parse tree produced by the {@code paren_expr}
 	 * labeled alternative in {@link CoolParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitTilda(CoolParser.TildaContext ctx);
+	void exitParen_expr(CoolParser.Paren_exprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code new}
 	 * labeled alternative in {@link CoolParser#expr}.
@@ -87,6 +87,18 @@ public interface CoolParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNew(CoolParser.NewContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code bit_neg}
+	 * labeled alternative in {@link CoolParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterBit_neg(CoolParser.Bit_negContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code bit_neg}
+	 * labeled alternative in {@link CoolParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitBit_neg(CoolParser.Bit_negContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code minus}
 	 * labeled alternative in {@link CoolParser#expr}.
@@ -255,18 +267,6 @@ public interface CoolParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLet(CoolParser.LetContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code body_expr}
-	 * labeled alternative in {@link CoolParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterBody_expr(CoolParser.Body_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code body_expr}
-	 * labeled alternative in {@link CoolParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitBody_expr(CoolParser.Body_exprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code divide}
 	 * labeled alternative in {@link CoolParser#expr}.

@@ -31,23 +31,21 @@ expr
         | LET ID COLON TYPE (ASSIGN expr)? (COMMA ID COLON TYPE (ASSIGN expr)?)* IN expr        #let
         | CASE expr OF (ID COLON TYPE RESULTS_CASE expr SEMI)+ ESAC                             #case
         | NEW TYPE                                                                              #new
+        | TILDA expr                                                                            #bit_neg
         | ISVOID expr                                                                           #isvoidcheck
-        | expr PLUS expr                                                                        #plus
-        | expr MINUS expr                                                                       #minus
         | expr MULTIPLY expr                                                                    #multiply
         | expr DIVIDE expr                                                                      #divide
-        | TILDA expr                                                                            #tilda
+        | expr PLUS expr                                                                        #plus
+        | expr MINUS expr                                                                       #minus
         | expr LT expr                                                                          #lt
         | expr LE expr                                                                          #le
         | expr EQ expr                                                                          #eq
         | NOT expr                                                                              #not
-        | LPAREN expr RPAREN                                                                    #body_expr
+        | LPAREN expr RPAREN                                                                    #paren_expr
         | ID                                                                                    #id
         | INT                                                                                   #int
         | STRING                                                                                #string
         | bool                                                                                  #bool_expr
-//        | TRUE                                                                                  #true
-//        | FALSE                                                                                 #false
     ;
 
 bool : TRUE | FALSE ;

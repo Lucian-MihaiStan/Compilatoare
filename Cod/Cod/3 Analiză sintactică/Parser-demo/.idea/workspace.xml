@@ -8,32 +8,12 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.g4" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.g4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.interp" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.interp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tester/Tester1.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tester/Tester1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTNode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfClass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/RfProgram.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/02-attribute-no-init.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/02-attribute-no-init.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/03-attribute-init.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/03-attribute-init.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/04-method.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/04-method.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/05-literal-id.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/05-literal-id.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/06-arithmetic.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/06-arithmetic.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/07-relational.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/07-relational.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/08-assignment.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/08-assignment.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/09-new-isvoid.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/09-new-isvoid.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/11-if.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/11-if.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/12-while.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/12-while.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/13-let.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/13-let.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/14-case.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/14-case.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/15-block.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/15-block.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/16-string-special-chars.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/16-string-special-chars.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/20-error-invalid-character.out" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/tests/tema1/20-error-invalid-character.out" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

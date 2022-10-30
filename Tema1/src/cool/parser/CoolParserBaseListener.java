@@ -78,13 +78,13 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTilda(CoolParser.TildaContext ctx) { }
+	@Override public void enterParen_expr(CoolParser.Paren_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTilda(CoolParser.TildaContext ctx) { }
+	@Override public void exitParen_expr(CoolParser.Paren_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -97,6 +97,18 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNew(CoolParser.NewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBit_neg(CoolParser.Bit_negContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBit_neg(CoolParser.Bit_negContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -265,18 +277,6 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLet(CoolParser.LetContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBody_expr(CoolParser.Body_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBody_expr(CoolParser.Body_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

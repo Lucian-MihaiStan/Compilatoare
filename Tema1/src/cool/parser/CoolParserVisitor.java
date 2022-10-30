@@ -45,12 +45,12 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitField(CoolParser.FieldContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code tilda}
+	 * Visit a parse tree produced by the {@code paren_expr}
 	 * labeled alternative in {@link CoolParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTilda(CoolParser.TildaContext ctx);
+	T visitParen_expr(CoolParser.Paren_exprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code new}
 	 * labeled alternative in {@link CoolParser#expr}.
@@ -58,6 +58,13 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNew(CoolParser.NewContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code bit_neg}
+	 * labeled alternative in {@link CoolParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBit_neg(CoolParser.Bit_negContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code minus}
 	 * labeled alternative in {@link CoolParser#expr}.
@@ -156,13 +163,6 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLet(CoolParser.LetContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code body_expr}
-	 * labeled alternative in {@link CoolParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBody_expr(CoolParser.Body_exprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code divide}
 	 * labeled alternative in {@link CoolParser#expr}.
