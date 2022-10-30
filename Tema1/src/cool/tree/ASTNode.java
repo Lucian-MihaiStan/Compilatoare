@@ -1,5 +1,6 @@
 package cool.tree;
 
+import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
 public abstract class ASTNode {

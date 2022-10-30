@@ -1,7 +1,5 @@
 package cool.compiler;
 
-import com.sun.jdi.Field;
-import cool.tree.*;
 import cool.visitor.utils.PrintVisitor;
 import cool.visitor.utils.Visitor;
 import org.antlr.v4.runtime.*;
@@ -11,8 +9,6 @@ import org.antlr.v4.runtime.tree.*;
 import cool.parser.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Compiler {

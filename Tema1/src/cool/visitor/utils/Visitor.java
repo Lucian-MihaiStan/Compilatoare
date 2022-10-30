@@ -2,7 +2,25 @@ package cool.visitor.utils;
 
 import cool.parser.CoolParser;
 import cool.parser.CoolParserBaseVisitor;
-import cool.tree.*;
+import cool.reflection.*;
+import cool.reflection.expression.*;
+import cool.reflection.expression.arithmetic.operation.RfDivideExpression;
+import cool.reflection.expression.arithmetic.operation.RfMinusExpression;
+import cool.reflection.expression.arithmetic.operation.RfMultiplyExpression;
+import cool.reflection.expression.arithmetic.operation.RfPlusExpression;
+import cool.reflection.expression.relational.operation.RfEQExpression;
+import cool.reflection.expression.relational.operation.RfLEExpression;
+import cool.reflection.expression.relational.operation.RfLTExpression;
+import cool.reflection.expression.single.value.RfBitNegExpression;
+import cool.reflection.expression.single.value.RfNotExpression;
+import cool.reflection.expression.single.value.RfParenExpression;
+import cool.reflection.feature.RfFeature;
+import cool.reflection.feature.features.RfField;
+import cool.reflection.feature.features.RfMethod;
+import cool.reflection.type.RfBool;
+import cool.reflection.type.RfInt;
+import cool.reflection.type.RfString;
+import cool.tree.ASTNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -11,7 +29,7 @@ import java.util.List;
 public interface Visitor {
 
     static CoolParserBaseVisitor<ASTNode> createBaseVisitor() {
-        return new CoolParserBaseVisitor<ASTNode>() {
+        return new CoolParserBaseVisitor<>() {
 
             @Override
             public ASTNode visitInt(CoolParser.IntContext ctx) {

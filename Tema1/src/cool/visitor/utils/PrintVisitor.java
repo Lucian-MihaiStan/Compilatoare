@@ -1,6 +1,19 @@
 package cool.visitor.utils;
 
-import cool.tree.*;
+import cool.reflection.*;
+import cool.reflection.expression.*;
+import cool.reflection.expression.arithmetic.RfArithmeticExpression;
+import cool.reflection.expression.relational.RfRelationalExpression;
+import cool.reflection.expression.single.RfSingleValueExpression;
+import cool.reflection.expression.single.value.RfBitNegExpression;
+import cool.reflection.expression.single.value.RfNotExpression;
+import cool.reflection.expression.single.value.RfParenExpression;
+import cool.reflection.feature.features.RfField;
+import cool.reflection.feature.features.RfMethod;
+import cool.reflection.type.RfBool;
+import cool.reflection.type.RfInt;
+import cool.reflection.type.RfString;
+import cool.visitor.ASTVisitor;
 
 import java.util.List;
 
@@ -89,29 +102,20 @@ public interface PrintVisitor {
             }
 
             @Override
-            public Void visit(RfBitNegExpression rfBitNegExpression) {
-                printIndent("~");
-                indent++;
-                rfBitNegExpression.getExpression().accept(this);
-                indent--;
-                return null;
-            }
-
-            @Override
-            public Void visit(RfNotExpression rfNotExpression) {
-                printIndent("not");
-                indent++;
-                rfNotExpression.getExpression().accept(this);
-                indent--;
-                return null;
-            }
-
-            @Override
             public Void visit(RfRelationalExpression rfRelationalExpression) {
                 printIndent(rfRelationalExpression.getRelationalSymbol());
                 indent++;
                 rfRelationalExpression.getLhValue().accept(this);
                 rfRelationalExpression.getRhValue().accept(this);
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfSingleValueExpression rfSingleValueExpression) {
+                printIndent(rfSingleValueExpression.getSymbol());
+                indent++;
+                rfSingleValueExpression.getExpression().accept(this);
                 indent--;
                 return null;
             }
