@@ -7,6 +7,4 @@ public class RfDivideExpression extends RfArithmeticExpression {
         super(lhValue, rhValue, token);
     }
 
-
-
 }

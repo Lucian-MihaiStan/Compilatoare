@@ -98,6 +98,25 @@ public interface PrintVisitor {
             }
 
             @Override
+            public Void visit(RfNotExpression rfNotExpression) {
+                printIndent("not");
+                indent++;
+                rfNotExpression.getExpression().accept(this);
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfRelationalExpression rfRelationalExpression) {
+                printIndent(rfRelationalExpression.getRelationalSymbol());
+                indent++;
+                rfRelationalExpression.getLhValue().accept(this);
+                rfRelationalExpression.getRhValue().accept(this);
+                indent--;
+                return null;
+            }
+
+            @Override
             public Void visit(RfArgument rfArgument) {
                 printIndent("formal");
                 indent++;

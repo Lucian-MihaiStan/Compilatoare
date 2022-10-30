@@ -37,8 +37,8 @@ expr
         | expr DIVIDE expr                                                                      #divide
         | expr PLUS expr                                                                        #plus
         | expr MINUS expr                                                                       #minus
-        | expr LT expr                                                                          #lt
         | expr LE expr                                                                          #le
+        | expr LT expr                                                                          #lt
         | expr EQ expr                                                                          #eq
         | NOT expr                                                                              #not
         | LPAREN expr RPAREN                                                                    #paren_expr

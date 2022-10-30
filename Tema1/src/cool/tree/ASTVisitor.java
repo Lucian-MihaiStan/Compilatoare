@@ -25,4 +25,8 @@ public interface ASTVisitor<T> {
     T visit(RfParenExpression rfParenExpression);
 
     T visit(RfBitNegExpression rfBitNegExpression);
+
+    T visit(RfNotExpression rfNotExpression);
+
+    T visit(RfRelationalExpression rfRelationalExpression);
 }

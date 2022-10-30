@@ -7,8 +7,17 @@ program
     attribute
       b
       Bool
-      n
+      not
+        <=
+          2
+          n
     attribute
       c
       Bool
-      false
+      =
+        <
+          2
+          +
+            n
+            1
+        false

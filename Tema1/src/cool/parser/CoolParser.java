@@ -1435,24 +1435,24 @@ public class CoolParser extends Parser {
 						break;
 					case 5:
 						{
-						_localctx = new LtContext(new ExprContext(_parentctx, _parentState));
+						_localctx = new LeContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(180);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(181);
-						match(LT);
+						match(LE);
 						setState(182);
 						expr(10);
 						}
 						break;
 					case 6:
 						{
-						_localctx = new LeContext(new ExprContext(_parentctx, _parentState));
+						_localctx = new LtContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(183);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(184);
-						match(LE);
+						match(LT);
 						setState(185);
 						expr(9);
 						}
@@ -1686,8 +1686,8 @@ public class CoolParser extends Parser {
 		"\u00be\u0003\b\u0004\r\u00ae\u00af\n\u000b\u0000\u0000\u00af\u00b0\u0005"+
 		"\u001e\u0000\u0000\u00b0\u00be\u0003\b\u0004\f\u00b1\u00b2\n\n\u0000\u0000"+
 		"\u00b2\u00b3\u0005\u001f\u0000\u0000\u00b3\u00be\u0003\b\u0004\u000b\u00b4"+
-		"\u00b5\n\t\u0000\u0000\u00b5\u00b6\u0005#\u0000\u0000\u00b6\u00be\u0003"+
-		"\b\u0004\n\u00b7\u00b8\n\b\u0000\u0000\u00b8\u00b9\u0005$\u0000\u0000"+
+		"\u00b5\n\t\u0000\u0000\u00b5\u00b6\u0005$\u0000\u0000\u00b6\u00be\u0003"+
+		"\b\u0004\n\u00b7\u00b8\n\b\u0000\u0000\u00b8\u00b9\u0005#\u0000\u0000"+
 		"\u00b9\u00be\u0003\b\u0004\t\u00ba\u00bb\n\u0007\u0000\u0000\u00bb\u00bc"+
 		"\u0005%\u0000\u0000\u00bc\u00be\u0003\b\u0004\b\u00bd\u00a8\u0001\u0000"+
 		"\u0000\u0000\u00bd\u00ab\u0001\u0000\u0000\u0000\u00bd\u00ae\u0001\u0000"+

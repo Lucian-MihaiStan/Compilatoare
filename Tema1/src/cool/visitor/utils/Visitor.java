@@ -59,6 +59,26 @@ public interface Visitor {
             }
 
             @Override
+            public ASTNode visitNot(CoolParser.NotContext ctx) {
+                return new RfNotExpression((RfExpression) visit(ctx.expr()), ctx.NOT().getSymbol());
+            }
+
+            @Override
+            public ASTNode visitLe(CoolParser.LeContext ctx) {
+                return new RfLEExpression((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.LE().getSymbol());
+            }
+
+            @Override
+            public ASTNode visitLt(CoolParser.LtContext ctx) {
+                return new RfLTExpression((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.LT().getSymbol());
+            }
+
+            @Override
+            public ASTNode visitEq(CoolParser.EqContext ctx) {
+                return new RfEQExpression((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.EQ().getSymbol());
+            }
+
+            @Override
             public ASTNode visitId(CoolParser.IdContext ctx) {
                 return new RfId(ctx.getText(), ctx.start);
             }
