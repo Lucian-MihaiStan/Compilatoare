@@ -45,6 +45,12 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitField(CoolParser.FieldContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CoolParser#declareVar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclareVar(CoolParser.DeclareVarContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code paren_expr}
 	 * labeled alternative in {@link CoolParser#expr}.
 	 * @param ctx the parse tree
@@ -72,6 +78,13 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMinus(CoolParser.MinusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code dispatch}
+	 * labeled alternative in {@link CoolParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDispatch(CoolParser.DispatchContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code string}
 	 * labeled alternative in {@link CoolParser#expr}.
@@ -114,6 +127,13 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitEq(CoolParser.EqContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code implicit_dispatch}
+	 * labeled alternative in {@link CoolParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitImplicit_dispatch(CoolParser.Implicit_dispatchContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code int}
 	 * labeled alternative in {@link CoolParser#expr}.
@@ -177,13 +197,6 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitId(CoolParser.IdContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code id_lparen_expr_comma}
-	 * labeled alternative in {@link CoolParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitId_lparen_expr_comma(CoolParser.Id_lparen_expr_commaContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code multiply}
 	 * labeled alternative in {@link CoolParser#expr}.

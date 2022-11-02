@@ -7,3 +7,11 @@ program
         x
         Int
       Int
+      if
+        <=
+          x
+          5
+        x
+        +
+          x
+          1

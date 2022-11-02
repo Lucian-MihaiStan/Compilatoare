@@ -20,15 +20,16 @@ feature
         | ID COLON TYPE (ASSIGN expr)?                                              #field
     ;
 
+declareVar : ID COLON TYPE (ASSIGN expr)? ;
+
 expr
     :
-        ID ASSIGN expr                                                                          #id_assign_expr
-        /* | expr[@TYPE].ID( [ expr [[, expr]]∗ ] ) */
-        | ID LPAREN (expr (COMMA expr)*)? RPAREN                                                #id_lparen_expr_comma
+        expr (AT TYPE)? DOT ID LPAREN (expr (COMMA expr)*)? RPAREN                              #dispatch
+        | ID LPAREN (expr (COMMA expr)*)? RPAREN                                                #implicit_dispatch
         | IF expr THEN expr ELSE expr FI                                                        #if
         | WHILE expr LOOP expr POOL                                                             #while
         | LBRACE (expr SEMI)+ RBRACE                                                            #body
-        | LET ID COLON TYPE (ASSIGN expr)? (COMMA ID COLON TYPE (ASSIGN expr)?)* IN expr        #let
+        | LET declareVar (COMMA declareVar)* IN expr                                            #let
         | CASE expr OF (ID COLON TYPE RESULTS_CASE expr SEMI)+ ESAC                             #case
         | NEW TYPE                                                                              #new
         | TILDA expr                                                                            #bit_neg
@@ -41,6 +42,7 @@ expr
         | expr LT expr                                                                          #lt
         | expr EQ expr                                                                          #eq
         | NOT expr                                                                              #not
+        | ID ASSIGN expr                                                                        #id_assign_expr
         | LPAREN expr RPAREN                                                                    #paren_expr
         | ID                                                                                    #id
         | INT                                                                                   #int

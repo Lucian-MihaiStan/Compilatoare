@@ -7,4 +7,17 @@ program
         x
         Int
       Int
-      x
+      let
+        local
+          x
+          Int
+          +
+            x
+            1
+        local
+          y
+          Int
+          +
+            x
+            1
+        x

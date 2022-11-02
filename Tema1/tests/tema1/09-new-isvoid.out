@@ -5,3 +5,6 @@ program
       f
       Bool
       not
+        isvoid
+          new
+            A

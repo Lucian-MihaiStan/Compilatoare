@@ -6,14 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d4c2851e-9f30-4827-aa80-b2e88f958600" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/compiler/Compiler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.g4" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.g4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserBaseVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/parser/CoolParserVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/tree/ASTVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Tema1/src/cool/visitor/utils/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Tema1/src/cool/visitor/utils/Visitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +31,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/stanl/Documents/Uni/cpl/antlr-4.11.1-complete.jar",
+    "last_opened_file_path": "C:/Users/stanl/Documents/Uni/cpl/Tema1",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -74,6 +67,8 @@
       <option name="presentableId" value="Default" />
       <updated>1603370047300</updated>
       <workItem from="1667055967430" duration="7074000" />
+      <workItem from="1667144825472" duration="638000" />
+      <workItem from="1667374930343" duration="235000" />
     </task>
     <servers />
   </component>

@@ -78,6 +78,18 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDeclareVar(CoolParser.DeclareVarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclareVar(CoolParser.DeclareVarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterParen_expr(CoolParser.Paren_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -121,6 +133,18 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMinus(CoolParser.MinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDispatch(CoolParser.DispatchContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDispatch(CoolParser.DispatchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -193,6 +217,18 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEq(CoolParser.EqContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterImplicit_dispatch(CoolParser.Implicit_dispatchContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitImplicit_dispatch(CoolParser.Implicit_dispatchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -301,18 +337,6 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitId(CoolParser.IdContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterId_lparen_expr_comma(CoolParser.Id_lparen_expr_commaContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitId_lparen_expr_comma(CoolParser.Id_lparen_expr_commaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

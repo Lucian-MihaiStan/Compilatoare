@@ -1,9 +1,12 @@
 package cool.visitor;
 
 import cool.reflection.*;
+import cool.reflection.expression.*;
+import cool.reflection.expression.instructions.RfIf;
+import cool.reflection.expression.instructions.RfLet;
+import cool.reflection.expression.instructions.RfWhile;
 import cool.reflection.expression.single.RfSingleValueExpression;
 import cool.reflection.expression.single.value.RfBitNegExpression;
-import cool.reflection.expression.RfId;
 import cool.reflection.expression.single.value.RfNotExpression;
 import cool.reflection.expression.single.value.RfParenExpression;
 import cool.reflection.expression.arithmetic.RfArithmeticExpression;
@@ -41,4 +44,20 @@ public interface ASTVisitor<T> {
     T visit(RfRelationalExpression rfRelationalExpression);
 
     T visit(RfSingleValueExpression rfSingleValueExpression);
+
+    T visit(RfAssignment rfAssignment);
+
+    T visit(RfNewExpression rfNewExpression);
+
+    T visit(RfDispatch rfDispatch);
+
+    T visit(RfImplicitDispatch rfImplicitDispatch);
+
+    T visit(RfIf rfIf);
+
+    T visit(RfWhile rfWhile);
+
+    T visit(RfLet rfLet);
+
+    T visit(RfLet.RfDeclareVariable rfDeclareVariable);
 }

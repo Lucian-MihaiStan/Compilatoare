@@ -7,3 +7,12 @@ program
         x
         Int
       Object
+      while
+        <
+          0
+          x
+        <-
+          x
+          -
+            x
+            1
