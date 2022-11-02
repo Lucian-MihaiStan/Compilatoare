@@ -22,6 +22,8 @@ feature
 
 declareVar : ID COLON TYPE (ASSIGN expr)? ;
 
+case_branch : ID COLON TYPE RESULTS_CASE expr SEMI;
+
 expr
     :
         expr (AT TYPE)? DOT ID LPAREN (expr (COMMA expr)*)? RPAREN                              #dispatch
@@ -30,7 +32,7 @@ expr
         | WHILE expr LOOP expr POOL                                                             #while
         | LBRACE (expr SEMI)+ RBRACE                                                            #body
         | LET declareVar (COMMA declareVar)* IN expr                                            #let
-        | CASE expr OF (ID COLON TYPE RESULTS_CASE expr SEMI)+ ESAC                             #case
+        | CASE expr OF (case_branch)+ ESAC                             #case
         | NEW TYPE                                                                              #new
         | TILDA expr                                                                            #bit_neg
         | ISVOID expr                                                                           #isvoidcheck

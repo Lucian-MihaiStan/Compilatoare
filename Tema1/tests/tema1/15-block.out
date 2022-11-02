@@ -7,3 +7,10 @@ program
         x
         Int
       String
+      block
+        <-
+          x
+          +
+            x
+            1
+        Done!

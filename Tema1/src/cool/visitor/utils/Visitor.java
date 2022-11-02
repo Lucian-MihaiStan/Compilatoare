@@ -8,6 +8,7 @@ import cool.reflection.expression.arithmetic.operation.RfDivideExpression;
 import cool.reflection.expression.arithmetic.operation.RfMinusExpression;
 import cool.reflection.expression.arithmetic.operation.RfMultiplyExpression;
 import cool.reflection.expression.arithmetic.operation.RfPlusExpression;
+import cool.reflection.expression.instructions.RfCase;
 import cool.reflection.expression.instructions.RfIf;
 import cool.reflection.expression.instructions.RfLet;
 import cool.reflection.expression.instructions.RfWhile;
@@ -48,6 +49,13 @@ public interface Visitor {
             @Override
             public ASTNode visitBool_expr(CoolParser.Bool_exprContext ctx) {
                 return new RfBool(ctx.getText(), ctx.start);
+            }
+
+            @Override
+            public ASTNode visitBody(CoolParser.BodyContext ctx) {
+                List<RfExpression> expressions = new ArrayList<>();
+                ctx.expr().forEach(expr -> expressions.add((RfExpression) visit(expr)));
+                return new RfBody(expressions, ctx.start);
             }
 
             @Override
@@ -225,6 +233,19 @@ public interface Visitor {
                     components.add((RfExpression) visit(expressions.get(i)));
 
                 return new RfDispatch(exprStart, type, rfId, components, ctx.DOT().getSymbol());
+            }
+
+            @Override
+            public ASTNode visitCase_branch(CoolParser.Case_branchContext ctx) {
+                return new RfCase.RfCaseBranch(new RfId(ctx.ID().getSymbol().getText(), ctx.ID().getSymbol()), ctx.TYPE().getText(), (RfExpression) visit(ctx.expr()), ctx.RESULTS_CASE().getSymbol());
+            }
+
+            @Override
+            public ASTNode visitCase(CoolParser.CaseContext ctx) {
+                List<RfCase.RfCaseBranch> branches = new ArrayList<>();
+                ctx.case_branch().forEach(branch -> branches.add((RfCase.RfCaseBranch) visit(branch)));
+
+                return new RfCase((RfExpression) visit(ctx.expr()), branches, ctx.CASE().getSymbol());
             }
 
             /**

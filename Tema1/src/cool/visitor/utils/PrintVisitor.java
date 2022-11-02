@@ -3,6 +3,7 @@ package cool.visitor.utils;
 import cool.reflection.*;
 import cool.reflection.expression.*;
 import cool.reflection.expression.arithmetic.RfArithmeticExpression;
+import cool.reflection.expression.instructions.RfCase;
 import cool.reflection.expression.instructions.RfIf;
 import cool.reflection.expression.instructions.RfLet;
 import cool.reflection.expression.instructions.RfWhile;
@@ -205,6 +206,36 @@ public interface PrintVisitor {
                 rfDeclareVariable.getRfId().accept(this);
                 printIndent(rfDeclareVariable.getType());
                 rfDeclareVariable.getValue().accept(this);
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfCase rfCase) {
+                printIndent(rfCase.getSymbol());
+                indent++;
+                rfCase.getToEvaluate().accept(this);
+                rfCase.getBranches().forEach(rfBranch -> rfBranch.accept(this));
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfCase.RfCaseBranch rfCaseBranch) {
+                printIndent(rfCaseBranch.getSymbol());
+                indent++;
+                rfCaseBranch.getRfId().accept(this);
+                printIndent(rfCaseBranch.getType());
+                rfCaseBranch.getExpression().accept(this);
+                indent--;
+                return null;
+            }
+
+            @Override
+            public Void visit(RfBody rfBody) {
+                printIndent(rfBody.getSymbol());
+                indent++;
+                rfBody.getExpressions().forEach(expr -> expr.accept(this));
                 indent--;
                 return null;
             }

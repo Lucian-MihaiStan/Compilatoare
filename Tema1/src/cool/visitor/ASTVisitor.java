@@ -2,6 +2,7 @@ package cool.visitor;
 
 import cool.reflection.*;
 import cool.reflection.expression.*;
+import cool.reflection.expression.instructions.RfCase;
 import cool.reflection.expression.instructions.RfIf;
 import cool.reflection.expression.instructions.RfLet;
 import cool.reflection.expression.instructions.RfWhile;
@@ -60,4 +61,10 @@ public interface ASTVisitor<T> {
     T visit(RfLet rfLet);
 
     T visit(RfLet.RfDeclareVariable rfDeclareVariable);
+
+    T visit(RfCase rfCase);
+
+    T visit(RfCase.RfCaseBranch rfCaseBranch);
+
+    T visit(RfBody rfBody);
 }
