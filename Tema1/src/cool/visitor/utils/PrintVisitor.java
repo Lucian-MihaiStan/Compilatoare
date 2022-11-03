@@ -205,7 +205,8 @@ public interface PrintVisitor {
                 indent++;
                 rfDeclareVariable.getRfId().accept(this);
                 printIndent(rfDeclareVariable.getType());
-                rfDeclareVariable.getValue().accept(this);
+                if (rfDeclareVariable.getValue() != null)
+                    rfDeclareVariable.getValue().accept(this);
                 indent--;
                 return null;
             }

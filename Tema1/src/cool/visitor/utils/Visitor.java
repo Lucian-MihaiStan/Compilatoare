@@ -208,7 +208,7 @@ public interface Visitor {
                 declareVarContexts.forEach(declareVarContext -> vars.add(new RfLet.RfDeclareVariable(
                         new RfId(declareVarContext.ID().getSymbol().getText(), declareVarContext.ID().getSymbol()),
                         declareVarContext.TYPE().getSymbol().getText(),
-                        (RfExpression) visit(declareVarContext.expr()),
+                        declareVarContext.expr() == null ? null : (RfExpression) visit(declareVarContext.expr()),
                         declareVarContext.COLON().getSymbol()
                 )));
 

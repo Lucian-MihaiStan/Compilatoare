@@ -29,12 +29,7 @@ public class Tester1 {
             var outPath = inPath.replace(".cl", ".out");
             var newOut = new PrintStream(outPath, "UTF-8");
             System.setOut(newOut);
-//            System.setErr(newOut);
-//            System.setErr(new PrintStream(new OutputStream() {
-//                public void write(int b) {
-//                    //DO NOTHING
-//                }
-//            }));
+            System.setErr(newOut);
             Compiler.main(new String[] { inPath });
             
             oldOut.printf("%-30s -> ", file.getName());

@@ -24,7 +24,8 @@ public class CoolParser extends Parser {
 		OF=18, NOT=19, TRUE=20, LPAREN=21, RPAREN=22, LBRACE=23, RBRACE=24, COMMA=25, 
 		COLON=26, SEMI=27, ASSIGN=28, RESULTS_CASE=29, PLUS=30, MINUS=31, MULTIPLY=32, 
 		DIVIDE=33, TILDA=34, LT=35, LE=36, EQ=37, DOT=38, AT=39, QUOTE=40, TYPE=41, 
-		ID=42, INT=43, STRING=44, WS=45;
+		ID=42, LINE_COMMENT=43, BLOCK_COMMENT=44, UNMATCHED_COMMENT=45, INT=46, 
+		STRING=47, WS=48, INVALID_CHARACTER=49;
 	public static final int
 		RULE_program = 0, RULE_class = 1, RULE_formal = 2, RULE_feature = 3, RULE_declareVar = 4, 
 		RULE_case_branch = 5, RULE_expr = 6, RULE_bool = 7;
@@ -41,7 +42,8 @@ public class CoolParser extends Parser {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, "'('", "')'", "'{'", 
 			"'}'", "','", "':'", "';'", "'<-'", "'=>'", "'+'", "'-'", "'*'", "'/'", 
-			"'~'", "'<'", "'<='", "'='", "'.'", "'@'", "'\"'"
+			"'~'", "'<'", "'<='", "'='", "'.'", "'@'", "'\"'", null, null, null, 
+			null, "'*)'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -52,7 +54,8 @@ public class CoolParser extends Parser {
 			"OF", "NOT", "TRUE", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "COMMA", 
 			"COLON", "SEMI", "ASSIGN", "RESULTS_CASE", "PLUS", "MINUS", "MULTIPLY", 
 			"DIVIDE", "TILDA", "LT", "LE", "EQ", "DOT", "AT", "QUOTE", "TYPE", "ID", 
-			"INT", "STRING", "WS"
+			"LINE_COMMENT", "BLOCK_COMMENT", "UNMATCHED_COMMENT", "INT", "STRING", 
+			"WS", "INVALID_CHARACTER"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -1710,7 +1713,7 @@ public class CoolParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001-\u00d9\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u00011\u00d9\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0001"+
 		"\u0000\u0001\u0000\u0001\u0000\u0004\u0000\u0014\b\u0000\u000b\u0000\f"+
@@ -1815,7 +1818,7 @@ public class CoolParser extends Parser {
 		"\u0005\u001c\u0000\u0000\u009e\u00a8\u0003\f\u0006\u0006\u009f\u00a0\u0005"+
 		"\u0015\u0000\u0000\u00a0\u00a1\u0003\f\u0006\u0000\u00a1\u00a2\u0005\u0016"+
 		"\u0000\u0000\u00a2\u00a8\u0001\u0000\u0000\u0000\u00a3\u00a8\u0005*\u0000"+
-		"\u0000\u00a4\u00a8\u0005+\u0000\u0000\u00a5\u00a8\u0005,\u0000\u0000\u00a6"+
+		"\u0000\u00a4\u00a8\u0005.\u0000\u0000\u00a5\u00a8\u0005/\u0000\u0000\u00a6"+
 		"\u00a8\u0003\u000e\u0007\u0000\u00a7X\u0001\u0000\u0000\u0000\u00a7f\u0001"+
 		"\u0000\u0000\u0000\u00a7n\u0001\u0000\u0000\u0000\u00a7t\u0001\u0000\u0000"+
 		"\u0000\u00a7~\u0001\u0000\u0000\u0000\u00a7\u008a\u0001\u0000\u0000\u0000"+

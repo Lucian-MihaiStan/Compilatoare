@@ -32,7 +32,7 @@ expr
         | WHILE expr LOOP expr POOL                                                             #while
         | LBRACE (expr SEMI)+ RBRACE                                                            #body
         | LET declareVar (COMMA declareVar)* IN expr                                            #let
-        | CASE expr OF (case_branch)+ ESAC                             #case
+        | CASE expr OF (case_branch)+ ESAC                                                      #case
         | NEW TYPE                                                                              #new
         | TILDA expr                                                                            #bit_neg
         | ISVOID expr                                                                           #isvoidcheck

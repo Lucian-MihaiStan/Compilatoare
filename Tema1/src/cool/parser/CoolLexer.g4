@@ -74,6 +74,20 @@ TYPE : UPPER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT
 /* object identifier */
 ID : LOWER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT)* ;
 
+fragment NEW_LINE : '\r'? '\n';
+
+LINE_COMMENT
+    : '--' .*? (NEW_LINE | EOF) -> skip
+    ;
+
+BLOCK_COMMENT
+    : '(*'
+      (BLOCK_COMMENT | .)*?
+      ('*)' { skip(); } | EOF { raiseError("EOF in comment"); })
+    ;
+
+UNMATCHED_COMMENT : '*)' { raiseError("Unmatched *)"); } ;
+
 /*
     Integer
 */
@@ -82,7 +96,8 @@ INT : DIGIT+ ;
 
 STRING : QUOTE .*? QUOTE;
 
-
 WS
     :   [ \n\f\r\t]+ -> skip
-    ; 
+    ;
+
+INVALID_CHARACTER : . { raiseError("Invalid character: " + getText()); } ;
