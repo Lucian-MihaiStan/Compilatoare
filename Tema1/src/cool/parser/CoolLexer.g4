@@ -4,9 +4,22 @@ tokens { ERROR }
 
 @header{
     package cool.parser;
+
+
 }
 
-@members{    
+@members{
+
+    private static final int MAX_STRING_LENGTH = 1024;
+    public static final String EOF_STRING_ERROR = "EOF in string constant";
+    public static final String STRING_CONSTANT_TO_LONG_ERROR = "String constant too long";
+    public static final String INVALID_CHARACTER_ERROR = "Invalid character: ";
+    public static final String EOF_COMMENT_ERROR = "EOF in comment";
+    public static final String UNMATCHED_COMMENT_ERROR = "Unmatched *)";
+    public static final String UNTERMINATED_STRING_CONSTANT_ERROR = "Unterminated string constant";
+    public static final String STRING_NULL_CHARACTER_ERROR = "String contains null character";
+    public static final String NULL_STRING = "\0";
+
     private void raiseError(String msg) {
         setText(msg);
         setType(ERROR);
@@ -75,18 +88,21 @@ TYPE : UPPER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT
 ID : LOWER_CASE_LETTER+ (('_') | UPPER_CASE_LETTER | LOWER_CASE_LETTER | DIGIT)* ;
 
 fragment NEW_LINE : '\r'? '\n';
+fragment SINGLE_LINE_COMMENT_START : '--' ;
+fragment OPEN_PAREN_STAR : '(*' ;
+fragment CLOSE_PAREN_STAR : '*)' ;
 
 LINE_COMMENT
-    : '--' .*? (NEW_LINE | EOF) -> skip
+    : SINGLE_LINE_COMMENT_START .*? (NEW_LINE | EOF) -> skip
     ;
 
 BLOCK_COMMENT
-    : '(*'
+    : OPEN_PAREN_STAR
       (BLOCK_COMMENT | .)*?
-      ('*)' { skip(); } | EOF { raiseError("EOF in comment"); })
+      (CLOSE_PAREN_STAR { skip(); } | EOF { raiseError(EOF_COMMENT_ERROR); })
     ;
 
-UNMATCHED_COMMENT : '*)' { raiseError("Unmatched *)"); } ;
+UNMATCHED_COMMENT : CLOSE_PAREN_STAR { raiseError(UNMATCHED_COMMENT_ERROR); } ;
 
 /*
     Integer
@@ -94,10 +110,28 @@ UNMATCHED_COMMENT : '*)' { raiseError("Unmatched *)"); } ;
 fragment DIGIT : [0-9] ;
 INT : DIGIT+ ;
 
-STRING : QUOTE .*? QUOTE;
+STRING: QUOTE ('\\"' | '\\' NEW_LINE | .)*? (
+	QUOTE {
+		String str = getText().substring(1, getText().length() - 1).replace("\\\r\n", "\r\n").replace("\\\n", "\n").replace("\\n", "\n").replace("\\t", "\t").replaceAll("\\\\(?!\\\\)", "");
+
+		if (str.length() > MAX_STRING_LENGTH) {
+			raiseError(STRING_CONSTANT_TO_LONG_ERROR);
+            return;
+        }
+
+		if (str.contains(NULL_STRING)) {
+			raiseError(STRING_NULL_CHARACTER_ERROR);
+		    return;
+		}
+
+		setText(str);
+	}
+	| EOF { raiseError(EOF_STRING_ERROR); }
+	| NEW_LINE { raiseError(UNTERMINATED_STRING_CONSTANT_ERROR); }
+);
 
 WS
     :   [ \n\f\r\t]+ -> skip
     ;
 
-INVALID_CHARACTER : . { raiseError("Invalid character: " + getText()); } ;
+INVALID_CHARACTER : . { raiseError(INVALID_CHARACTER_ERROR + getText()); } ;

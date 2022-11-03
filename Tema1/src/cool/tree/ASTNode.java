@@ -11,8 +11,6 @@ public abstract class ASTNode {
         this.token = token;
     }
 
-    public <T> T accept(ASTVisitor<T> visitor) {
-        return null;
-    }
+    abstract public <T> T accept(ASTVisitor<T> visitor);
 
 }

@@ -65,7 +65,8 @@ program
               next
             implicit dispatch
               out_string
-              \n
+              
+
             .
               next
               print
@@ -136,7 +137,8 @@ program
                   fact_rec
                   n
               out_string
-              \n
+              
+
             .
               .
                 implicit dispatch
@@ -147,7 +149,8 @@ program
                   fact_iter
                   n
               out_string
-              \n
+              
+
     method
       fact_rec
       formal
