@@ -183,7 +183,7 @@ public class CoolLexer extends Lexer {
 		switch (actionIndex) {
 		case 3:
 
-					String str = getText().substring(1, getText().length() - 1).replace("\\\r\n", "\r\n").replace("\\\n", "\n").replace("\\n", "\n").replace("\\t", "\t").replaceAll("\\\\(?!\\\\)", "");
+					String str = getText().substring(1, getText().length() - 1).replace("\\\r\n", "\r\n").replace("\\\n", "\n").replace("\\n", "\n").replace("\\t", "\t").replace("\\f", "\f").replaceAll("\\\\(?!\\\\)", "");
 
 					if (str.length() > MAX_STRING_LENGTH) {
 						raiseError(STRING_CONSTANT_TO_LONG_ERROR);

@@ -618,27 +618,6 @@ public class CoolParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class Paren_exprContext extends ExprContext {
-		public TerminalNode LPAREN() { return getToken(CoolParser.LPAREN, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public TerminalNode RPAREN() { return getToken(CoolParser.RPAREN, 0); }
-		public Paren_exprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterParen_expr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitParen_expr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitParen_expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class NewContext extends ExprContext {
 		public TerminalNode NEW() { return getToken(CoolParser.NEW, 0); }
 		public TerminalNode TYPE() { return getToken(CoolParser.TYPE, 0); }
@@ -657,34 +636,16 @@ public class CoolParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Bit_negContext extends ExprContext {
-		public TerminalNode TILDA() { return getToken(CoolParser.TILDA, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public Bit_negContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterBit_neg(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitBit_neg(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitBit_neg(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class MinusContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode MINUS() { return getToken(CoolParser.MINUS, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode MINUS() { return getToken(CoolParser.MINUS, 0); }
 		public MinusContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -697,6 +658,26 @@ public class CoolParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitMinus(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NegationContext extends ExprContext {
+		public TerminalNode TILDA() { return getToken(CoolParser.TILDA, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public NegationContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterNegation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitNegation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitNegation(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -749,34 +730,16 @@ public class CoolParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class IsvoidcheckContext extends ExprContext {
-		public TerminalNode ISVOID() { return getToken(CoolParser.ISVOID, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public IsvoidcheckContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterIsvoidcheck(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitIsvoidcheck(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitIsvoidcheck(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class LtContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode LT() { return getToken(CoolParser.LT, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode LT() { return getToken(CoolParser.LT, 0); }
 		public LtContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -793,15 +756,17 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class WhileContext extends ExprContext {
+		public ExprContext cond;
+		public ExprContext body;
 		public TerminalNode WHILE() { return getToken(CoolParser.WHILE, 0); }
+		public TerminalNode LOOP() { return getToken(CoolParser.LOOP, 0); }
+		public TerminalNode POOL() { return getToken(CoolParser.POOL, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode LOOP() { return getToken(CoolParser.LOOP, 0); }
-		public TerminalNode POOL() { return getToken(CoolParser.POOL, 0); }
 		public WhileContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -846,13 +811,15 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class EqContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode EQ() { return getToken(CoolParser.EQ, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode EQ() { return getToken(CoolParser.EQ, 0); }
 		public EqContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -868,7 +835,7 @@ public class CoolParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Implicit_dispatchContext extends ExprContext {
+	public static class ImplicitDispatchContext extends ExprContext {
 		public TerminalNode ID() { return getToken(CoolParser.ID, 0); }
 		public TerminalNode LPAREN() { return getToken(CoolParser.LPAREN, 0); }
 		public TerminalNode RPAREN() { return getToken(CoolParser.RPAREN, 0); }
@@ -882,18 +849,39 @@ public class CoolParser extends Parser {
 		public TerminalNode COMMA(int i) {
 			return getToken(CoolParser.COMMA, i);
 		}
-		public Implicit_dispatchContext(ExprContext ctx) { copyFrom(ctx); }
+		public ImplicitDispatchContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterImplicit_dispatch(this);
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterImplicitDispatch(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitImplicit_dispatch(this);
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitImplicitDispatch(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitImplicit_dispatch(this);
+			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitImplicitDispatch(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ParenExprContext extends ExprContext {
+		public TerminalNode LPAREN() { return getToken(CoolParser.LPAREN, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode RPAREN() { return getToken(CoolParser.RPAREN, 0); }
+		public ParenExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterParenExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitParenExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitParenExpr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -915,13 +903,15 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class PlusContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode PLUS() { return getToken(CoolParser.PLUS, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode PLUS() { return getToken(CoolParser.PLUS, 0); }
 		public PlusContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -938,6 +928,7 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class NotContext extends ExprContext {
+		public ExprContext value;
 		public TerminalNode NOT() { return getToken(CoolParser.NOT, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -957,54 +948,36 @@ public class CoolParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Id_assign_exprContext extends ExprContext {
-		public TerminalNode ID() { return getToken(CoolParser.ID, 0); }
-		public TerminalNode ASSIGN() { return getToken(CoolParser.ASSIGN, 0); }
+	public static class IsVoidContext extends ExprContext {
+		public TerminalNode ISVOID() { return getToken(CoolParser.ISVOID, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public Id_assign_exprContext(ExprContext ctx) { copyFrom(ctx); }
+		public IsVoidContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterId_assign_expr(this);
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterIsVoid(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitId_assign_expr(this);
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitIsVoid(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitId_assign_expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Bool_exprContext extends ExprContext {
-		public BoolContext bool() {
-			return getRuleContext(BoolContext.class,0);
-		}
-		public Bool_exprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterBool_expr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitBool_expr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitBool_expr(this);
+			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitIsVoid(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 	public static class LeContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode LE() { return getToken(CoolParser.LE, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode LE() { return getToken(CoolParser.LE, 0); }
 		public LeContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1052,13 +1025,15 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class DivideContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode DIVIDE() { return getToken(CoolParser.DIVIDE, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode DIVIDE() { return getToken(CoolParser.DIVIDE, 0); }
 		public DivideContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1091,14 +1066,35 @@ public class CoolParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class BoolExprContext extends ExprContext {
+		public BoolContext bool() {
+			return getRuleContext(BoolContext.class,0);
+		}
+		public BoolExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterBoolExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitBoolExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitBoolExpr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class MultiplyContext extends ExprContext {
+		public ExprContext lhValue;
+		public ExprContext rhValue;
+		public TerminalNode MULTIPLY() { return getToken(CoolParser.MULTIPLY, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode MULTIPLY() { return getToken(CoolParser.MULTIPLY, 0); }
 		public MultiplyContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1115,16 +1111,19 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class IfContext extends ExprContext {
+		public ExprContext cond;
+		public ExprContext thenBranch;
+		public ExprContext elseBranch;
 		public TerminalNode IF() { return getToken(CoolParser.IF, 0); }
+		public TerminalNode THEN() { return getToken(CoolParser.THEN, 0); }
+		public TerminalNode ELSE() { return getToken(CoolParser.ELSE, 0); }
+		public TerminalNode FI() { return getToken(CoolParser.FI, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode THEN() { return getToken(CoolParser.THEN, 0); }
-		public TerminalNode ELSE() { return getToken(CoolParser.ELSE, 0); }
-		public TerminalNode FI() { return getToken(CoolParser.FI, 0); }
 		public IfContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1141,12 +1140,13 @@ public class CoolParser extends Parser {
 		}
 	}
 	public static class CaseContext extends ExprContext {
+		public ExprContext cond;
 		public TerminalNode CASE() { return getToken(CoolParser.CASE, 0); }
+		public TerminalNode OF() { return getToken(CoolParser.OF, 0); }
+		public TerminalNode ESAC() { return getToken(CoolParser.ESAC, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode OF() { return getToken(CoolParser.OF, 0); }
-		public TerminalNode ESAC() { return getToken(CoolParser.ESAC, 0); }
 		public List<Case_branchContext> case_branch() {
 			return getRuleContexts(Case_branchContext.class);
 		}
@@ -1165,6 +1165,28 @@ public class CoolParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitCase(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AssignContext extends ExprContext {
+		public ExprContext value;
+		public TerminalNode ID() { return getToken(CoolParser.ID, 0); }
+		public TerminalNode ASSIGN() { return getToken(CoolParser.ASSIGN, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public AssignContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).enterAssign(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CoolParserListener ) ((CoolParserListener)listener).exitAssign(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof CoolParserVisitor ) return ((CoolParserVisitor<? extends T>)visitor).visitAssign(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1190,7 +1212,7 @@ public class CoolParser extends Parser {
 			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
 				{
-				_localctx = new Implicit_dispatchContext(_localctx);
+				_localctx = new ImplicitDispatchContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
@@ -1236,15 +1258,15 @@ public class CoolParser extends Parser {
 				setState(102);
 				match(IF);
 				setState(103);
-				expr(0);
+				((IfContext)_localctx).cond = expr(0);
 				setState(104);
 				match(THEN);
 				setState(105);
-				expr(0);
+				((IfContext)_localctx).thenBranch = expr(0);
 				setState(106);
 				match(ELSE);
 				setState(107);
-				expr(0);
+				((IfContext)_localctx).elseBranch = expr(0);
 				setState(108);
 				match(FI);
 				}
@@ -1257,11 +1279,11 @@ public class CoolParser extends Parser {
 				setState(110);
 				match(WHILE);
 				setState(111);
-				expr(0);
+				((WhileContext)_localctx).cond = expr(0);
 				setState(112);
 				match(LOOP);
 				setState(113);
-				expr(0);
+				((WhileContext)_localctx).body = expr(0);
 				setState(114);
 				match(POOL);
 				}
@@ -1332,7 +1354,7 @@ public class CoolParser extends Parser {
 				setState(138);
 				match(CASE);
 				setState(139);
-				expr(0);
+				((CaseContext)_localctx).cond = expr(0);
 				setState(140);
 				match(OF);
 				setState(142); 
@@ -1366,7 +1388,7 @@ public class CoolParser extends Parser {
 				break;
 			case 8:
 				{
-				_localctx = new Bit_negContext(_localctx);
+				_localctx = new NegationContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(150);
@@ -1377,7 +1399,7 @@ public class CoolParser extends Parser {
 				break;
 			case 9:
 				{
-				_localctx = new IsvoidcheckContext(_localctx);
+				_localctx = new IsVoidContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(152);
@@ -1394,12 +1416,12 @@ public class CoolParser extends Parser {
 				setState(154);
 				match(NOT);
 				setState(155);
-				expr(7);
+				((NotContext)_localctx).value = expr(7);
 				}
 				break;
 			case 11:
 				{
-				_localctx = new Id_assign_exprContext(_localctx);
+				_localctx = new AssignContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(156);
@@ -1407,12 +1429,12 @@ public class CoolParser extends Parser {
 				setState(157);
 				match(ASSIGN);
 				setState(158);
-				expr(6);
+				((AssignContext)_localctx).value = expr(6);
 				}
 				break;
 			case 12:
 				{
-				_localctx = new Paren_exprContext(_localctx);
+				_localctx = new ParenExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(159);
@@ -1452,7 +1474,7 @@ public class CoolParser extends Parser {
 				break;
 			case 16:
 				{
-				_localctx = new Bool_exprContext(_localctx);
+				_localctx = new BoolExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(166);
@@ -1475,85 +1497,92 @@ public class CoolParser extends Parser {
 					case 1:
 						{
 						_localctx = new MultiplyContext(new ExprContext(_parentctx, _parentState));
+						((MultiplyContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(169);
 						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						setState(170);
 						match(MULTIPLY);
 						setState(171);
-						expr(15);
+						((MultiplyContext)_localctx).rhValue = expr(15);
 						}
 						break;
 					case 2:
 						{
 						_localctx = new DivideContext(new ExprContext(_parentctx, _parentState));
+						((DivideContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(172);
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						setState(173);
 						match(DIVIDE);
 						setState(174);
-						expr(14);
+						((DivideContext)_localctx).rhValue = expr(14);
 						}
 						break;
 					case 3:
 						{
 						_localctx = new PlusContext(new ExprContext(_parentctx, _parentState));
+						((PlusContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(175);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(176);
 						match(PLUS);
 						setState(177);
-						expr(13);
+						((PlusContext)_localctx).rhValue = expr(13);
 						}
 						break;
 					case 4:
 						{
 						_localctx = new MinusContext(new ExprContext(_parentctx, _parentState));
+						((MinusContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(178);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(179);
 						match(MINUS);
 						setState(180);
-						expr(12);
+						((MinusContext)_localctx).rhValue = expr(12);
 						}
 						break;
 					case 5:
 						{
 						_localctx = new LeContext(new ExprContext(_parentctx, _parentState));
+						((LeContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(181);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(182);
 						match(LE);
 						setState(183);
-						expr(11);
+						((LeContext)_localctx).rhValue = expr(11);
 						}
 						break;
 					case 6:
 						{
 						_localctx = new LtContext(new ExprContext(_parentctx, _parentState));
+						((LtContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(184);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(185);
 						match(LT);
 						setState(186);
-						expr(10);
+						((LtContext)_localctx).rhValue = expr(10);
 						}
 						break;
 					case 7:
 						{
 						_localctx = new EqContext(new ExprContext(_parentctx, _parentState));
+						((EqContext)_localctx).lhValue = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(187);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(188);
 						match(EQ);
 						setState(189);
-						expr(9);
+						((EqContext)_localctx).rhValue = expr(9);
 						}
 						break;
 					case 8:

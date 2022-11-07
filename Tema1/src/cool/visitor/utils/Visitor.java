@@ -30,6 +30,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface Visitor {
 
@@ -47,7 +48,7 @@ public interface Visitor {
             }
 
             @Override
-            public ASTNode visitBool_expr(CoolParser.Bool_exprContext ctx) {
+            public ASTNode visitBoolExpr(CoolParser.BoolExprContext ctx) {
                 return new RfBool(ctx.getText(), ctx.start);
             }
 
@@ -60,57 +61,57 @@ public interface Visitor {
 
             @Override
             public ASTNode visitPlus(CoolParser.PlusContext ctx) {
-                return new RfPlusExpression((RfExpression)visit(ctx.expr(0)), (RfExpression)visit(ctx.expr(1)), ctx.PLUS().getSymbol());
+                return new RfPlusExpression((RfExpression)visit(ctx.lhValue), (RfExpression)visit(ctx.rhValue), ctx.PLUS().getSymbol());
             }
 
             @Override
             public ASTNode visitMinus(CoolParser.MinusContext ctx) {
-                return new RfMinusExpression((RfExpression)visit(ctx.expr(0)), (RfExpression)visit(ctx.expr(1)), ctx.MINUS().getSymbol());
+                return new RfMinusExpression((RfExpression)visit(ctx.lhValue), (RfExpression)visit(ctx.rhValue), ctx.MINUS().getSymbol());
             }
 
             @Override
             public ASTNode visitMultiply(CoolParser.MultiplyContext ctx) {
-                return new RfMultiplyExpression((RfExpression)visit(ctx.expr(0)), (RfExpression)visit(ctx.expr(1)), ctx.MULTIPLY().getSymbol());
+                return new RfMultiplyExpression((RfExpression)visit(ctx.lhValue), (RfExpression)visit(ctx.rhValue), ctx.MULTIPLY().getSymbol());
             }
 
             @Override
-            public ASTNode visitParen_expr(CoolParser.Paren_exprContext ctx) {
+            public ASTNode visitParenExpr(CoolParser.ParenExprContext ctx) {
                 return new RfParenExpression((RfExpression) visit(ctx.expr()), ctx.start);
             }
 
             @Override
             public ASTNode visitDivide(CoolParser.DivideContext ctx) {
-                return new RfDivideExpression((RfExpression)visit(ctx.expr(0)), (RfExpression)visit(ctx.expr(1)), ctx.DIVIDE().getSymbol());
+                return new RfDivideExpression((RfExpression)visit(ctx.lhValue), (RfExpression)visit(ctx.rhValue), ctx.DIVIDE().getSymbol());
             }
 
             @Override
-            public ASTNode visitId_assign_expr(CoolParser.Id_assign_exprContext ctx) {
-                return new RfAssignment(new RfId(ctx.ID().getSymbol().getText(), ctx.ID().getSymbol()), (RfExpression) visit(ctx.expr()), ctx.ASSIGN().getSymbol());
+            public ASTNode visitAssign(CoolParser.AssignContext ctx) {
+                return new RfAssignment(new RfId(ctx.ID().getSymbol().getText(), ctx.ID().getSymbol()), (RfExpression) visit(ctx.value), ctx.ASSIGN().getSymbol());
             }
 
             @Override
-            public ASTNode visitBit_neg(CoolParser.Bit_negContext ctx) {
+            public ASTNode visitNegation(CoolParser.NegationContext ctx) {
                 return new RfBitNegExpression((RfExpression) visit(ctx.expr()), ctx.TILDA().getSymbol());
             }
 
             @Override
             public ASTNode visitNot(CoolParser.NotContext ctx) {
-                return new RfNotExpression((RfExpression) visit(ctx.expr()), ctx.NOT().getSymbol());
+                return new RfNotExpression((RfExpression) visit(ctx.value), ctx.NOT().getSymbol());
             }
 
             @Override
             public ASTNode visitLe(CoolParser.LeContext ctx) {
-                return new RfLEExpression((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.LE().getSymbol());
+                return new RfLEExpression((RfExpression) visit(ctx.lhValue), (RfExpression) visit(ctx.rhValue), ctx.LE().getSymbol());
             }
 
             @Override
             public ASTNode visitLt(CoolParser.LtContext ctx) {
-                return new RfLTExpression((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.LT().getSymbol());
+                return new RfLTExpression((RfExpression) visit(ctx.lhValue), (RfExpression) visit(ctx.rhValue), ctx.LT().getSymbol());
             }
 
             @Override
             public ASTNode visitEq(CoolParser.EqContext ctx) {
-                return new RfEQExpression((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.EQ().getSymbol());
+                return new RfEQExpression((RfExpression) visit(ctx.lhValue), (RfExpression) visit(ctx.rhValue), ctx.EQ().getSymbol());
             }
 
             @Override
@@ -166,7 +167,7 @@ public interface Visitor {
             }
 
             @Override
-            public ASTNode visitIsvoidcheck(CoolParser.IsvoidcheckContext ctx) {
+            public ASTNode visitIsVoid(CoolParser.IsVoidContext ctx) {
                 return new RfIsVoidExpression((RfExpression) visit(ctx.expr()), ctx.ISVOID().getSymbol());
             }
 
@@ -193,7 +194,7 @@ public interface Visitor {
              */
             @Override
             public ASTNode visitWhile(CoolParser.WhileContext ctx) {
-                return new RfWhile((RfExpression) visit(ctx.expr(0)), (RfExpression) visit(ctx.expr(1)), ctx.WHILE().getSymbol());
+                return new RfWhile((RfExpression) visit(ctx.cond), (RfExpression) visit(ctx.body), ctx.WHILE().getSymbol());
             }
 
             /**
@@ -242,17 +243,14 @@ public interface Visitor {
 
             @Override
             public ASTNode visitCase(CoolParser.CaseContext ctx) {
-                List<RfCase.RfCaseBranch> branches = new ArrayList<>();
-                ctx.case_branch().forEach(branch -> branches.add((RfCase.RfCaseBranch) visit(branch)));
-
-                return new RfCase((RfExpression) visit(ctx.expr()), branches, ctx.CASE().getSymbol());
+                return new RfCase((RfExpression) visit(ctx.cond), ctx.case_branch().stream().map(branch -> (RfCase.RfCaseBranch) visit(branch)).collect(Collectors.toList()), ctx.CASE().getSymbol());
             }
 
             /**
              * ID LPAREN (expr (COMMA expr)*)? RPAREN
              */
             @Override
-            public ASTNode visitImplicit_dispatch(CoolParser.Implicit_dispatchContext ctx) {
+            public ASTNode visitImplicitDispatch(CoolParser.ImplicitDispatchContext ctx) {
                 RfId rfId = new RfId(ctx.ID().getSymbol().getText(), ctx.ID().getSymbol());
 
                 List<CoolParser.ExprContext> expressions = ctx.expr();
@@ -263,16 +261,9 @@ public interface Visitor {
                 return new RfImplicitDispatch(rfId, rfExpressions, ctx.ID().getSymbol());
             }
 
-            /**
-             * ID LPAREN (expr (COMMA expr)*)? RPAREN
-             */
             @Override
             public ASTNode visitIf(CoolParser.IfContext ctx) {
-                CoolParser.ExprContext cond = ctx.expr(0);
-                CoolParser.ExprContext ifBranch = ctx.expr(1);
-                CoolParser.ExprContext elseBranch = ctx.expr(2);
-
-                return new RfIf((RfExpression) visit(cond), (RfExpression) visit(ifBranch), (RfExpression) visit(elseBranch), ctx.IF().getSymbol());
+                return new RfIf((RfExpression) visit(ctx.cond), (RfExpression) visit(ctx.thenBranch), (RfExpression) visit(ctx.elseBranch), ctx.IF().getSymbol());
             }
         };
     }
