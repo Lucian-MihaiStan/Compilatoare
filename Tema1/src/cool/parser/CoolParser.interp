@@ -108,7 +108,7 @@ class
 formal
 feature
 declareVar
-case_branch
+caseBranch
 expr
 bool
 

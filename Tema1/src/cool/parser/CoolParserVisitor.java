@@ -51,11 +51,11 @@ public interface CoolParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclareVar(CoolParser.DeclareVarContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CoolParser#case_branch}.
+	 * Visit a parse tree produced by {@link CoolParser#caseBranch}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCase_branch(CoolParser.Case_branchContext ctx);
+	T visitCaseBranch(CoolParser.CaseBranchContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code new}
 	 * labeled alternative in {@link CoolParser#expr}.

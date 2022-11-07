@@ -90,13 +90,13 @@ public class CoolParserBaseListener implements CoolParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCase_branch(CoolParser.Case_branchContext ctx) { }
+	@Override public void enterCaseBranch(CoolParser.CaseBranchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCase_branch(CoolParser.Case_branchContext ctx) { }
+	@Override public void exitCaseBranch(CoolParser.CaseBranchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

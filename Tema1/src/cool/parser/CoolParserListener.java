@@ -74,15 +74,15 @@ public interface CoolParserListener extends ParseTreeListener {
 	 */
 	void exitDeclareVar(CoolParser.DeclareVarContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CoolParser#case_branch}.
+	 * Enter a parse tree produced by {@link CoolParser#caseBranch}.
 	 * @param ctx the parse tree
 	 */
-	void enterCase_branch(CoolParser.Case_branchContext ctx);
+	void enterCaseBranch(CoolParser.CaseBranchContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CoolParser#case_branch}.
+	 * Exit a parse tree produced by {@link CoolParser#caseBranch}.
 	 * @param ctx the parse tree
 	 */
-	void exitCase_branch(CoolParser.Case_branchContext ctx);
+	void exitCaseBranch(CoolParser.CaseBranchContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code new}
 	 * labeled alternative in {@link CoolParser#expr}.
