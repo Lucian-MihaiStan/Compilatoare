@@ -175,7 +175,7 @@ public class CoolLexer extends Lexer {
 	private void UNMATCHED_COMMENT_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 2:
-			 raiseError(UNMATCHED_COMMENT_ERROR); 
+			 raiseEalte 
 			break;
 		}
 	}

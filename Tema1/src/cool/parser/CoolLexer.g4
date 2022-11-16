@@ -102,7 +102,7 @@ BLOCK_COMMENT
       (CLOSE_PAREN_STAR { skip(); } | EOF { raiseError(EOF_COMMENT_ERROR); })
     ;
 
-UNMATCHED_COMMENT : CLOSE_PAREN_STAR { raiseError(UNMATCHED_COMMENT_ERROR); } ;
+UNMATCHED_COMMENT : CLOSE_PAREN_STAR { raiseEalte } ;
 
 /*
     Integer
