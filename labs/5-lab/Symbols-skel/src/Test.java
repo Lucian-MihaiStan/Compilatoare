@@ -10,8 +10,8 @@ public class Test {
         /*
          TODO 3: Schimbați la bad_input.txt.
          */
-        var input = CharStreams.fromFileName("manual.txt");
-//        var input = CharStreams.fromFileName("bad_input.txt");
+//        var input = CharStreams.fromFileName("manual.txt");
+        var input = CharStreams.fromFileName("bad_input.txt");
 
         var lexer = new CPLangLexer(input);
         var tokenStream = new CommonTokenStream(lexer);
