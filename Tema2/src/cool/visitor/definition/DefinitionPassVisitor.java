@@ -21,6 +21,7 @@ import cool.structures.Scope;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.constants.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
@@ -109,11 +110,88 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfArgument rfArgument) {
+        Token argumentName = rfArgument.getName();
+        if (argumentName == null)
+            throw new IllegalStateException("Unable to find name of argument " + rfArgument + " in the context of " + currentScope);
+
+        Token argumentType = rfArgument.getType();
+        if (argumentType == null)
+            throw new IllegalStateException("Unable to find type of argument" + rfArgument + " in the context of " + currentScope);
+
+        String name = argumentName.getText();
+        if (TypeSymbolConstants.SELF_STR.equals(name)) {
+            if (!(currentScope instanceof MethodSymbol))
+                throw new IllegalStateException("Unable to log error for unaccepted name of parameter " + rfArgument + " in context " + currentScope);
+
+            Scope parentScope = currentScope.getParent();
+            if (!(parentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log error for unaccepted name of parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
+
+            SymbolTable.error(rfArgument.getContext(), rfArgument.getName(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" has formal parameter with illegal name self").toString());
+            return null;
+        }
+
+        String type = argumentType.getText();
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(type)) {
+            if (!(currentScope instanceof MethodSymbol))
+                throw new IllegalStateException("Unable to log error for unaccepted SELF_TYPE of parameter " + rfArgument + " in context " + currentScope);
+
+            Scope parentScope = currentScope.getParent();
+            if (!(parentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log error for unaccepted SELF_TYPE of parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
+
+            SymbolTable.error(rfArgument.getContext(), rfArgument.getType(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" has formal parameter ").append(name).append(" with illegal type SELF_TYPE").toString());
+            return null;
+        }
+
+        IdSymbol argSymbol = new IdSymbol(name);
+        if (!(currentScope.add(argSymbol))) {
+            if (!(currentScope instanceof MethodSymbol))
+                throw new IllegalStateException("Unable to log error for redefined parameter " + rfArgument + " in context " + currentScope);
+
+            Scope parentScope = currentScope.getParent();
+            if (!(parentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log error for redefined parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
+
+            SymbolTable.error(rfArgument.getContext(), rfArgument.getName(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" redefines formal parameter ").append(name).toString());
+            return null;
+        }
+
+        rfArgument.setIdSymbol(argSymbol);
+
         return null;
     }
 
     @Override
     public Void visit(RfMethod rfMethod) {
+        Token methodName = rfMethod.getName();
+        if (methodName == null)
+            throw new IllegalStateException("Unable to find method name in context " + currentScope);
+
+        String name = methodName.getText();
+        MethodSymbol methodSymbol = new MethodSymbol(name, currentScope);
+
+        if (!(currentScope.add(methodSymbol))) {
+            if (!(currentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log redefined error for method " + name + " in context " + currentScope);
+
+            SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines method ").append(name).toString());
+            return null;
+        }
+
+        rfMethod.setMethodSymbol(methodSymbol);
+
+        Scope initialScope = currentScope;
+
+        currentScope = methodSymbol;
+
+        rfMethod.getArgs().forEach(rfArgument -> rfArgument.accept(this));
+
+        rfMethod.getRfMethodBody().accept(this);
+
+        // return from the depth travers
+        currentScope = initialScope;
+
         return null;
     }
 

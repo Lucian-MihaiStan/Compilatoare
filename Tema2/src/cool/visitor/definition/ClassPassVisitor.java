@@ -21,13 +21,14 @@ import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.constants.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
+import java.util.Map;
 
-public class ClassHierarchyPassVisitor implements ASTVisitor<Void> {
+public class ClassPassVisitor implements ASTVisitor<Void> {
 
     Scope currentScope;
 
@@ -124,11 +125,77 @@ public class ClassHierarchyPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfArgument rfArgument) {
+        // if the following condition is true it means the name of formal argument was illegal
+        if (rfArgument.getIdSymbolName() == null)
+            return null;
+
+        Token argumentName = rfArgument.getName();
+        if (argumentName == null)
+            throw new IllegalStateException("Unable to find name token for field " + rfArgument);
+
+        Token argumentType = rfArgument.getType();
+        if  (argumentType == null)
+            throw new IllegalStateException("Unable to find type token for field " + rfArgument);
+
+//        Scope parent = currentScope.getParent();
+//        if (parent == null)
+//            throw new IllegalStateException("Unable to locate parent scope of scope " + currentScope);
+
+//        Symbol symbolInherited = parent.lookup(argumentName.getText());
+//        if (symbolInherited != null) {
+//            if (!(currentScope instanceof TypeSymbol))
+//                throw new IllegalStateException("Unable to log error for redefined field " + rfField + " in context " + currentScope);
+//
+//            SymbolTable.error(rfField.getContext(), argumentName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines inherited attribute ").append(argumentName.getText()).toString());
+//            return null;
+//        }
+
+        Symbol symbolType = SymbolTable.globals.lookup(argumentType.getText());
+        if (symbolType == null) {
+            if (!(currentScope instanceof MethodSymbol))
+                throw new IllegalStateException("Unable to log error for undefined type " + argumentType.getText() + " of field " + rfArgument + " in context " + currentScope);
+
+            Scope parentScope = currentScope.getParent();
+            if (!(parentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log error for undefined type of parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
+
+            SymbolTable.error(rfArgument.getContext(), argumentType, new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" has formal parameter ").append(argumentName.getText()).append(" with undefined type ").append(argumentType.getText()).toString());
+            return null;
+        }
+
+        rfArgument.setIdSymbolType(symbolType);
+
         return null;
     }
 
     @Override
     public Void visit(RfMethod rfMethod) {
+        // if the following condition is true it means the name of method was self
+        MethodSymbol methodSymbol = rfMethod.getMethodSymbol();
+        if (methodSymbol == null)
+            return null;
+
+        Token methodName = rfMethod.getName();
+        if (methodName == null)
+            throw new IllegalStateException("Unable to locate name of method " + rfMethod);
+
+        Token returnType = rfMethod.getReturnType();
+        if (returnType == null)
+            throw new IllegalStateException("Unable to locate return type of method " + rfMethod);
+
+        Symbol returnTypeSymbol = SymbolTable.globals.lookup(returnType.getText());
+        if (returnTypeSymbol == null)
+            throw new IllegalStateException("Unable to locate return type symbol in global context of method " + rfMethod);
+
+        methodSymbol.setReturnTypeSymbol(returnTypeSymbol);
+
+        Scope initialScope = currentScope;
+        currentScope = methodSymbol;
+        rfMethod.getArgs().forEach(rfArgument -> rfArgument.accept(this));
+
+        // return from depth traversal
+        currentScope = initialScope;
+
         return null;
     }
 

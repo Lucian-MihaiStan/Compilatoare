@@ -242,8 +242,8 @@ public interface PrintVisitor {
             public Void visit(RfArgument rfArgument) {
                 printIndent("formal");
                 indent++;
-                printIndent(rfArgument.getName());
-                printIndent(rfArgument.getType());
+                printIndent(rfArgument.getName().getText());
+                printIndent(rfArgument.getType().getText());
                 indent--;
                 return null;
             }
@@ -252,12 +252,12 @@ public interface PrintVisitor {
             public Void visit(RfMethod rfMethod) {
                 printIndent("method");
                 indent++;
-                printIndent(rfMethod.getName());
+                printIndent(rfMethod.getName().getText());
 
                 List<RfArgument> rfArgs = rfMethod.getArgs();
                 rfArgs.forEach(arg -> arg.accept(this));
 
-                printIndent(rfMethod.getReturnType());
+                printIndent(rfMethod.getReturnType().getText());
 
                 RfExpression rfMethodBody = rfMethod.getRfMethodBody();
                 if (rfMethodBody != null)

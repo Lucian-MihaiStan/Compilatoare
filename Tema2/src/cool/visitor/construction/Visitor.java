@@ -120,7 +120,7 @@ public interface Visitor {
              */
             @Override
             public ASTNode visitFormal(CoolParser.FormalContext ctx) {
-                return new RfArgument(ctx, ctx.ID().getSymbol().getText(), ctx.TYPE().getSymbol().getText(), ctx.start);
+                return new RfArgument(ctx, ctx.ID().getSymbol(), ctx.TYPE().getSymbol(), ctx.start);
             }
 
             /**
@@ -128,7 +128,7 @@ public interface Visitor {
              */
             @Override
             public ASTNode visitMethod(CoolParser.MethodContext ctx) {
-                return new RfMethod(ctx, ctx.ID().getSymbol().getText(), ctx.TYPE().getSymbol().getText(), ctx.formalParams.stream().map(arg -> (RfArgument) visit(arg)).collect(Collectors.toList()), (RfExpression) visit(ctx.methodBody), ctx.ID().getSymbol());
+                return new RfMethod(ctx, ctx.ID().getSymbol(), ctx.TYPE().getSymbol(), ctx.formalParams.stream().map(arg -> (RfArgument) visit(arg)).collect(Collectors.toList()), (RfExpression) visit(ctx.methodBody), ctx.ID().getSymbol());
             }
 
             /**

@@ -18,8 +18,14 @@ import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
 import cool.structures.Scope;
+import cool.structures.Symbol;
+import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.constants.MethodSymbol;
 import cool.visitor.ASTVisitor;
+import org.antlr.v4.runtime.Token;
+
+import java.util.Map;
 
 public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
 
@@ -37,6 +43,7 @@ public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
             return null;
 
         currentScope = rfClass.getTypeSymbol();
+        rfClass.getRfFeatures().forEach(rfFeature -> rfFeature.accept(this));
 
         return null;
     }
@@ -58,6 +65,35 @@ public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
 
     @Override
     public TypeSymbol visit(RfMethod rfMethod) {
+        MethodSymbol methodSymbol = rfMethod.getMethodSymbol();
+        if (methodSymbol == null)
+            return null;
+
+        Token methodName = rfMethod.getName();
+        if (methodName == null)
+            throw new IllegalStateException("Unable to locate name of method " + rfMethod);
+
+        if (!(currentScope instanceof TypeSymbol))
+            throw new IllegalStateException("Unknown evaluation of current scope " + currentScope);
+
+        Map<String, Symbol> parameters = methodSymbol.getParameters();
+
+        Symbol overridenMethodSymbol = currentScope.getParent().lookup(methodName.getText());
+        if (overridenMethodSymbol instanceof MethodSymbol) {
+            Map<String, Symbol> overriddenParameters = ((MethodSymbol) overridenMethodSymbol).getParameters();
+            if (overriddenParameters.size() != parameters.size()) {
+                SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" overrides method ").append(methodSymbol.getName()).append(" with different number of formal parameters").toString());
+                return null;
+            }
+        }
+
+        Scope initialScope = currentScope;
+        currentScope = methodSymbol;
+
+        rfMethod.getRfMethodBody().accept(this);
+
+        currentScope = initialScope;
+
         return null;
     }
 
