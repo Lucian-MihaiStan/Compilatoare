@@ -20,12 +20,14 @@ import cool.reflection.type.RfString;
 import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
+import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.TypeSymbol;
 import cool.structures.custom.symbols.constants.MethodSymbol;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
 
@@ -76,15 +78,15 @@ public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
         if (!(currentScope instanceof TypeSymbol))
             throw new IllegalStateException("Unknown evaluation of current scope " + currentScope);
 
-        Map<String, Symbol> parameters = methodSymbol.getParameters();
-
-        Symbol overridenMethodSymbol = currentScope.getParent().lookup(methodName.getText());
-        if (overridenMethodSymbol instanceof MethodSymbol) {
-            Map<String, Symbol> overriddenParameters = ((MethodSymbol) overridenMethodSymbol).getParameters();
-            if (overriddenParameters.size() != parameters.size()) {
-                SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" overrides method ").append(methodSymbol.getName()).append(" with different number of formal parameters").toString());
+        Scope enclosingClassScope = currentScope.getParent();
+        String name = methodName.getText();
+        Symbol overriddenMethodSymbol = enclosingClassScope.lookup(name);
+        if (overriddenMethodSymbol instanceof MethodSymbol) {
+            if (checkParameters(rfMethod, methodSymbol, (MethodSymbol) overriddenMethodSymbol))
                 return null;
-            }
+
+            if (checkReturnType(rfMethod, methodSymbol, (MethodSymbol) overriddenMethodSymbol))
+                return null;
         }
 
         Scope initialScope = currentScope;
@@ -95,6 +97,59 @@ public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
         currentScope = initialScope;
 
         return null;
+    }
+
+    private boolean checkReturnType(RfMethod rfMethod, MethodSymbol methodSymbol, MethodSymbol overriddenMethodSymbol) {
+        Symbol returnTypeSymbol = methodSymbol.getReturnTypeSymbol();
+        Symbol overriddenReturnTypeSymbol = overriddenMethodSymbol.getReturnTypeSymbol();
+
+        if (!overriddenReturnTypeSymbol.getName().equals(returnTypeSymbol.getName())) {
+            SymbolTable.error(rfMethod.getContext(), rfMethod.getReturnType(), new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" overrides method ").append(rfMethod.getName().getText()).append(" but changes return type from ").append(overriddenReturnTypeSymbol.getName()).append(" to ").append(returnTypeSymbol.getName()).toString());
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean checkParameters(RfMethod rfMethod, MethodSymbol methodSymbol, MethodSymbol overriddenMethodSymbol) {
+        Map<String, Symbol> parameters = methodSymbol.getParameters();
+        Map<String, Symbol> overriddenParameters = overriddenMethodSymbol.getParameters();
+
+        if (overriddenParameters.size() != parameters.size()) {
+            SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" overrides method ").append(methodSymbol.getName()).append(" with different number of formal parameters").toString());
+            return true;
+        }
+
+        int numberOfParameters = overriddenParameters.size();
+
+        List<Map.Entry<String, Symbol>> overriddenParametersList = new LinkedList<>(overriddenParameters.entrySet());
+        List<Map.Entry<String, Symbol>> parametersList = new LinkedList<>(parameters.entrySet());
+
+        for (int i = 0; i < numberOfParameters; i++) {
+            Map.Entry<String, Symbol> overriddenParameter = overriddenParametersList.get(i);
+            Map.Entry<String, Symbol> parameter = parametersList.get(i);
+
+            Symbol overriddenParameterSymbolValue = overriddenParameter.getValue();
+            Symbol parameterSymbolValue = parameter.getValue();
+
+            if (!(overriddenParameterSymbolValue instanceof IdSymbol && parameterSymbolValue instanceof IdSymbol))
+                throw new IllegalStateException("Unknown provided symbol " + overriddenParameterSymbolValue + " or " + parameterSymbolValue);
+
+            TypeSymbol overriddenParameterTypeSymbol = ((IdSymbol) overriddenParameterSymbolValue).getTypeSymbol();
+            TypeSymbol parameterTypeSymbol = ((IdSymbol) parameterSymbolValue).getTypeSymbol();
+
+            String overriddenParameterTypeSymbolName = overriddenParameterTypeSymbol.getName();
+            String parameterTypeSymbolName = parameterTypeSymbol.getName();
+            if (!overriddenParameterTypeSymbolName.equals(parameterTypeSymbolName)) {
+
+                List<RfArgument> parametersMethod = rfMethod.getArgs();
+
+                SymbolTable.error(rfMethod.getContext(), parametersMethod.get(i).getType(), new StringBuilder("Class ").append(((TypeSymbol) currentScope).getName()).append(" overrides method ").append(rfMethod.getName().getText()).append(" but changes type of formal parameter ").append(parameter.getKey()).append(" from ").append(overriddenParameterTypeSymbolName).append(" to ").append(parameterTypeSymbolName).toString());
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
