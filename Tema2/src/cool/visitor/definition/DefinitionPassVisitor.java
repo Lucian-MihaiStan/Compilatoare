@@ -19,9 +19,11 @@ import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
 import cool.structures.Scope;
 import cool.structures.SymbolTable;
+import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.TypeSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
+import org.antlr.v4.runtime.Token;
 
 public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
@@ -61,13 +63,42 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
         rfClass.getRfFeatures().forEach(rfFeature -> rfFeature.accept(this));
 
-
-
         return null;
     }
 
     @Override
     public Void visit(RfField rfField) {
+        Token fieldName = rfField.getFieldName();
+        if (fieldName == null)
+            throw new IllegalStateException("Unable to find field name for " + rfField);
+
+        Token fieldType = rfField.getFieldType();
+        if (fieldType == null)
+            throw new IllegalStateException("Unable to find field type for " + rfField);
+
+        String name = fieldName.getText();
+        if (TypeSymbolConstants.SELF_STR.equals(name)) {
+            if (!(currentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to throw error for field " + rfField + " with illegal name self in context " + currentScope);
+
+            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" has attribute with illegal name self").toString());
+            return null;
+        }
+
+        IdSymbol idSymbolName = new IdSymbol(name);
+        if (!currentScope.add(idSymbolName)) {
+            if (!(currentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to throw error for symbol with name " + name + " in the context of " + currentScope);
+
+            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines attribute ").append(name).toString());
+            return null;
+        }
+
+        rfField.setIdSymbol(idSymbolName);
+
+        if (rfField.getRfExpression() != null)
+            rfField.getRfExpression().accept(this);
+
         return null;
     }
 

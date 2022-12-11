@@ -23,6 +23,7 @@ import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.TypeSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
+import org.antlr.v4.runtime.Token;
 
 import java.lang.reflect.Type;
 
@@ -77,6 +78,42 @@ public class ClassHierarchyPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfField rfField) {
+        // if the following condition is true it means the name of field was illegal
+        if (rfField.getIdSymbolName() == null)
+            return null;
+
+        Token fieldName = rfField.getFieldName();
+        if (fieldName == null)
+            throw new IllegalStateException("Unable to find name token for field " + rfField);
+
+        Token fieldType = rfField.getFieldType();
+        if  (fieldType == null)
+            throw new IllegalStateException("Unable to find type token for field " + rfField);
+
+        Scope parent = currentScope.getParent();
+        if (parent == null)
+            throw new IllegalStateException("Unable to locate parent scope of scope " + currentScope);
+
+        Symbol symbolInherited = parent.lookup(fieldName.getText());
+        if (symbolInherited != null) {
+            if (!(currentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log error for redefined field " + rfField + " in context " + currentScope);
+
+            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines inherited attribute ").append(fieldName.getText()).toString());
+            return null;
+        }
+
+        Symbol symbolType = SymbolTable.globals.lookup(fieldType.getText());
+        if (symbolType == null) {
+            if (!(currentScope instanceof TypeSymbol))
+                throw new IllegalStateException("Unable to log error for undefined type " + fieldType.getText() + " of field " + rfField + " in context " + currentScope);
+
+            SymbolTable.error(rfField.getContext(), fieldType, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" has attribute ").append(fieldName.getText()).append(" with undefined type ").append(fieldType.getText()).toString());
+            return null;
+        }
+
+        rfField.setIdSymbolType(symbolType);
+
         return null;
     }
 

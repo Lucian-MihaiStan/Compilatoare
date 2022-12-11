@@ -4,6 +4,7 @@ import cool.visitor.construction.PrintVisitor;
 import cool.visitor.construction.Visitor;
 import cool.visitor.definition.ClassHierarchyPassVisitor;
 import cool.visitor.definition.DefinitionPassVisitor;
+import cool.visitor.resolution.ResolutionPassVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -129,14 +130,14 @@ public class Compiler {
 
         var ast = astConstructionVisitor.visit(globalTree);
 
-//        var printVisitor = PrintVisitor.getPrintVisitor();
-//        ast.accept(printVisitor);
+//        ast.accept(PrintVisitor.getPrintVisitor());
         
         // Populate global scope.
         SymbolTable.defineBasicClasses();
 
         ast.accept(new DefinitionPassVisitor());
         ast.accept(new ClassHierarchyPassVisitor());
+        ast.accept(new ResolutionPassVisitor());
 
         // TODO Semantic analysis
         

@@ -136,7 +136,7 @@ public interface Visitor {
              */
             @Override
             public ASTNode visitField(CoolParser.FieldContext ctx) {
-                return new RfField(ctx, ctx.ID().getSymbol().getText(), ctx.TYPE().getSymbol().getText(), ctx.expr() != null ? (RfExpression) visit(ctx.expr()) : null, ctx.ID().getSymbol());
+                return new RfField(ctx, ctx.ID().getSymbol(), ctx.TYPE().getSymbol(), ctx.expr() != null ? (RfExpression) visit(ctx.expr()) : null, ctx.ID().getSymbol());
             }
 
             /**

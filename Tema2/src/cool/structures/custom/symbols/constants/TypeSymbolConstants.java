@@ -6,6 +6,7 @@ import java.util.Set;
 
 public interface TypeSymbolConstants {
 
+    String SELF_STR = "self";
     String INT_STR = "Int";
     String STRING_STR = "String";
     String BOOL_STR = "Bool";

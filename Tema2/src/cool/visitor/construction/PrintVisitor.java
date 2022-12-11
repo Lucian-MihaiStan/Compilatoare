@@ -51,8 +51,8 @@ public interface PrintVisitor {
             public Void visit(RfField rfField) {
                 printIndent("attribute");
                 indent++;
-                printIndent(rfField.getFieldName());
-                printIndent(rfField.getFieldType());
+                printIndent(rfField.getFieldName().getText());
+                printIndent(rfField.getFieldType().getText());
                 RfExpression rfExpression = rfField.getRfExpression();
                 if (rfExpression != null)
                     rfExpression.accept(this);

@@ -3,27 +3,31 @@ package cool.reflection.feature.features;
 import cool.parser.CoolParser;
 import cool.reflection.expression.RfExpression;
 import cool.reflection.feature.RfFeature;
+import cool.structures.Symbol;
+import cool.structures.custom.symbols.IdSymbol;
+import cool.structures.custom.symbols.TypeSymbol;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
 public class RfField extends RfFeature {
 
-    private final String fieldName;
-    private final String fieldType;
+    private final Token fieldName;
+    private final Token fieldType;
     private final RfExpression rfExpression;
+    private IdSymbol idSymbolName;
 
-    public RfField(CoolParser.FieldContext ctx, String text, String s, RfExpression rfExpression, Token token) {
+    public RfField(CoolParser.FieldContext ctx, Token fieldName, Token fieldType, RfExpression rfExpression, Token token) {
         super(ctx, token);
-        this.fieldName = text;
-        this.fieldType = s;
+        this.fieldName = fieldName;
+        this.fieldType = fieldType;
         this.rfExpression = rfExpression;
     }
 
-    public String getFieldName() {
+    public Token getFieldName() {
         return fieldName;
     }
 
-    public String getFieldType() {
+    public Token getFieldType() {
         return fieldType;
     }
 
@@ -34,5 +38,25 @@ public class RfField extends RfFeature {
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return (fieldType == null ? "null" : fieldType.getText()) + " : " + (fieldName == null ? "null" : fieldName.getText());
+    }
+
+    public void setIdSymbol(IdSymbol idSymbolName) {
+        this.idSymbolName = idSymbolName;
+    }
+
+    public IdSymbol getIdSymbolName() {
+        return idSymbolName;
+    }
+
+    public void setIdSymbolType(Symbol symbolType) {
+        if (!(symbolType instanceof TypeSymbol))
+            throw new IllegalStateException("Unmatched provided type for type symbol " + symbolType + " in context of field " + this);
+
+        idSymbolName.setTypeSymbol((TypeSymbol) symbolType);
     }
 }
