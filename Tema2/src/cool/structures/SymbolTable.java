@@ -25,6 +25,7 @@ public class SymbolTable {
         globals.add(TypeSymbolConstants.STRING);
         globals.add(TypeSymbolConstants.BOOL);
         globals.add(TypeSymbolConstants.IO);
+        globals.add(TypeSymbolConstants.SELF_TYPE);
     }
     
     /**

@@ -21,12 +21,10 @@ import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.TypeSymbol;
-import cool.structures.custom.symbols.constants.MethodSymbol;
+import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
-
-import java.util.Map;
 
 public class ClassPassVisitor implements ASTVisitor<Void> {
 

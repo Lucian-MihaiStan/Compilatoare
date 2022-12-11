@@ -1,4 +1,4 @@
-package cool.structures.custom.symbols.constants;
+package cool.structures.custom.symbols;
 
 import cool.structures.Scope;
 import cool.structures.Symbol;

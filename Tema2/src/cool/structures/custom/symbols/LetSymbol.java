@@ -6,15 +6,15 @@ import cool.structures.Symbol;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TypeSymbol extends Symbol implements Scope {
-    private final String parentScopeName;
-    private Scope parentScope;
+public class LetSymbol extends Symbol implements Scope {
+
+    private final Scope enclosingScope;
 
     private final Map<String, Symbol> symbols = new LinkedHashMap<>();
 
-    public TypeSymbol(String symbolName, String parentSymbolName) {
-        super(symbolName);
-        this.parentScopeName = parentSymbolName;
+    public LetSymbol(String name, Scope parentScope) {
+        super(name);
+        this.enclosingScope = parentScope;
     }
 
     @Override
@@ -34,22 +34,15 @@ public class TypeSymbol extends Symbol implements Scope {
         if (sym != null)
             return sym;
 
-        if (parentScope != null)
-            return parentScope.lookup(symbolName);
+        if (enclosingScope != null)
+            return enclosingScope.lookup(symbolName);
 
         return null;
     }
 
     @Override
     public Scope getParent() {
-        return parentScope;
+        return enclosingScope;
     }
 
-    public String getParentScopeName() {
-        return parentScopeName;
-    }
-
-    public void setParentScope(Scope parentScope) {
-        this.parentScope = parentScope;
-    }
 }

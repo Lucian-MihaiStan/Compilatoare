@@ -12,17 +12,17 @@ public class RfCase extends RfExpression  {
     public static class RfCaseBranch extends RfExpression {
 
         private final Token id;
-        private final String type;
+        private final Token type;
         private final RfExpression expression;
 
-        public RfCaseBranch(CoolParser.CaseBranchContext ctx, Token id, String type, RfExpression expression, Token token) {
+        public RfCaseBranch(CoolParser.CaseBranchContext ctx, Token id, Token type, RfExpression expression, Token token) {
             super(ctx, token);
             this.id = id;
             this.type = type;
             this.expression = expression;
         }
 
-        public String getType() {
+        public Token getType() {
             return type;
         }
 

@@ -200,7 +200,7 @@ public interface PrintVisitor {
             public Void visit(RfLet.RfDeclareVariable rfDeclareVariable) {
                 printIndent(rfDeclareVariable.getSymbol());
                 indent++;
-                printIndent(rfDeclareVariable.getRfId().getText());
+                printIndent(rfDeclareVariable.getName().getText());
                 printIndent(rfDeclareVariable.getType().getText());
                 if (rfDeclareVariable.getValue() != null)
                     rfDeclareVariable.getValue().accept(this);
@@ -223,7 +223,7 @@ public interface PrintVisitor {
                 printIndent(rfCaseBranch.getSymbol());
                 indent++;
                 printIndent(rfCaseBranch.getId().getText());
-                printIndent(rfCaseBranch.getType());
+                printIndent(rfCaseBranch.getType().getText());
                 rfCaseBranch.getExpression().accept(this);
                 indent--;
                 return null;

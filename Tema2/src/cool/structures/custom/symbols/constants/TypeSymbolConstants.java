@@ -26,7 +26,6 @@ public interface TypeSymbolConstants {
 
     TypeSymbol IO = new TypeSymbol(IO_STR, OBJECT_STR);
 
-    // TODO Lucian
-//    TypeSymbol SELF_TYPE = new TypeSymbol("SELF_TYPE", OBJECT);
+    TypeSymbol SELF_TYPE = new TypeSymbol(SELF_TYPE_STR, OBJECT_STR);
 
 }

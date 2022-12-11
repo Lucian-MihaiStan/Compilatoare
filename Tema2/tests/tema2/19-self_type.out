@@ -1,18 +1,2 @@
 "19-self_type.cl", line 5:11, Semantic error: Method h of class A has formal parameter y with illegal type SELF_TYPE
-"19-self_type.cl", line 2:9, Semantic error: Class A has attribute x with undefined type SELF_TYPE
-Exception in thread "main" java.lang.IllegalStateException: Unable to locate return type symbol in global context of method h([SELF_TYPE : y]) : SELF_TYPE
-	at cool.visitor.definition.ClassPassVisitor.visit(ClassPassVisitor.java:188)
-	at cool.visitor.definition.ClassPassVisitor.visit(ClassPassVisitor.java:31)
-	at cool.reflection.feature.features.RfMethod.accept(RfMethod.java:48)
-	at cool.visitor.definition.ClassPassVisitor.lambda$visit$1(ClassPassVisitor.java:50)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at cool.visitor.definition.ClassPassVisitor.visit(ClassPassVisitor.java:50)
-	at cool.visitor.definition.ClassPassVisitor.visit(ClassPassVisitor.java:31)
-	at cool.reflection.RfClass.accept(RfClass.java:28)
-	at cool.visitor.definition.ClassPassVisitor.lambda$visit$0(ClassPassVisitor.java:37)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at cool.visitor.definition.ClassPassVisitor.visit(ClassPassVisitor.java:37)
-	at cool.visitor.definition.ClassPassVisitor.visit(ClassPassVisitor.java:31)
-	at cool.reflection.RfProgram.accept(RfProgram.java:21)
-	at cool.compiler.Compiler.main(Compiler.java:138)
-	at cool.tester.Tester2.main(Tester2.java:34)
+Compilation halted

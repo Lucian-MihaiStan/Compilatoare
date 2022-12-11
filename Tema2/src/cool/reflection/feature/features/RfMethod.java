@@ -4,7 +4,7 @@ import cool.parser.CoolParser;
 import cool.reflection.RfArgument;
 import cool.reflection.expression.RfExpression;
 import cool.reflection.feature.RfFeature;
-import cool.structures.custom.symbols.constants.MethodSymbol;
+import cool.structures.custom.symbols.MethodSymbol;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 

@@ -20,8 +20,9 @@ import cool.reflection.type.RfString;
 import cool.structures.Scope;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.IdSymbol;
+import cool.structures.custom.symbols.LetSymbol;
 import cool.structures.custom.symbols.TypeSymbol;
-import cool.structures.custom.symbols.constants.MethodSymbol;
+import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
@@ -182,14 +183,11 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
         rfMethod.setMethodSymbol(methodSymbol);
 
         Scope initialScope = currentScope;
-
         currentScope = methodSymbol;
-
         rfMethod.getArgs().forEach(rfArgument -> rfArgument.accept(this));
-
         rfMethod.getRfMethodBody().accept(this);
 
-        // return from the depth travers
+        // return from the depth traversal
         currentScope = initialScope;
 
         return null;
@@ -262,21 +260,69 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfLet rfLet) {
+        LetSymbol letScope = new LetSymbol("LetScope", currentScope);
+        rfLet.setLetSymbolScope(letScope);
+
+        Scope initialScope = currentScope;
+        currentScope = letScope;
+        rfLet.getVars().forEach(rfDeclareVariable -> rfDeclareVariable.accept(this));
+        rfLet.getBody().accept(this);
+
+        currentScope = initialScope;
+
         return null;
     }
 
     @Override
     public Void visit(RfLet.RfDeclareVariable rfDeclareVariable) {
+        Token rfDeclareVariableName = rfDeclareVariable.getName();
+        if (rfDeclareVariableName == null)
+            throw new IllegalStateException("Unable to compute name of declared variable " + rfDeclareVariable);
+
+        Token rfDeclareVariableType = rfDeclareVariable.getType();
+        if (rfDeclareVariableType == null)
+            throw new IllegalStateException("Unable to find type of declared variable " + rfDeclareVariable);
+
+        if (TypeSymbolConstants.SELF_STR.equals(rfDeclareVariableName.getText())) {
+            SymbolTable.error(rfDeclareVariable.getContext(), rfDeclareVariableName, "Let variable has illegal name self");
+            return null;
+        }
+
+        IdSymbol idSymbol = new IdSymbol(rfDeclareVariableName.getText());
+        rfDeclareVariable.setIdSymbol(idSymbol);
+
+        RfExpression initializedExpression = rfDeclareVariable.getValue();
+        if (initializedExpression != null)
+            initializedExpression.accept(this);
+
         return null;
     }
 
     @Override
     public Void visit(RfCase rfCase) {
+        rfCase.getBranches().forEach(rfCaseBranch -> rfCaseBranch.accept(this));
         return null;
     }
 
     @Override
     public Void visit(RfCase.RfCaseBranch rfCaseBranch) {
+        Token id = rfCaseBranch.getId();
+        if (id == null)
+            throw new IllegalStateException("Unable to find the variable name of the branch " + rfCaseBranch);
+        
+        if (TypeSymbolConstants.SELF_STR.equals(id.getText())) {
+            SymbolTable.error(rfCaseBranch.getContext(), id, "Case variable has illegal name self");
+            return null;
+        }
+
+        Token type = rfCaseBranch.getType();
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(type.getText())) {
+            SymbolTable.error(rfCaseBranch.getContext(), type, new StringBuilder("Case variable ").append(id.getText()).append(" has illegal type SELF_TYPE").toString());
+            return null;
+        }
+
+        rfCaseBranch.getExpression().accept(this);
+        
         return null;
     }
 

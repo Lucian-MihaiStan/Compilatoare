@@ -21,12 +21,12 @@ import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.IdSymbol;
+import cool.structures.custom.symbols.LetSymbol;
 import cool.structures.custom.symbols.TypeSymbol;
-import cool.structures.custom.symbols.constants.MethodSymbol;
+import cool.structures.custom.symbols.MethodSymbol;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
@@ -219,21 +219,72 @@ public class ResolutionPassVisitor implements ASTVisitor<TypeSymbol> {
 
     @Override
     public TypeSymbol visit(RfLet rfLet) {
-        return null;
+        LetSymbol letScope = rfLet.getLetScope();
+        if (letScope == null)
+            throw new IllegalStateException("Unable to find let scope " + rfLet);
+
+        Scope initialScope = currentScope;
+
+        currentScope = letScope;
+
+        rfLet.getVars().forEach(rfDeclareVariable -> rfDeclareVariable.accept(this));
+        TypeSymbol value = rfLet.getBody().accept(this);
+
+        currentScope = initialScope;
+        return value;
     }
 
     @Override
     public TypeSymbol visit(RfLet.RfDeclareVariable rfDeclareVariable) {
+        IdSymbol idSymbol = rfDeclareVariable.getIdSymbol();
+        if (idSymbol == null)
+            return null;
+
+        Token name = rfDeclareVariable.getName();
+        if (name == null)
+            throw new IllegalStateException("Unable to find name of declared variable " + rfDeclareVariable);
+
+        Token type = rfDeclareVariable.getType();
+        if (type == null)
+            throw new IllegalStateException("Unable to find type of declared variable " + rfDeclareVariable);
+
+        Symbol typeSymbol = SymbolTable.globals.lookup(type.getText());
+        if (typeSymbol == null) {
+            SymbolTable.error(rfDeclareVariable.getContext(), rfDeclareVariable.getType(), new StringBuilder().append("Let variable ").append(idSymbol.getName()).append(" has undefined type ").append(rfDeclareVariable.getType().getText()).toString());
+            return null;
+        }
+
+        if (!(typeSymbol instanceof TypeSymbol))
+            throw new IllegalStateException("Unable to find symbol for type let declared variable " + rfDeclareVariable);
+
+        idSymbol.setTypeSymbol((TypeSymbol) typeSymbol);
+
         return null;
     }
 
     @Override
     public TypeSymbol visit(RfCase rfCase) {
+        rfCase.getBranches().forEach(rfCaseBranch -> rfCaseBranch.accept(this));
         return null;
     }
 
     @Override
     public TypeSymbol visit(RfCase.RfCaseBranch rfCaseBranch) {
+        Token id = rfCaseBranch.getId();
+        if (id == null)
+            throw new IllegalStateException("Unable to find variable name for branch " + rfCaseBranch);
+
+        Token type = rfCaseBranch.getType();
+        if (type == null)
+            throw new IllegalStateException("Unable to find variable type for branch " + rfCaseBranch);
+
+        Symbol symbolType = SymbolTable.globals.lookup(type.getText());
+        if (symbolType == null) {
+            SymbolTable.error(rfCaseBranch.getContext(), rfCaseBranch.getType(), new StringBuilder().append("Case variable ").append(id.getText()).append(" has undefined type ").append(type.getText()).toString());
+            return null;
+        }
+
+
         return null;
     }
 

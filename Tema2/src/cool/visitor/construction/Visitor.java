@@ -194,7 +194,7 @@ public interface Visitor {
 
             @Override
             public ASTNode visitCaseBranch(CoolParser.CaseBranchContext ctx) {
-                return new RfCase.RfCaseBranch(ctx, ctx.ID().getSymbol(), ctx.TYPE().getText(), (RfExpression) visit(ctx.branchBody), ctx.RESULTS_CASE().getSymbol());
+                return new RfCase.RfCaseBranch(ctx, ctx.ID().getSymbol(), ctx.TYPE().getSymbol(), (RfExpression) visit(ctx.branchBody), ctx.RESULTS_CASE().getSymbol());
             }
 
             @Override
