@@ -2,20 +2,20 @@ package cool.structures.custom.symbols;
 
 import cool.structures.Scope;
 import cool.structures.Symbol;
+import cool.structures.SymbolTable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ClassTypeSymbol extends Symbol implements Scope {
-    private final String parentScopeName;
     private Scope parentScope;
 
     private final Map<String, IdSymbol> symbols = new LinkedHashMap<>();
     private final Map<String, MethodSymbol> methodsSymbols = new LinkedHashMap<>();
 
-    public ClassTypeSymbol(String symbolName, String parentSymbolName) {
+    public ClassTypeSymbol(String symbolName, Scope parentClass) {
         super(symbolName);
-        this.parentScopeName = parentSymbolName;
+        this.parentScope = parentClass;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ClassTypeSymbol extends Symbol implements Scope {
     }
 
     public String getParentScopeName() {
-        return parentScopeName;
+        return parentScope instanceof ClassTypeSymbol ? ((ClassTypeSymbol) parentScope).getName() : null;
     }
 
     public void setParentScope(Scope parentScope) {

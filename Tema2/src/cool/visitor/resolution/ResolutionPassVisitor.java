@@ -12,6 +12,7 @@ import cool.reflection.expression.instructions.RfWhile;
 import cool.reflection.expression.relational.RfRelationalExpression;
 import cool.reflection.expression.single.RfSingleValueExpression;
 import cool.reflection.expression.single.value.RfBitNegExpression;
+import cool.reflection.expression.single.value.RfIsVoidExpression;
 import cool.reflection.expression.single.value.RfNotExpression;
 import cool.reflection.expression.single.value.RfParenExpression;
 import cool.reflection.feature.features.RfField;
@@ -30,6 +31,7 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,24 +61,36 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
     }
 
     private void checkClassHierarchy(RfClass rfClass) {
-        ClassTypeSymbol currentScope = rfClass.getTypeSymbol();
+        RfClass currentInspectedRfClass = rfClass;
 
-        Symbol parentSymbol = null;
+        ClassTypeSymbol classType = currentInspectedRfClass.getTypeSymbol();
 
-        while (currentScope != TypeSymbolConstants.OBJECT) {
-            parentSymbol = SymbolTable.globals.lookup(currentScope.getParentScopeName());
+        Symbol parentSymbol;
+
+        while (classType != TypeSymbolConstants.OBJECT) {
+            parentSymbol = (Symbol) classType.getParent();
+
+            // here are two cases if the parent wasn't set in the definition pass due to forward references, otherwise he doesn't really exit, so we try to search one more time in globals
             if (parentSymbol == null) {
-                SymbolTable.error(rfClass.getContext(), rfClass.getInheritedTokenType(), new StringBuilder().append("Class ").append(rfClass.getToken().getText()).append(" has undefined parent ").append(currentScope.getParentScopeName()).toString());
-                return;
+                if (currentInspectedRfClass.getInheritedTokenType() == null)
+                    throw new IllegalStateException("Unable to locate inherited type token of class " + currentInspectedRfClass);
+
+                parentSymbol = SymbolTable.globals.lookup(currentInspectedRfClass.getInheritedTokenType().getText());
+                if (parentSymbol == null) {
+                    SymbolTable.error(currentInspectedRfClass.getContext(), currentInspectedRfClass.getInheritedTokenType(), new StringBuilder().append("Class ").append(currentInspectedRfClass.getToken().getText()).append(" has undefined parent ").append(currentInspectedRfClass.getInheritedTokenType().getText()).toString());
+                    return;
+                }
             }
 
             if (!(parentSymbol instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Undefined parent symbol");
-            currentScope.setParentScope((ClassTypeSymbol) parentSymbol);
 
-            currentScope = (ClassTypeSymbol) parentSymbol;
+            currentInspectedRfClass.getTypeSymbol().setParentScope((ClassTypeSymbol) parentSymbol);
 
-            if (currentScope == rfClass.getTypeSymbol()) {
+            classType = (ClassTypeSymbol) parentSymbol;
+            currentInspectedRfClass = SymbolTable.globals.getGlobalClassWithName(classType.getName());
+
+            if (classType == rfClass.getTypeSymbol()) {
                 SymbolTable.error(rfClass.getContext(), rfClass.getToken(), new StringBuilder().append("Inheritance cycle for class ").append(rfClass.getActualTokenType().getText()).toString());
                 return;
             }
@@ -380,6 +394,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return TypeSymbolConstants.BOOL;
         }
 
+        if (rfSingleValueExpression instanceof RfIsVoidExpression)
+            return TypeSymbolConstants.BOOL;
+
         return symbol;
     }
 
@@ -398,11 +415,13 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return TypeSymbolConstants.BOOL;
 
         Symbol expressionSymbol = expression.accept(this);
+        if (expressionSymbol == null)
+            return null;
+
         Symbol idSymbol = currentScope.lookup(id.getText());
 
         if (!(expressionSymbol instanceof ClassTypeSymbol))
             throw new IllegalStateException("Unable to compute class returned type of expression " + expression);
-
 
         if (!(idSymbol instanceof IdSymbol))
             throw new IllegalStateException("Unable to locate idSymbol for element " + id);
@@ -414,7 +433,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return TypeSymbolConstants.BOOL;
 
         if (typeSymbol != expressionSymbol)
-            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getContext().stop, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
+            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getValue().start, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
 
         return TypeSymbolConstants.BOOL;
     }
@@ -445,10 +464,10 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             throw new IllegalStateException("Unable to compute type of new expression " + rfNewExpression);
 
         Symbol rawType = SymbolTable.globals.lookup(type.getText());
-        if (!(rawType instanceof ClassTypeSymbol))
-            throw new IllegalStateException("Unknown found type in global scope " + rawType);
-
-        
+        if (rawType == null) {
+            SymbolTable.error(rfNewExpression.getContext(), rfNewExpression.getType(), new StringBuilder().append("new is used with undefined type ").append(type.getText()).toString());
+            return null;
+        }
 
         return rawType;
     }

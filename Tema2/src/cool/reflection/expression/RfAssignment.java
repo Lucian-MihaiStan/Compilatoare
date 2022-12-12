@@ -7,11 +7,14 @@ import org.antlr.v4.runtime.Token;
 public class RfAssignment extends RfExpression {
 
     private final Token id;
-    private final RfExpression expr;
 
-    public RfAssignment(CoolParser.AssignContext ctx, Token id, RfExpression expr, Token token) {
+    private final RfExpression expr;
+    private final CoolParser.ExprContext value;
+
+    public RfAssignment(CoolParser.AssignContext ctx, Token id, CoolParser.ExprContext value, RfExpression expr, Token token) {
         super(ctx, token);
         this.id = id;
+        this.value = value;
         this.expr = expr;
     }
 
@@ -35,5 +38,9 @@ public class RfAssignment extends RfExpression {
     @Override
     public String toString() {
         return (id == null ? "null" : id.getText()) + " <- " + (expr != null ? expr.toString() : "");
+    }
+
+    public CoolParser.ExprContext getValue() {
+        return value;
     }
 }

@@ -136,7 +136,7 @@ public interface PrintVisitor {
             public Void visit(RfNewExpression rfNewExpression) {
                 printIndent(rfNewExpression.getSymbol());
                 indent++;
-                printIndent(rfNewExpression.getType());
+                printIndent(rfNewExpression.getType().getText());
                 indent--;
                 return null;
             }

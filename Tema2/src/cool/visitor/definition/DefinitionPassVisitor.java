@@ -18,6 +18,7 @@ import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
 import cool.structures.Scope;
+import cool.structures.Symbol;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.LetSymbol;
@@ -26,6 +27,8 @@ import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
+
+import java.lang.reflect.Type;
 
 public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
@@ -46,16 +49,18 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             return null;
         }
 
-        String parentSymbolName = rfClass.getInheritedTokenType() != null ? rfClass.getInheritedTokenType().getText() : "Object";
+        Symbol parentSymbol = rfClass.getInheritedTokenType() != null ? SymbolTable.globals.lookup(rfClass.getInheritedTokenType().getText()) : TypeSymbolConstants.OBJECT;
 
-        ClassTypeSymbol typeClassSymbol = new ClassTypeSymbol(actualTypeName, parentSymbolName);
+        ClassTypeSymbol typeClassSymbol = new ClassTypeSymbol(actualTypeName, (Scope) parentSymbol);
         if (!SymbolTable.globals.add(typeClassSymbol)) {
             SymbolTable.error(rfClass.getContext(), rfClass.getToken(), new StringBuilder().append("Class ").append(actualTypeName).append(" is redefined").toString());
             return null;
         }
 
-        if (TypeSymbolConstants.illegalParents.contains(parentSymbolName)) {
-            SymbolTable.error(rfClass.getContext(), rfClass.getInheritedTokenType(), new StringBuilder().append("Class ").append(actualTypeName).append(" has illegal parent ").append(parentSymbolName).toString());
+        SymbolTable.globals.addClass(rfClass);
+
+        if (parentSymbol != null && TypeSymbolConstants.illegalParents.contains(parentSymbol)) {
+            SymbolTable.error(rfClass.getContext(), rfClass.getInheritedTokenType(), new StringBuilder().append("Class ").append(actualTypeName).append(" has illegal parent ").append(parentSymbol.getName()).toString());
             return null;
         }
 

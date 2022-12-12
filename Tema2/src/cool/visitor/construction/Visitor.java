@@ -82,7 +82,7 @@ public interface Visitor {
 
             @Override
             public ASTNode visitAssign(CoolParser.AssignContext ctx) {
-                return new RfAssignment(ctx, ctx.ID().getSymbol(), (RfExpression) visit(ctx.value), ctx.ASSIGN().getSymbol());
+                return new RfAssignment(ctx, ctx.ID().getSymbol(), ctx.value, (RfExpression) visit(ctx.value), ctx.ASSIGN().getSymbol());
             }
 
             @Override

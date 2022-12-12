@@ -67,6 +67,6 @@ public class RfClass extends ASTNode {
 
     @Override
     public String toString() {
-        return "Class " + getActualTokenType().getText();
+        return "Class " + getActualTokenType().getText() + (getInheritedTokenType() != null ? (" inherits " + getInheritedTokenType().getText()) : "");
     }
 }

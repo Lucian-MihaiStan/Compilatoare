@@ -1,10 +1,14 @@
 package cool.structures;
 
+import cool.reflection.RfClass;
+import org.antlr.v4.runtime.Token;
+
 import java.util.*;
 
 public class DefaultScope implements Scope {
     
     private final Map<String, Symbol> symbols = new LinkedHashMap<>();
+    private final Map<String, RfClass> globalClasses = new LinkedHashMap<>();
     
     private final Scope parent;
     
@@ -46,4 +50,20 @@ public class DefaultScope implements Scope {
         return symbols.values().toString();
     }
 
+    @Override
+    public void addClass(RfClass rfClass) {
+        Token actualTokenType = rfClass.getActualTokenType();
+        if (actualTokenType == null)
+            throw new IllegalStateException("Unable to locate actual type of class " + rfClass);
+
+        if (globalClasses.containsKey(actualTokenType.getText()))
+            return;
+
+        globalClasses.put(actualTokenType.getText(), rfClass);
+    }
+
+    @Override
+    public RfClass getGlobalClassWithName(String name) {
+        return globalClasses.get(name);
+    }
 }
