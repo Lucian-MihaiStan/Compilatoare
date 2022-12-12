@@ -9,10 +9,12 @@ public class RfWhile extends RfExpression {
 
     private final RfExpression cond;
     private final RfExpression body;
+    private final CoolParser.ExprContext condContext;
 
-    public RfWhile(CoolParser.WhileContext ctx, RfExpression cond, RfExpression body, Token token) {
+    public RfWhile(CoolParser.WhileContext ctx, CoolParser.ExprContext condContext, RfExpression cond, RfExpression body, Token token) {
         super(ctx, token);
         this.cond = cond;
+        this.condContext = condContext;
         this.body = body;
     }
 
@@ -31,5 +33,9 @@ public class RfWhile extends RfExpression {
 
     public String getSymbol() {
         return token.getText();
+    }
+
+    public CoolParser.ExprContext getCondContext() {
+        return condContext;
     }
 }

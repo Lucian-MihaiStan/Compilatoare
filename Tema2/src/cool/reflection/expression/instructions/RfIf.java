@@ -10,10 +10,12 @@ public class RfIf extends RfExpression {
     private final RfExpression cond;
     private final RfExpression ifBranch;
     private final RfExpression elseBranch;
+    private final CoolParser.ExprContext condContext;
 
-    public RfIf(CoolParser.IfContext ctx, RfExpression cond, RfExpression ifBranch, RfExpression elseBranch, Token token) {
+    public RfIf(CoolParser.IfContext ctx, CoolParser.ExprContext condContext, RfExpression cond, RfExpression ifBranch, RfExpression elseBranch, Token token) {
         super(ctx, token);
         this.cond = cond;
+        this.condContext = condContext;
         this.ifBranch = ifBranch;
         this.elseBranch = elseBranch;
     }
@@ -37,5 +39,9 @@ public class RfIf extends RfExpression {
 
     public String getSymbol() {
         return token.getText();
+    }
+
+    public CoolParser.ExprContext getCondContext() {
+        return condContext;
     }
 }

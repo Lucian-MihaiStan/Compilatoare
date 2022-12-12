@@ -225,11 +225,30 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfRelationalExpression rfRelationalExpression) {
+        RfExpression lhValue = rfRelationalExpression.getLhValue();
+        if (lhValue == null)
+            throw new IllegalStateException("Unable to find left hand expression of expression " + rfRelationalExpression.getRelationalSymbol().getText());
+
+        lhValue.accept(this);
+
+        RfExpression rhValue = rfRelationalExpression.getRhValue();
+        if (rhValue == null)
+            throw new IllegalStateException("Unable to find right hand expression of expression " + rfRelationalExpression.getRelationalSymbol().getText());
+
+        rhValue.accept(this);
+
         return null;
     }
 
     @Override
     public Void visit(RfSingleValueExpression rfSingleValueExpression) {
+
+        RfExpression expression = rfSingleValueExpression.getExpression();
+        if (expression == null)
+            throw new IllegalStateException("Unable to locate expression of " + rfSingleValueExpression.getSymbol());
+
+        expression.accept(this);
+
         return null;
     }
 
@@ -243,6 +262,12 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             SymbolTable.error(rfAssignment.getContext(), rfAssignment.getId(), "Cannot assign to self");
             return null;
         }
+
+        RfExpression assignmentExpr = rfAssignment.getExpr();
+        if (assignmentExpr == null)
+            throw new IllegalStateException("Unable to locate assignment expression of " + assignmentExpr);
+
+        assignmentExpr.accept(this);
 
         return null;
     }
@@ -264,11 +289,41 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfIf rfIf) {
+        RfExpression cond = rfIf.getCond();
+        if (cond == null)
+            throw new IllegalStateException("Unable to locate condition of if " + rfIf.getContext());
+
+        cond.accept(this);
+
+        RfExpression ifBranch = rfIf.getIfBranch();
+        if (ifBranch == null)
+            throw new IllegalStateException("Unable to locate then branch of if " + rfIf.getContext());
+
+        ifBranch.accept(this);
+
+        RfExpression elseBranch = rfIf.getElseBranch();
+        if (elseBranch == null)
+            throw new IllegalStateException("Unable to locate else branch of if " + rfIf.getElseBranch());
+
+        elseBranch.accept(this);
+
         return null;
     }
 
     @Override
     public Void visit(RfWhile rfWhile) {
+        RfExpression cond = rfWhile.getCond();
+        if (cond == null)
+            throw new IllegalStateException("Unable to locate while condition " + rfWhile.getContext());
+
+        cond.accept(this);
+
+        RfExpression whileBody = rfWhile.getBody();
+        if (whileBody == null)
+            throw new IllegalStateException("Unable to locate while body " + rfWhile.getBody());
+
+        whileBody.accept(this);
+
         return null;
     }
 

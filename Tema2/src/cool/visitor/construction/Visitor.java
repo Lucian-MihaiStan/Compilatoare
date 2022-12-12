@@ -170,7 +170,7 @@ public interface Visitor {
              */
             @Override
             public ASTNode visitWhile(CoolParser.WhileContext ctx) {
-                return new RfWhile(ctx, (RfExpression) visit(ctx.cond), (RfExpression) visit(ctx.body), ctx.WHILE().getSymbol());
+                return new RfWhile(ctx, ctx.cond, (RfExpression) visit(ctx.cond), (RfExpression) visit(ctx.body), ctx.WHILE().getSymbol());
             }
 
             /**
@@ -212,7 +212,7 @@ public interface Visitor {
 
             @Override
             public ASTNode visitIf(CoolParser.IfContext ctx) {
-                return new RfIf(ctx, (RfExpression) visit(ctx.cond), (RfExpression) visit(ctx.thenBranch), (RfExpression) visit(ctx.elseBranch), ctx.IF().getSymbol());
+                return new RfIf(ctx, ctx.cond, (RfExpression) visit(ctx.cond), (RfExpression) visit(ctx.thenBranch), (RfExpression) visit(ctx.elseBranch), ctx.IF().getSymbol());
             }
         };
     }

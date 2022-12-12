@@ -32,9 +32,7 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
 import java.lang.reflect.Type;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
@@ -484,12 +482,63 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfIf rfIf) {
-        return null;
+        RfExpression cond = rfIf.getCond();
+        if (cond == null)
+            throw new IllegalStateException("Unable to locate condition of if " + rfIf.getContext());
+
+        Symbol condSymbol = cond.accept(this);
+        if (condSymbol != TypeSymbolConstants.BOOL)
+            SymbolTable.error(rfIf.getContext(), rfIf.getCondContext().start, new StringBuilder().append("If condition has type ").append(condSymbol.getName()).append(" instead of ").append(TypeSymbolConstants.BOOL_STR).toString());
+
+        RfExpression ifBranch = rfIf.getIfBranch();
+        if (ifBranch == null)
+            throw new IllegalStateException("Unable to locate then branch of if " + rfIf.getContext());
+
+        Symbol thenBranchSymbol = ifBranch.accept(this);
+
+        RfExpression elseBranch = rfIf.getElseBranch();
+        if (elseBranch == null)
+            throw new IllegalStateException("Unable to locate else branch of if " + rfIf.getElseBranch());
+
+        Symbol elseBranchSymbol = elseBranch.accept(this);
+
+        return findCommonParent((ClassTypeSymbol) thenBranchSymbol, (ClassTypeSymbol) elseBranchSymbol);
+    }
+
+    private static Symbol findCommonParent(ClassTypeSymbol thenBranchSymbol, ClassTypeSymbol elseBranchSymbol) {
+        Set<ClassTypeSymbol> types = new HashSet<>();
+        while (thenBranchSymbol != null) {
+            types.add(thenBranchSymbol);
+            thenBranchSymbol = (ClassTypeSymbol) thenBranchSymbol.getParent();
+        }
+
+        while (elseBranchSymbol != null) {
+            if (types.contains(elseBranchSymbol))
+                return elseBranchSymbol;
+
+            elseBranchSymbol = (ClassTypeSymbol) elseBranchSymbol.getParent();
+        }
+
+        return TypeSymbolConstants.OBJECT;
     }
 
     @Override
     public Symbol visit(RfWhile rfWhile) {
-        return null;
+
+        RfExpression cond = rfWhile.getCond();
+        if (cond == null)
+            throw new IllegalStateException("Unable to locate the condition of while statement");
+
+        Symbol condSymbol = cond.accept(this);
+        if (condSymbol != TypeSymbolConstants.BOOL) {
+            if (rfWhile.getCondContext() == null)
+                throw new IllegalStateException("Unable to locate condition context of while " + rfWhile.getContext());
+            SymbolTable.error(rfWhile.getContext(), rfWhile.getCondContext().start, new StringBuilder().append("While condition has type ").append(condSymbol.getName()).append(" instead of ").append(TypeSymbolConstants.BOOL_STR).toString());
+
+            return TypeSymbolConstants.OBJECT;
+        }
+
+        return condSymbol;
     }
 
     @Override
