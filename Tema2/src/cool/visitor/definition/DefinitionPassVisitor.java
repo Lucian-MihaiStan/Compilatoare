@@ -21,7 +21,7 @@ import cool.structures.Scope;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.LetSymbol;
-import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
@@ -48,7 +48,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
         String parentSymbolName = rfClass.getInheritedTokenType() != null ? rfClass.getInheritedTokenType().getText() : "Object";
 
-        TypeSymbol typeClassSymbol = new TypeSymbol(actualTypeName, parentSymbolName);
+        ClassTypeSymbol typeClassSymbol = new ClassTypeSymbol(actualTypeName, parentSymbolName);
         if (!SymbolTable.globals.add(typeClassSymbol)) {
             SymbolTable.error(rfClass.getContext(), rfClass.getToken(), new StringBuilder().append("Class ").append(actualTypeName).append(" is redefined").toString());
             return null;
@@ -80,19 +80,19 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
         String name = fieldName.getText();
         if (TypeSymbolConstants.SELF_STR.equals(name)) {
-            if (!(currentScope instanceof TypeSymbol))
+            if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to throw error for field " + rfField + " with illegal name self in context " + currentScope);
 
-            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" has attribute with illegal name self").toString());
+            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((ClassTypeSymbol) currentScope).getName()).append(" has attribute with illegal name self").toString());
             return null;
         }
 
         IdSymbol idSymbolName = new IdSymbol(name);
         if (!currentScope.add(idSymbolName)) {
-            if (!(currentScope instanceof TypeSymbol))
+            if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to throw error for symbol with name " + name + " in the context of " + currentScope);
 
-            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines attribute ").append(name).toString());
+            SymbolTable.error(rfField.getContext(), fieldName, new StringBuilder().append("Class ").append(((ClassTypeSymbol) currentScope).getName()).append(" redefines attribute ").append(name).toString());
             return null;
         }
 
@@ -125,10 +125,10 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
                 throw new IllegalStateException("Unable to log error for unaccepted name of parameter " + rfArgument + " in context " + currentScope);
 
             Scope parentScope = currentScope.getParent();
-            if (!(parentScope instanceof TypeSymbol))
+            if (!(parentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to log error for unaccepted name of parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
 
-            SymbolTable.error(rfArgument.getContext(), rfArgument.getName(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" has formal parameter with illegal name self").toString());
+            SymbolTable.error(rfArgument.getContext(), rfArgument.getName(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((ClassTypeSymbol) parentScope).getName()).append(" has formal parameter with illegal name self").toString());
             return null;
         }
 
@@ -138,10 +138,10 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
                 throw new IllegalStateException("Unable to log error for unaccepted SELF_TYPE of parameter " + rfArgument + " in context " + currentScope);
 
             Scope parentScope = currentScope.getParent();
-            if (!(parentScope instanceof TypeSymbol))
+            if (!(parentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to log error for unaccepted SELF_TYPE of parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
 
-            SymbolTable.error(rfArgument.getContext(), rfArgument.getType(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" has formal parameter ").append(name).append(" with illegal type SELF_TYPE").toString());
+            SymbolTable.error(rfArgument.getContext(), rfArgument.getType(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((ClassTypeSymbol) parentScope).getName()).append(" has formal parameter ").append(name).append(" with illegal type SELF_TYPE").toString());
             return null;
         }
 
@@ -151,10 +151,10 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
                 throw new IllegalStateException("Unable to log error for redefined parameter " + rfArgument + " in context " + currentScope);
 
             Scope parentScope = currentScope.getParent();
-            if (!(parentScope instanceof TypeSymbol))
+            if (!(parentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to log error for redefined parameter " + rfArgument + " in context " + currentScope + " due unknown parent scope " + parentScope);
 
-            SymbolTable.error(rfArgument.getContext(), rfArgument.getName(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((TypeSymbol) parentScope).getName()).append(" redefines formal parameter ").append(name).toString());
+            SymbolTable.error(rfArgument.getContext(), rfArgument.getName(), new StringBuilder().append("Method ").append(((MethodSymbol) currentScope).getName()).append(" of class ").append(((ClassTypeSymbol) parentScope).getName()).append(" redefines formal parameter ").append(name).toString());
             return null;
         }
 
@@ -173,10 +173,10 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
         MethodSymbol methodSymbol = new MethodSymbol(name, currentScope);
 
         if (!(currentScope.add(methodSymbol))) {
-            if (!(currentScope instanceof TypeSymbol))
+            if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to log redefined error for method " + name + " in context " + currentScope);
 
-            SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines method ").append(name).toString());
+            SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((ClassTypeSymbol) currentScope).getName()).append(" redefines method ").append(name).toString());
             return null;
         }
 

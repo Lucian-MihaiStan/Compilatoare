@@ -10,13 +10,13 @@ public abstract class RfArithmeticExpression extends RfExpression {
     private final RfExpression lhValue;
     private final RfExpression rhValue;
 
-    private final String arithmeticSymbol;
+    private final Token arithmeticSymbol;
 
     protected RfArithmeticExpression(ParserRuleContext ctx, RfExpression lhValue, RfExpression rhValue, Token token) {
         super(ctx, token);
         this.lhValue = lhValue;
         this.rhValue = rhValue;
-        this.arithmeticSymbol = token.getText();
+        this.arithmeticSymbol = token;
     }
 
     public RfExpression getLhValue() {
@@ -27,7 +27,7 @@ public abstract class RfArithmeticExpression extends RfExpression {
         return rhValue;
     }
 
-    public String getArithmeticSymbol() {
+    public Token getArithmeticSymbol() {
         return arithmeticSymbol;
     }
 

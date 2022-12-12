@@ -2,7 +2,6 @@ package cool.structures;
 
 import java.io.File;
 
-import cool.structures.custom.symbols.TypeSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import org.antlr.v4.runtime.*;
 

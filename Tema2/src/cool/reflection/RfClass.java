@@ -2,7 +2,7 @@ package cool.reflection;
 
 import cool.parser.CoolParser;
 import cool.reflection.feature.RfFeature;
-import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.tree.ASTNode;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
@@ -15,7 +15,7 @@ public class RfClass extends ASTNode {
     private final List<TerminalNode> types;
     private final List<RfFeature> rfFeatures;
 
-    private TypeSymbol typeSymbol;
+    private ClassTypeSymbol classTypeSymbol;
 
     public RfClass(CoolParser.ClassContext ctx, List<TerminalNode> type, List<RfFeature> rfFeatures, Token token) {
         super(ctx, token);
@@ -36,12 +36,12 @@ public class RfClass extends ASTNode {
         return rfFeatures;
     }
 
-    public TypeSymbol getTypeSymbol() {
-        return typeSymbol;
+    public ClassTypeSymbol getTypeSymbol() {
+        return classTypeSymbol;
     }
 
-    public void setTypeSymbol(TypeSymbol typeSymbol) {
-        this.typeSymbol = typeSymbol;
+    public void setTypeSymbol(ClassTypeSymbol classTypeSymbol) {
+        this.classTypeSymbol = classTypeSymbol;
     }
 
     public Token getActualTokenType() {

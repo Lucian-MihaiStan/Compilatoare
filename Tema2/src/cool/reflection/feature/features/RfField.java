@@ -5,7 +5,7 @@ import cool.reflection.expression.RfExpression;
 import cool.reflection.feature.RfFeature;
 import cool.structures.Symbol;
 import cool.structures.custom.symbols.IdSymbol;
-import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
@@ -54,9 +54,9 @@ public class RfField extends RfFeature {
     }
 
     public void setIdSymbolType(Symbol symbolType) {
-        if (!(symbolType instanceof TypeSymbol))
+        if (!(symbolType instanceof ClassTypeSymbol))
             throw new IllegalStateException("Unmatched provided type for type symbol " + symbolType + " in context of field " + this);
 
-        idSymbolName.setTypeSymbol((TypeSymbol) symbolType);
+        idSymbolName.setTypeSymbol((ClassTypeSymbol) symbolType);
     }
 }

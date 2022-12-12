@@ -24,8 +24,8 @@ public class RfRelationalExpression extends RfExpression {
         return lhValue;
     }
 
-    public String getRelationalSymbol() {
-        return token.getText();
+    public Token getRelationalSymbol() {
+        return token;
     }
 
     @Override

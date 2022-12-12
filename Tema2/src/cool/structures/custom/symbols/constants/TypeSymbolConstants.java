@@ -1,6 +1,6 @@
 package cool.structures.custom.symbols.constants;
 
-import cool.structures.custom.symbols.TypeSymbol;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 
 import java.util.Set;
 
@@ -16,16 +16,16 @@ public interface TypeSymbolConstants {
     String SELF_TYPE_STR = "SELF_TYPE";
     Set<String> illegalParents = Set.of(INT_STR, STRING_STR, BOOL_STR, SELF_TYPE_STR);
 
-    TypeSymbol OBJECT = new TypeSymbol(OBJECT_STR, null);
+    ClassTypeSymbol OBJECT = new ClassTypeSymbol(OBJECT_STR, null);
 
-    TypeSymbol INT = new TypeSymbol(INT_STR, OBJECT_STR);
+    ClassTypeSymbol INT = new ClassTypeSymbol(INT_STR, OBJECT_STR);
 
-    TypeSymbol STRING = new TypeSymbol(STRING_STR, OBJECT_STR);
+    ClassTypeSymbol STRING = new ClassTypeSymbol(STRING_STR, OBJECT_STR);
 
-    TypeSymbol BOOL = new TypeSymbol(BOOL_STR, OBJECT_STR);
+    ClassTypeSymbol BOOL = new ClassTypeSymbol(BOOL_STR, OBJECT_STR);
 
-    TypeSymbol IO = new TypeSymbol(IO_STR, OBJECT_STR);
+    ClassTypeSymbol IO = new ClassTypeSymbol(IO_STR, OBJECT_STR);
 
-    TypeSymbol SELF_TYPE = new TypeSymbol(SELF_TYPE_STR, OBJECT_STR);
+    ClassTypeSymbol SELF_TYPE = new ClassTypeSymbol(SELF_TYPE_STR, OBJECT_STR);
 
 }

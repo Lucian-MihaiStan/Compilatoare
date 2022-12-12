@@ -1,9 +1,8 @@
 package cool.compiler;
 
 import cool.visitor.construction.Visitor;
-import cool.visitor.definition.ClassPassVisitor;
-import cool.visitor.definition.DefinitionPassVisitor;
 import cool.visitor.resolution.ResolutionPassVisitor;
+import cool.visitor.definition.DefinitionPassVisitor;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -135,8 +134,8 @@ public class Compiler {
         SymbolTable.defineBasicClasses();
 
         ast.accept(new DefinitionPassVisitor());
-        ast.accept(new ClassPassVisitor());
         ast.accept(new ResolutionPassVisitor());
+//        ast.accept(new ResolutionPassVisitor());
 
         // TODO Semantic analysis
         

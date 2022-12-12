@@ -112,7 +112,7 @@ public interface Visitor {
 
             @Override
             public ASTNode visitId(CoolParser.IdContext ctx) {
-                return new RfId(ctx, ctx.getText(), ctx.ID().getSymbol());
+                return new RfId(ctx, ctx.ID().getSymbol(), ctx.ID().getSymbol());
             }
 
             /**

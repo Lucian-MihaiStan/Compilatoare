@@ -83,13 +83,13 @@ public interface PrintVisitor {
 
             @Override
             public Void visit(RfId rfId) {
-                printIndent(rfId.getValue());
+                printIndent(rfId.getValue().getText());
                 return null;
             }
 
             @Override
             public Void visit(RfArithmeticExpression rfArithmeticExpression) {
-               printIndent(rfArithmeticExpression.getArithmeticSymbol());
+               printIndent(rfArithmeticExpression.getArithmeticSymbol().getText());
                indent++;
                rfArithmeticExpression.getLhValue().accept(this);
                rfArithmeticExpression.getRhValue().accept(this);
@@ -105,7 +105,7 @@ public interface PrintVisitor {
 
             @Override
             public Void visit(RfRelationalExpression rfRelationalExpression) {
-                printIndent(rfRelationalExpression.getRelationalSymbol());
+                printIndent(rfRelationalExpression.getRelationalSymbol().getText());
                 indent++;
                 rfRelationalExpression.getLhValue().accept(this);
                 rfRelationalExpression.getRhValue().accept(this);

@@ -4,17 +4,17 @@ import cool.structures.Symbol;
 
 public class IdSymbol extends Symbol {
 
-    private TypeSymbol typeSymbol;
+    private ClassTypeSymbol classTypeSymbol;
 
     public IdSymbol(String name) {
         super(name);
     }
 
-    public void setTypeSymbol(TypeSymbol typeSymbol) {
-        this.typeSymbol = typeSymbol;
+    public void setTypeSymbol(ClassTypeSymbol classTypeSymbol) {
+        this.classTypeSymbol = classTypeSymbol;
     }
 
-    public TypeSymbol getTypeSymbol() {
-        return typeSymbol;
+    public ClassTypeSymbol getTypeSymbol() {
+        return classTypeSymbol;
     }
 }
