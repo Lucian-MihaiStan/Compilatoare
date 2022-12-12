@@ -30,7 +30,6 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -386,12 +385,72 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfAssignment rfAssignment) {
-        return null;
+        Token id = rfAssignment.getId();
+        if (id == null)
+            throw new IllegalStateException("Unable to locate assigner from " + rfAssignment);
+
+        RfExpression expression = rfAssignment.getExpr();
+        if (expression == null)
+            throw new IllegalStateException("Unable to locate expression of assignment " + rfAssignment);
+
+        // TODO Lucian
+        if (TypeSymbolConstants.SELF_STR.equals(id.getText()))
+            return TypeSymbolConstants.BOOL;
+
+        Symbol expressionSymbol = expression.accept(this);
+        Symbol idSymbol = currentScope.lookup(id.getText());
+
+        if (!(expressionSymbol instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unable to compute class returned type of expression " + expression);
+
+
+        if (!(idSymbol instanceof IdSymbol))
+            throw new IllegalStateException("Unable to locate idSymbol for element " + id);
+
+
+        ClassTypeSymbol typeSymbol = ((IdSymbol) idSymbol).getTypeSymbol();
+
+        if (checkInheritanceType(typeSymbol, (ClassTypeSymbol) expressionSymbol))
+            return TypeSymbolConstants.BOOL;
+
+        if (typeSymbol != expressionSymbol)
+            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getContext().stop, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
+
+        return TypeSymbolConstants.BOOL;
+    }
+
+    private boolean checkInheritanceType(ClassTypeSymbol typeSymbol, ClassTypeSymbol expressionSymbol) {
+        if (typeSymbol == expressionSymbol)
+            return true;
+
+        String parent = expressionSymbol.getParentScopeName();
+        while (parent != null) {
+            if (parent.equals(typeSymbol.getName()))
+                return true;
+
+            Symbol inherited = SymbolTable.globals.lookup(parent);
+            if (!(inherited instanceof ClassTypeSymbol))
+                return false;
+
+            parent = ((ClassTypeSymbol) inherited).getParentScopeName();
+        }
+
+        return false;
     }
 
     @Override
     public Symbol visit(RfNewExpression rfNewExpression) {
-        return null;
+        Token type = rfNewExpression.getType();
+        if (type == null)
+            throw new IllegalStateException("Unable to compute type of new expression " + rfNewExpression);
+
+        Symbol rawType = SymbolTable.globals.lookup(type.getText());
+        if (!(rawType instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unknown found type in global scope " + rawType);
+
+        
+
+        return rawType;
     }
 
     @Override

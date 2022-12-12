@@ -154,7 +154,7 @@ public interface Visitor {
 
             @Override
             public ASTNode visitNew(CoolParser.NewContext ctx) {
-                return new RfNewExpression(ctx, ctx.TYPE().getSymbol().getText(), ctx.start);
+                return new RfNewExpression(ctx, ctx.TYPE().getSymbol(), ctx.start);
             }
 
             /**

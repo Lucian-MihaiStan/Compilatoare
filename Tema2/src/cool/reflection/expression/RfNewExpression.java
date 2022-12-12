@@ -6,14 +6,14 @@ import org.antlr.v4.runtime.Token;
 
 public class RfNewExpression extends RfExpression{
 
-    private final String type;
+    private final Token type;
 
-    public RfNewExpression(CoolParser.NewContext ctx, String type, Token token) {
+    public RfNewExpression(CoolParser.NewContext ctx, Token type, Token token) {
         super(ctx, token);
         this.type = type;
     }
 
-    public String getType() {
+    public Token getType() {
         return type;
     }
 
@@ -24,5 +24,10 @@ public class RfNewExpression extends RfExpression{
 
     public String getSymbol() {
         return token.getText();
+    }
+
+    @Override
+    public String toString() {
+        return "new " + (type == null ? "null" : type.getText());
     }
 }

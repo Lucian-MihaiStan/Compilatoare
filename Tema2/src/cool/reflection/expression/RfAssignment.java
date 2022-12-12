@@ -31,4 +31,9 @@ public class RfAssignment extends RfExpression {
     public String getSymbol() {
         return token.getText();
     }
+
+    @Override
+    public String toString() {
+        return (id == null ? "null" : id.getText()) + " <- " + (expr != null ? expr.toString() : "");
+    }
 }

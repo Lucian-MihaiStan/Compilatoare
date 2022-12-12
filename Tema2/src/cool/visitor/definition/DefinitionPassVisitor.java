@@ -230,6 +230,15 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfAssignment rfAssignment) {
+        Token id = rfAssignment.getId();
+        if (id == null)
+            throw new IllegalStateException("Unable to compute id of assignment");
+
+        if (TypeSymbolConstants.SELF_STR.equals(id.getText())) {
+            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getId(), "Cannot assign to self");
+            return null;
+        }
+
         return null;
     }
 
