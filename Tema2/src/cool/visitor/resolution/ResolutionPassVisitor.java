@@ -494,6 +494,8 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfDispatch rfDispatch) {
+        if (rfDispatch.toString().equals("self.f1([])"))
+            System.out.println("da");
         Token dispatchToken = rfDispatch.getDispatch();
         if (dispatchToken == null)
             throw new IllegalStateException("Unable to locate function name on dispatchToken " + rfDispatch);
@@ -530,9 +532,18 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
                 return TypeSymbolConstants.OBJECT;
             }
 
-            
+            MethodSymbol methodSymbol = ((ClassTypeSymbol) atTypeSymbol).lookUpMethod(dispatchToken.getText());
+            if (methodSymbol != null) {
+                if (!methodSymbol.isResolved())
+                    methodSymbol.resolve();
 
-            symbolToCall = atTypeSymbol;
+                Symbol returnTypeSymbol = methodSymbol.getReturnTypeSymbol();
+                if (!TypeSymbolConstants.SELF_TYPE_STR.equals(returnTypeSymbol.getName()))
+                    symbolToCall = atTypeSymbol;
+            } else {
+                symbolToCall = atTypeSymbol;
+            }
+
         }
 
         if (symbolToCall == null)

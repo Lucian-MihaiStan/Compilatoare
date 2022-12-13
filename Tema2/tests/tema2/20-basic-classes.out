@@ -1,0 +1,12 @@
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "cool.reflection.RfClass.getTypeSymbol()" because "currentInspectedRfClass" is null
+	at cool.visitor.resolution.ResolutionPassVisitor.checkClassHierarchy(ResolutionPassVisitor.java:88)
+	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:55)
+	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:39)
+	at cool.reflection.RfClass.accept(RfClass.java:28)
+	at cool.visitor.resolution.ResolutionPassVisitor.lambda$visit$0(ResolutionPassVisitor.java:45)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:45)
+	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:39)
+	at cool.reflection.RfProgram.accept(RfProgram.java:21)
+	at cool.compiler.Compiler.main(Compiler.java:137)
+	at cool.tester.Tester2.main(Tester2.java:34)
