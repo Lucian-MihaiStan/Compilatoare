@@ -29,6 +29,7 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
@@ -369,7 +370,17 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfCase rfCase) {
-        rfCase.getBranches().forEach(rfCaseBranch -> rfCaseBranch.accept(this));
+        RfExpression condition = rfCase.getToEvaluate();
+        if (condition == null)
+            throw new IllegalStateException("Unable to locate condition of case " + rfCase.getContext());
+
+        condition.accept(this);
+
+        List<RfCase.RfCaseBranch> branches = rfCase.getBranches();
+        if (branches == null)
+            throw new IllegalStateException("Unable to locate branches of case");
+
+        branches.forEach(rfCaseBranch -> rfCaseBranch.accept(this));
         return null;
     }
 

@@ -20,6 +20,7 @@ import cool.reflection.feature.features.RfMethod;
 import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
+import cool.structures.CaseScope;
 import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
@@ -33,6 +34,7 @@ import org.antlr.v4.runtime.Token;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
@@ -424,7 +426,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (!(idSymbol instanceof IdSymbol))
             throw new IllegalStateException("Unable to locate idSymbol for element " + id);
 
-
         ClassTypeSymbol typeSymbol = ((IdSymbol) idSymbol).getTypeSymbol();
 
         if (checkInheritanceType(typeSymbol, (ClassTypeSymbol) expressionSymbol))
@@ -436,7 +437,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         return TypeSymbolConstants.BOOL;
     }
 
-    private boolean checkInheritanceType(ClassTypeSymbol typeSymbol, ClassTypeSymbol expressionSymbol) {
+    private static boolean checkInheritanceType(ClassTypeSymbol typeSymbol, ClassTypeSymbol expressionSymbol) {
         if (typeSymbol == expressionSymbol)
             return true;
 
@@ -590,8 +591,38 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfCase rfCase) {
-        rfCase.getBranches().forEach(rfCaseBranch -> rfCaseBranch.accept(this));
-        return null;
+        RfExpression toEvaluate = rfCase.getToEvaluate();
+        if (toEvaluate == null)
+            throw new IllegalStateException("Unable to locate evaluation of branch " + rfCase.getContext());
+
+        toEvaluate.accept(this);
+
+        List<RfCase.RfCaseBranch> branches = rfCase.getBranches();
+        if (branches == null)
+            throw new IllegalStateException("Unable to locate branched of case " + rfCase.getContext());
+
+        List<Symbol> branchesSymbols = branches.stream().map(rfCaseBranch -> rfCaseBranch.accept(this)).filter(Objects::nonNull).collect(Collectors.toList());
+        if (branchesSymbols.isEmpty())
+            return null;
+
+        Symbol firstBranchSymbol = branchesSymbols.get(0);
+        if (branchesSymbols.size() == 1)
+            return firstBranchSymbol;
+
+        Symbol secondBranchSymbol = branchesSymbols.get(1);
+
+        Symbol commonParent = findCommonParent((ClassTypeSymbol) firstBranchSymbol, (ClassTypeSymbol) secondBranchSymbol);
+        if (commonParent == TypeSymbolConstants.OBJECT)
+            return TypeSymbolConstants.OBJECT;
+
+        for (int i = 2; i < branchesSymbols.size(); i++) {
+            Symbol branchSymbol = branchesSymbols.get(i);
+            commonParent = findCommonParent((ClassTypeSymbol) commonParent, (ClassTypeSymbol) branchSymbol);
+            if (commonParent == TypeSymbolConstants.OBJECT)
+                return TypeSymbolConstants.OBJECT;
+        }
+
+        return commonParent;
     }
 
     @Override
@@ -609,7 +640,26 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             SymbolTable.error(rfCaseBranch.getContext(), rfCaseBranch.getType(), new StringBuilder().append("Case variable ").append(id.getText()).append(" has undefined type ").append(type.getText()).toString());
             return null;
         }
-        return null;
+
+        if (!(symbolType instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unknown evaluation of variable type " + symbolType);
+
+        IdSymbol variableDeclared = new IdSymbol(id.getText());
+        variableDeclared.setTypeSymbol((ClassTypeSymbol) symbolType);
+
+        CaseScope caseScope = new CaseScope(variableDeclared, currentScope);
+
+        Scope initialScope = currentScope;
+        currentScope = caseScope;
+
+        RfExpression expression = rfCaseBranch.getExpression();
+        if (expression == null)
+            throw new IllegalStateException("Unable to find expression case branch for case " + rfCaseBranch.getContext());
+
+        Symbol branchSymbol = expression.accept(this);
+        currentScope = initialScope;
+
+        return branchSymbol;
     }
 
     @Override
