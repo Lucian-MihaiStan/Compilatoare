@@ -429,12 +429,12 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         ClassTypeSymbol typeSymbol = ((IdSymbol) idSymbol).getTypeSymbol();
 
         if (checkInheritanceType(typeSymbol, (ClassTypeSymbol) expressionSymbol))
-            return TypeSymbolConstants.BOOL;
+            return expressionSymbol;
 
         if (typeSymbol != expressionSymbol)
             SymbolTable.error(rfAssignment.getContext(), rfAssignment.getValue().start, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
 
-        return TypeSymbolConstants.BOOL;
+        return expressionSymbol;
     }
 
     private static boolean checkInheritanceType(ClassTypeSymbol typeSymbol, ClassTypeSymbol expressionSymbol) {
@@ -595,8 +595,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (toEvaluate == null)
             throw new IllegalStateException("Unable to locate evaluation of branch " + rfCase.getContext());
 
-        toEvaluate.accept(this);
-
         List<RfCase.RfCaseBranch> branches = rfCase.getBranches();
         if (branches == null)
             throw new IllegalStateException("Unable to locate branched of case " + rfCase.getContext());
@@ -664,7 +662,15 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfBody rfBody) {
-        return null;
+        List<RfExpression> expressions = rfBody.getExpressions();
+        if (expressions == null)
+            throw new IllegalStateException("Unable to evaluate expressions of body " + rfBody.getContext());
+
+        List<Symbol> expressionsSymbols = expressions.stream().map(rfExpression -> rfExpression.accept(this)).filter(Objects::nonNull).collect(Collectors.toList());
+        if (expressionsSymbols.isEmpty())
+            return null;
+
+        return expressionsSymbols.get(expressionsSymbols.size() - 1);
     }
 
 }
