@@ -86,4 +86,8 @@ public class MethodSymbol extends Symbol implements Scope {
         isResolved = true;
         returnTypeSymbol = SymbolTable.globals.lookup(returnTypeName);
     }
+
+    public void setResolved(boolean resolved) {
+        isResolved = resolved;
+    }
 }

@@ -1,12 +1,9 @@
-Exception in thread "main" java.lang.NullPointerException: Cannot invoke "cool.reflection.RfClass.getTypeSymbol()" because "currentInspectedRfClass" is null
-	at cool.visitor.resolution.ResolutionPassVisitor.checkClassHierarchy(ResolutionPassVisitor.java:88)
-	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:55)
-	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:39)
-	at cool.reflection.RfClass.accept(RfClass.java:28)
-	at cool.visitor.resolution.ResolutionPassVisitor.lambda$visit$0(ResolutionPassVisitor.java:45)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:45)
-	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:39)
-	at cool.reflection.RfProgram.accept(RfProgram.java:21)
-	at cool.compiler.Compiler.main(Compiler.java:137)
-	at cool.tester.Tester2.main(Tester2.java:34)
+"20-basic-classes.cl", line 2:16, Semantic error: Type Object of initialization expression of attribute x is incompatible with declared type Int
+"20-basic-classes.cl", line 4:16, Semantic error: Type A of initialization expression of attribute a is incompatible with declared type Int
+"20-basic-classes.cl", line 6:36, Semantic error: Undefined method out_int in class SELF_TYPE
+"20-basic-classes.cl", line 6:47, Semantic error: Undefined method in_string in class Object
+"20-basic-classes.cl", line 6:20, Semantic error: Type Object of initialization expression of attribute s1 is incompatible with declared type String
+"20-basic-classes.cl", line 7:36, Semantic error: Undefined method out_int in class SELF_TYPE
+"20-basic-classes.cl", line 7:47, Semantic error: Undefined method in_int in class Object
+"20-basic-classes.cl", line 7:20, Semantic error: Type Object of initialization expression of attribute s2 is incompatible with declared type String
+Compilation halted

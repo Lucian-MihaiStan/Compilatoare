@@ -24,15 +24,14 @@ import cool.structures.CaseScope;
 import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.LetSymbol;
-import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,6 +83,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
             if (!(parentSymbol instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Undefined parent symbol");
+
+            if (currentInspectedRfClass == null)
+                return;
 
             currentInspectedRfClass.getTypeSymbol().setParentScope((ClassTypeSymbol) parentSymbol);
 

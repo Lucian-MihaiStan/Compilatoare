@@ -35,6 +35,10 @@ public class IdSymbol extends Symbol {
         classTypeSymbol = (ClassTypeSymbol) SymbolTable.globals.lookup(type);
     }
 
+    public void setResolved(boolean resolved) {
+        isResolved = resolved;
+    }
+
     public void setCurrentSelfTypeSymbol(ClassTypeSymbol currentScope) {
         currentTSelfTypeSymbol = currentScope;
     }
