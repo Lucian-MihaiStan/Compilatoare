@@ -66,4 +66,9 @@ public class DefaultScope implements Scope {
     public RfClass getGlobalClassWithName(String name) {
         return globalClasses.get(name);
     }
+
+    @Override
+    public Scope getParentWithClassType(Class<?> clazz) {
+        return null;
+    }
 }

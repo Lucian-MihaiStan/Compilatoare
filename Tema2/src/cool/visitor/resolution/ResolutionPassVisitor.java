@@ -502,7 +502,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         RfExpression objectToCall = rfDispatch.getObjectToCall();
         if (objectToCall != null) {
             if (TypeSymbolConstants.SELF_STR.equals(objectToCall.getToken().getText())) {
-                symbolToCall = (Symbol) currentScope.getParent();
+                symbolToCall = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
             } else {
                 symbolToCall = objectToCall.accept(this);
             }
@@ -529,6 +529,8 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
                 SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type ").append(atType.getText()).append(" of static dispatch is not a superclass of type ").append(symbolToCall.getName()).toString());
                 return TypeSymbolConstants.OBJECT;
             }
+
+            
 
             symbolToCall = atTypeSymbol;
         }
@@ -590,7 +592,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (dispatchToken == null)
             throw new IllegalStateException("Unable to locate name on dispatchToken " + rfImplicitDispatch);
 
-        Scope parentScope = currentScope.getParent();
+        Scope parentScope = currentScope.getParentWithClassType(ClassTypeSymbol.class);
         if (!(parentScope instanceof Symbol))
             throw new IllegalStateException("Unknown evaluation of parent scope " + parentScope);
 

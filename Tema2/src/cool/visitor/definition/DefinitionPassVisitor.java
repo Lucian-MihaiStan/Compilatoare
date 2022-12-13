@@ -408,6 +408,9 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfBody rfBody) {
+        List<RfExpression> expressions = rfBody.getExpressions();
+        if (expressions != null)
+            expressions.forEach(rfExpression -> rfExpression.accept(this));
         return null;
     }
 }

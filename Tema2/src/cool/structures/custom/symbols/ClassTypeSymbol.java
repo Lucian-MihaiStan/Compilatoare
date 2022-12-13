@@ -69,6 +69,11 @@ public class ClassTypeSymbol extends Symbol implements Scope {
         return parentScope;
     }
 
+    @Override
+    public Scope getParentWithClassType(Class<?> clazz) {
+        return this;
+    }
+
     public String getParentScopeName() {
         return parentScope instanceof ClassTypeSymbol ? ((ClassTypeSymbol) parentScope).getName() : null;
     }

@@ -45,4 +45,19 @@ public class LetSymbol extends Symbol implements Scope {
         return enclosingScope;
     }
 
+    @Override
+    public Scope getParentWithClassType(Class<?> clazz) {
+        if (enclosingScope == null)
+            return null;
+
+        Scope currentScope = enclosingScope;
+        while (!clazz.equals(currentScope.getClass())) {
+            currentScope = currentScope.getParent();
+            if (currentScope == null)
+                return null;
+        }
+
+        return currentScope;
+    }
+
 }
