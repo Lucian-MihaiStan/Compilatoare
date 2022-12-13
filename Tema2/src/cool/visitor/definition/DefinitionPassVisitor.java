@@ -93,7 +93,12 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             return null;
         }
 
+
         IdSymbol idSymbolName = new IdSymbol(name, fieldType.getText());
+
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(fieldType.getText()))
+            idSymbolName.setCurrentSelfTypeSymbol((ClassTypeSymbol) currentScope.getParentWithClassType(ClassTypeSymbol.class));
+
         if (!currentScope.add(idSymbolName)) {
             if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to throw error for symbol with name " + name + " in the context of " + currentScope);
@@ -359,6 +364,9 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
         }
 
         IdSymbol idSymbol = new IdSymbol(rfDeclareVariableName.getText(), rfDeclareVariableType.getText());
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(rfDeclareVariableType.getText()))
+            idSymbol.setCurrentSelfTypeSymbol((ClassTypeSymbol) currentScope.getParentWithClassType(ClassTypeSymbol.class));
+
         rfDeclareVariable.setIdSymbol(idSymbol);
 
         RfExpression initializedExpression = rfDeclareVariable.getValue();

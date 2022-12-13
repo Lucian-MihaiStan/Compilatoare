@@ -441,19 +441,26 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         Symbol idSymbol = currentScope.lookup(id.getText());
 
-        if (!(expressionSymbol instanceof ClassTypeSymbol))
-            throw new IllegalStateException("Unable to compute class returned type of expression " + expression);
-
         if (!(idSymbol instanceof IdSymbol))
             throw new IllegalStateException("Unable to locate idSymbol for element " + id);
 
+        ClassTypeSymbol actualTypeSymbol = null;
         ClassTypeSymbol typeSymbol = ((IdSymbol) idSymbol).getTypeSymbol();
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(((IdSymbol) idSymbol).getTypeSymbol().getName())) {
+            actualTypeSymbol = typeSymbol;
+            typeSymbol = ((IdSymbol) idSymbol).getCurrentTSelfTypeSymbol();
+            if (TypeSymbolConstants.SELF_TYPE_STR.equals(expressionSymbol.getName()))
+                expressionSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
+        }
+
+        if (!(expressionSymbol instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unable to compute class returned type of expression " + expression);
 
         if (checkInheritanceType(typeSymbol, (ClassTypeSymbol) expressionSymbol))
             return expressionSymbol;
 
         if (typeSymbol != expressionSymbol)
-            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getValue().start, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
+            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getValue().start, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(actualTypeSymbol != null ? actualTypeSymbol.getName() : typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
 
         return expressionSymbol;
     }
@@ -494,8 +501,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfDispatch rfDispatch) {
-        if (rfDispatch.toString().equals("self.f1([])"))
-            System.out.println("da");
         Token dispatchToken = rfDispatch.getDispatch();
         if (dispatchToken == null)
             throw new IllegalStateException("Unable to locate function name on dispatchToken " + rfDispatch);
