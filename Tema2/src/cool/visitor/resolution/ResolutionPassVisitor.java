@@ -329,6 +329,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         Symbol lhValueSymbol = rfArithmeticExpression.getLhValue().accept(this);
         Symbol rhValueSymbol = rfArithmeticExpression.getRhValue().accept(this);
 
+        if (lhValueSymbol == null || rhValueSymbol == null)
+            return null;
+
         String lhValueSymbolName = lhValueSymbol.getName();
         String rhValueSymbolName = rhValueSymbol.getName();
 
@@ -553,10 +556,10 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         currentScope = letScope;
 
         rfLet.getVars().forEach(rfDeclareVariable -> rfDeclareVariable.accept(this));
-        rfLet.getBody().accept(this);
+        Symbol bodySymbol = rfLet.getBody().accept(this);
 
         currentScope = initialScope;
-        return null;
+        return bodySymbol;
     }
 
     @Override
@@ -584,7 +587,20 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         idSymbol.setTypeSymbol((ClassTypeSymbol) typeSymbol);
 
-        rfDeclareVariable.getValue().accept(this);
+
+        RfExpression value = rfDeclareVariable.getValue();
+        if (value != null) {
+            Symbol initializationExpressionSymbol = value.accept(this);
+            if (initializationExpressionSymbol == null)
+                return null;
+
+            currentScope.add(idSymbol);
+
+            if (!checkInheritanceType((ClassTypeSymbol) typeSymbol, (ClassTypeSymbol) initializationExpressionSymbol))
+                SymbolTable.error(rfDeclareVariable.getContext(), rfDeclareVariable.getValue().getContext().start, new StringBuilder().append("Type ").append(initializationExpressionSymbol.getName()).append(" of initialization expression of identifier ").append(idSymbol.getName()).append(" is incompatible with declared type ").append(idSymbol.getTypeSymbol().getName()).toString());
+        }
+
+        currentScope.add(idSymbol);
 
         return null;
     }
