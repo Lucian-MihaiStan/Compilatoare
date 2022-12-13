@@ -189,7 +189,7 @@ public interface Visitor {
 
             @Override
             public ASTNode visitDispatch(CoolParser.DispatchContext ctx) {
-                return new RfDispatch(ctx, (RfExpression) visit(ctx.obj), ctx.TYPE() != null ? ctx.TYPE().getText() : null, ctx.ID().getSymbol(), ctx.params.stream().map(param -> (RfExpression) visit(param)).collect(Collectors.toList()), ctx.DOT().getSymbol());
+                return new RfDispatch(ctx, (RfExpression) visit(ctx.obj), ctx.TYPE() != null ? ctx.TYPE().getSymbol() : null, ctx.ID().getSymbol(), ctx.params.stream().map(param -> (RfExpression) visit(param)).collect(Collectors.toList()), ctx.DOT().getSymbol());
             }
 
             @Override

@@ -5,23 +5,24 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RfImplicitDispatch extends RfExpression {
     private final Token id;
-    private final List<RfExpression> rfExpressions;
+    private final List<RfExpression> parameters;
 
-    public RfImplicitDispatch(CoolParser.ImplicitDispatchContext ctx, Token id, List<RfExpression> rfExpressions, Token token) {
+    public RfImplicitDispatch(CoolParser.ImplicitDispatchContext ctx, Token id, List<RfExpression> parameters, Token token) {
         super(ctx, token);
         this.id = id;
-        this.rfExpressions = rfExpressions;
+        this.parameters = parameters;
     }
 
     public Token getId() {
         return id;
     }
 
-    public List<RfExpression> getRfExpressions() {
-        return rfExpressions;
+    public List<RfExpression> getParameters() {
+        return parameters;
     }
 
     @Override
@@ -29,4 +30,8 @@ public class RfImplicitDispatch extends RfExpression {
         return visitor.visit(this);
     }
 
+    @Override
+    public String toString() {
+        return (id == null ? "null" : id.getText()) + "(" + parameters.stream().map(Object::toString).collect(Collectors.toList()) + ")";
+    }
 }

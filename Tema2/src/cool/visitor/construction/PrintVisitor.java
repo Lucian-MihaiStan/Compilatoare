@@ -16,6 +16,7 @@ import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
 import cool.visitor.ASTVisitor;
+import org.antlr.v4.runtime.Token;
 
 import java.util.List;
 
@@ -145,12 +146,12 @@ public interface PrintVisitor {
             public Void visit(RfDispatch rfDispatch) {
                 printIndent(rfDispatch.getSymbol());
                 indent++;
-                rfDispatch.getExprStart().accept(this);
-                String type = rfDispatch.getType();
-                if (type != null)
-                   printIndent(type);
-                printIndent(rfDispatch.getId().getText());
-                rfDispatch.getComponents().forEach(rfExpression -> rfExpression.accept(this));
+                rfDispatch.getObjectToCall().accept(this);
+                Token atType = rfDispatch.getAtType();
+                if (atType != null)
+                   printIndent(atType.getText());
+                printIndent(rfDispatch.getDispatch().getText());
+                rfDispatch.getParameters().forEach(rfExpression -> rfExpression.accept(this));
                 indent--;
                 return null;
             }
@@ -160,7 +161,7 @@ public interface PrintVisitor {
                 printIndent("implicit dispatch");
                 indent++;
                 printIndent(rfImplicitDispatch.getId().getText());
-                rfImplicitDispatch.getRfExpressions().forEach(rfExpression -> rfExpression.accept(this));
+                rfImplicitDispatch.getParameters().forEach(rfExpression -> rfExpression.accept(this));
                 indent--;
                 return null;
             }

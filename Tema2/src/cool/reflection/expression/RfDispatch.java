@@ -5,36 +5,37 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RfDispatch extends RfExpression {
 
-    private final RfExpression exprStart;
-    private final String type;
-    private final Token id;
-    private final List<RfExpression> components;
+    private final RfExpression objectToCall;
+    private final Token atType;
+    private final Token dispatchName;
+    private final List<RfExpression> parameters;
 
-    public RfDispatch(CoolParser.DispatchContext ctx, RfExpression exprStart, String type, Token id, List<RfExpression> components, Token token) {
+    public RfDispatch(CoolParser.DispatchContext ctx, RfExpression objectToCall, Token atType, Token dispatchName, List<RfExpression> parameters, Token token) {
         super(ctx, token);
-        this.exprStart = exprStart;
-        this.type = type;
-        this.id = id;
-        this.components = components;
+        this.objectToCall = objectToCall;
+        this.atType = atType;
+        this.dispatchName = dispatchName;
+        this.parameters = parameters;
     }
 
-    public RfExpression getExprStart() {
-        return exprStart;
+    public RfExpression getObjectToCall() {
+        return objectToCall;
     }
 
-    public String getType() {
-        return type;
+    public Token getAtType() {
+        return atType;
     }
 
-    public Token getId() {
-        return id;
+    public Token getDispatch() {
+        return dispatchName;
     }
 
-    public List<RfExpression> getComponents() {
-        return components;
+    public List<RfExpression> getParameters() {
+        return parameters;
     }
 
     public String getSymbol() {
@@ -44,5 +45,10 @@ public class RfDispatch extends RfExpression {
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return objectToCall.toString() + (atType == null ? "" : ("@" + atType.getText())) + "." + (dispatchName == null ? "null" : dispatchName.getText()) + "(" + parameters.stream().map(Object::toString).collect(Collectors.toList()) + ")";
     }
 }

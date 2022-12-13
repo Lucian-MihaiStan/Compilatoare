@@ -124,8 +124,8 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return null;
         }
 
-        Symbol symbolType = SymbolTable.globals.lookup(fieldType.getText());
-        if (symbolType == null) {
+        Symbol fieldSymbolType = SymbolTable.globals.lookup(fieldType.getText());
+        if (fieldSymbolType == null) {
             if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to log error for undefined type " + fieldType.getText() + " of field " + rfField + " in context " + currentScope);
 
@@ -133,10 +133,16 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return null;
         }
 
-        rfField.setIdSymbolType(symbolType);
+        rfField.setIdSymbolType(fieldSymbolType);
 
-        if (rfField.getRfExpression() != null)
-            rfField.getRfExpression().accept(this);
+        if (rfField.getRfExpression() != null) {
+            Symbol initializationSymbol = rfField.getRfExpression().accept(this);
+            if (initializationSymbol == null)
+                return null;
+
+            if (!(checkInheritanceType((ClassTypeSymbol) fieldSymbolType, (ClassTypeSymbol) initializationSymbol)))
+                SymbolTable.error(rfField.getContext(), rfField.getRfExpression().getContext().start, new StringBuilder().append("Type ").append(initializationSymbol.getName()).append(" of initialization expression of attribute ").append(fieldName.getText()).append(" is incompatible with declared type ").append(fieldSymbolType.getName()).toString());
+        }
 
         return null;
     }
@@ -268,18 +274,30 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         Scope initialScope = currentScope;
         currentScope = methodSymbol;
         rfMethod.getArgs().forEach(rfArgument -> rfArgument.accept(this));
-        rfMethod.getRfMethodBody().accept(this);
 
         Scope enclosingClassScope = initialScope.getParent();
         if (enclosingClassScope instanceof ClassTypeSymbol) {
-            Symbol overriddenMethodSymbol = ((ClassTypeSymbol) enclosingClassScope).lookUpMethod(methodSymbol.getName());
-            if (overriddenMethodSymbol instanceof MethodSymbol) {
-                if (checkParameters(rfMethod, methodSymbol, (MethodSymbol) overriddenMethodSymbol, (ClassTypeSymbol) initialScope))
+            MethodSymbol overriddenMethodSymbol = ((ClassTypeSymbol) enclosingClassScope).lookUpMethod(methodSymbol.getName());
+            if (overriddenMethodSymbol != null) {
+                if (checkParameters(rfMethod, methodSymbol, overriddenMethodSymbol, (ClassTypeSymbol) initialScope))
                     return null;
 
-                if (checkReturnType(rfMethod, methodSymbol, (MethodSymbol) overriddenMethodSymbol, (ClassTypeSymbol) initialScope))
+                if (checkReturnType(rfMethod, methodSymbol, overriddenMethodSymbol, (ClassTypeSymbol) initialScope))
                     return null;
             }
+        }
+
+        RfExpression rfMethodBody = rfMethod.getRfMethodBody();
+        if (rfMethodBody != null) {
+            Symbol bodyMethodSymbol = rfMethodBody.accept(this);
+            if (bodyMethodSymbol == null) {
+                currentScope = initialScope;
+                return null;
+            }
+
+            if (!checkInheritanceType((ClassTypeSymbol) returnTypeSymbol, (ClassTypeSymbol) bodyMethodSymbol))
+                SymbolTable.error(rfMethod.getContext(), rfMethodBody.getContext().start, new StringBuilder("Type ").append(bodyMethodSymbol.getName()).append(" of the body of method ").append(methodName.getText()).append(" is incompatible with declared return type ").append(returnTypeSymbol.getName()).toString());
+
         }
 
         // return from depth traversal
@@ -476,7 +494,84 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
     @Override
     public Symbol visit(RfDispatch rfDispatch) {
-        return null;
+        Token dispatchToken = rfDispatch.getDispatch();
+        if (dispatchToken == null)
+            throw new IllegalStateException("Unable to locate function name on dispatchToken " + rfDispatch);
+
+        Symbol symbolToCall = null;
+        RfExpression objectToCall = rfDispatch.getObjectToCall();
+        if (objectToCall != null)
+             symbolToCall = objectToCall.accept(this);
+
+        Token atType = rfDispatch.getAtType();
+        if (atType != null) {
+            String atTypeText = atType.getText();
+            if (TypeSymbolConstants.SELF_TYPE_STR.equals(atTypeText)) {
+                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type of static ").append(dispatchToken.getText()).append("cannot be SELF_TYPE").toString());
+                return TypeSymbolConstants.OBJECT;
+            }
+
+            Symbol atTypeSymbol = SymbolTable.globals.lookup(atTypeText);
+            if (atTypeSymbol == null) {
+                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type ").append(atTypeText).append(" of static ").append(dispatchToken.getText()).append(" is undefined").toString());
+                return TypeSymbolConstants.OBJECT;
+            }
+
+            // TODO Lucian this is just for know until i compute the type of enclosing scope
+            if (symbolToCall == null)
+                return null;
+
+            if (!checkInheritanceType((ClassTypeSymbol) atTypeSymbol, (ClassTypeSymbol) symbolToCall)) {
+                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type ").append(atType.getText()).append(" of static dispatch is not a superclass of type ").append(symbolToCall.getName()).toString());
+                return TypeSymbolConstants.OBJECT;
+            }
+
+            symbolToCall = atTypeSymbol;
+        }
+
+        // TODO Lucian this is just for know until i compute the type of enclosing scope
+        if (symbolToCall == null)
+            return null;
+
+        if (!(symbolToCall instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unknown type of symbol to call " + symbolToCall);
+
+        MethodSymbol methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchToken.getText());
+        if (methodSymbol == null) {
+            SymbolTable.error(rfDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchToken.getText()).append(" in class ").append(symbolToCall.getName()).toString());
+            return TypeSymbolConstants.OBJECT;
+        }
+
+        List<Symbol> parametersSymbols = rfDispatch.getParameters().stream().map(rfExpression -> rfExpression.accept(this)).collect(Collectors.toList());
+
+        Map<String, Symbol> parametersOfDefinition = methodSymbol.getParameters();
+
+        if (parametersSymbols.size() != parametersOfDefinition.size()) {
+            SymbolTable.error(rfDispatch.getContext(), dispatchToken, new StringBuilder().append("Method ").append(dispatchToken.getText()).append(" of class ").append(symbolToCall.getName()).append(" is applied to wrong number of arguments").toString());
+            return TypeSymbolConstants.OBJECT;
+        }
+
+        List<Symbol> parametersOfDefinitionValues = new LinkedList<>(parametersOfDefinition.values());
+
+        for (int i = 0; i < parametersSymbols.size(); ++i){
+//            if (!(checkInheritanceType((ClassTypeSymbol) parametersSymbols.get(i), ((IdSymbol) parametersOfDefinitionValues.get(i)).getTypeSymbol())))
+//                SymbolTable.error(rfDispatch.getContext(), rfDispatch.getParameters().get(i).getToken(), new StringBuilder()
+//                        .append("In call to method ")
+//                        .append(dispatchToken.getText())
+//                        .append(" of class ")
+//                        .append(symbolToCall.getName())
+//                        .append(", actual type ")
+//                        .append(parametersSymbols.get(i).getName()).append(" of formal parameter ").append(parametersOfDefinitionValues.get(i).getName())
+//                                .append(" is incompatible with declared type ").append(((ClassTypeSymbol) parametersOfDefinitionValues.get(i)).getName())
+//                        .toString()
+//                );
+
+        }
+
+        if (methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE)
+            return symbolToCall;
+
+        return methodSymbol.getReturnTypeSymbol();
     }
 
     @Override
