@@ -500,24 +500,28 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         Symbol symbolToCall = null;
         RfExpression objectToCall = rfDispatch.getObjectToCall();
-        if (objectToCall != null)
-             symbolToCall = objectToCall.accept(this);
+        if (objectToCall != null) {
+            if (TypeSymbolConstants.SELF_STR.equals(objectToCall.getToken().getText())) {
+                symbolToCall = (Symbol) currentScope.getParent();
+            } else {
+                symbolToCall = objectToCall.accept(this);
+            }
+        }
 
         Token atType = rfDispatch.getAtType();
         if (atType != null) {
             String atTypeText = atType.getText();
             if (TypeSymbolConstants.SELF_TYPE_STR.equals(atTypeText)) {
-                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type of static ").append(dispatchToken.getText()).append("cannot be SELF_TYPE").toString());
+                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type of static dispatch cannot be SELF_TYPE").toString());
                 return TypeSymbolConstants.OBJECT;
             }
 
             Symbol atTypeSymbol = SymbolTable.globals.lookup(atTypeText);
             if (atTypeSymbol == null) {
-                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type ").append(atTypeText).append(" of static ").append(dispatchToken.getText()).append(" is undefined").toString());
+                SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type ").append(atTypeText).append(" of static dispatch is undefined").toString());
                 return TypeSymbolConstants.OBJECT;
             }
 
-            // TODO Lucian this is just for know until i compute the type of enclosing scope
             if (symbolToCall == null)
                 return null;
 
@@ -529,7 +533,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             symbolToCall = atTypeSymbol;
         }
 
-        // TODO Lucian this is just for know until i compute the type of enclosing scope
         if (symbolToCall == null)
             return null;
 
@@ -541,6 +544,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             SymbolTable.error(rfDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchToken.getText()).append(" in class ").append(symbolToCall.getName()).toString());
             return TypeSymbolConstants.OBJECT;
         }
+
+        if (!methodSymbol.isResolved())
+            methodSymbol.resolve();
 
         List<Symbol> parametersSymbols = rfDispatch.getParameters().stream().map(rfExpression -> rfExpression.accept(this)).collect(Collectors.toList());
 
@@ -554,29 +560,87 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         List<Symbol> parametersOfDefinitionValues = new LinkedList<>(parametersOfDefinition.values());
 
         for (int i = 0; i < parametersSymbols.size(); ++i){
-//            if (!(checkInheritanceType((ClassTypeSymbol) parametersSymbols.get(i), ((IdSymbol) parametersOfDefinitionValues.get(i)).getTypeSymbol())))
-//                SymbolTable.error(rfDispatch.getContext(), rfDispatch.getParameters().get(i).getToken(), new StringBuilder()
-//                        .append("In call to method ")
-//                        .append(dispatchToken.getText())
-//                        .append(" of class ")
-//                        .append(symbolToCall.getName())
-//                        .append(", actual type ")
-//                        .append(parametersSymbols.get(i).getName()).append(" of formal parameter ").append(parametersOfDefinitionValues.get(i).getName())
-//                                .append(" is incompatible with declared type ").append(((ClassTypeSymbol) parametersOfDefinitionValues.get(i)).getName())
-//                        .toString()
-//                );
+            Symbol definitionSymbol = parametersOfDefinitionValues.get(i);
+            if (!(definitionSymbol instanceof IdSymbol))
+                throw new IllegalStateException("Unknown evaluation of parameter " + definitionSymbol);
+
+            if (!((IdSymbol) definitionSymbol).isResolved())
+                ((IdSymbol) definitionSymbol).resolve();
+
+            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i))))
+                SymbolTable.error(rfDispatch.getContext(), rfDispatch.getParameters().get(i).getContext().start, new StringBuilder()
+                        .append("In call to method ")
+                        .append(dispatchToken.getText())
+                        .append(" of class ")
+                        .append(symbolToCall.getName())
+                        .append(", actual type ")
+                        .append(parametersSymbols.get(i).getName()).append(" of formal parameter ").append(definitionSymbol.getName())
+                        .append(" is incompatible with declared type ").append(((IdSymbol) definitionSymbol).getTypeSymbol().getName())
+                        .toString()
+                );
 
         }
 
-        if (methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE)
-            return symbolToCall;
-
-        return methodSymbol.getReturnTypeSymbol();
+        return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
     }
 
     @Override
     public Symbol visit(RfImplicitDispatch rfImplicitDispatch) {
-        return null;
+        Token dispatchToken = rfImplicitDispatch.getDispatch();
+        if (dispatchToken == null)
+            throw new IllegalStateException("Unable to locate name on dispatchToken " + rfImplicitDispatch);
+
+        Scope parentScope = currentScope.getParent();
+        if (!(parentScope instanceof Symbol))
+            throw new IllegalStateException("Unknown evaluation of parent scope " + parentScope);
+
+        Symbol symbolToCall = (Symbol) parentScope;
+        if (!(symbolToCall instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unknown evaluation of symbol " + symbolToCall + " instead of ClassTypeSymbol");
+
+        MethodSymbol methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchToken.getText());
+        if (methodSymbol == null){
+            SymbolTable.error(rfImplicitDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchToken.getText()).append(" in class ").append(symbolToCall.getName()).toString());
+            return TypeSymbolConstants.OBJECT;
+        }
+
+        if (!methodSymbol.isResolved())
+            methodSymbol.resolve();
+
+        List<Symbol> parametersSymbols = rfImplicitDispatch.getParameters().stream().map(rfExpression -> rfExpression.accept(this)).collect(Collectors.toList());
+
+        Map<String, Symbol> parametersOfDefinition = methodSymbol.getParameters();
+
+        if (parametersSymbols.size() != parametersOfDefinition.size()) {
+            SymbolTable.error(rfImplicitDispatch.getContext(), dispatchToken, new StringBuilder().append("Method ").append(dispatchToken.getText()).append(" of class ").append(symbolToCall.getName()).append(" is applied to wrong number of arguments").toString());
+            return TypeSymbolConstants.OBJECT;
+        }
+
+        List<Symbol> parametersOfDefinitionValues = new LinkedList<>(parametersOfDefinition.values());
+
+        for (int i = 0; i < parametersSymbols.size(); ++i){
+            Symbol definitionSymbol = parametersOfDefinitionValues.get(i);
+            if (!(definitionSymbol instanceof IdSymbol))
+                throw new IllegalStateException("Unknown evaluation of parameter " + definitionSymbol);
+
+            if (!((IdSymbol) definitionSymbol).isResolved())
+                ((IdSymbol) definitionSymbol).resolve();
+
+            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i))))
+                SymbolTable.error(rfImplicitDispatch.getContext(), rfImplicitDispatch.getParameters().get(i).getContext().start, new StringBuilder()
+                        .append("In call to method ")
+                        .append(dispatchToken.getText())
+                        .append(" of class ")
+                        .append(symbolToCall.getName())
+                        .append(", actual type ")
+                        .append(parametersSymbols.get(i).getName()).append(" of formal parameter ").append(definitionSymbol.getName())
+                        .append(" is incompatible with declared type ").append(((IdSymbol) definitionSymbol).getTypeSymbol().getName())
+                        .toString()
+                );
+
+        }
+
+        return methodSymbol.getReturnTypeSymbol();
     }
 
     @Override
@@ -753,7 +817,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (!(symbolType instanceof ClassTypeSymbol))
             throw new IllegalStateException("Unknown evaluation of variable type " + symbolType);
 
-        IdSymbol variableDeclared = new IdSymbol(id.getText());
+        IdSymbol variableDeclared = new IdSymbol(id.getText(), type.getText());
         variableDeclared.setTypeSymbol((ClassTypeSymbol) symbolType);
 
         CaseScope caseScope = new CaseScope(variableDeclared, currentScope);

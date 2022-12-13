@@ -2,6 +2,7 @@ package cool.structures.custom.symbols;
 
 import cool.structures.Scope;
 import cool.structures.Symbol;
+import cool.structures.SymbolTable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,11 +11,15 @@ public class MethodSymbol extends Symbol implements Scope {
 
     private final Scope definitionScope;
     private final Map<String, Symbol> parameters = new LinkedHashMap<>();
+    private final String returnTypeName;
+
+    private boolean isResolved;
 
     private Symbol returnTypeSymbol;
 
-    public MethodSymbol(String name, Scope currentScope) {
+    public MethodSymbol(String name, String returnTypeName, Scope currentScope) {
         super(name);
+        this.returnTypeName = returnTypeName;
         definitionScope = currentScope;
     }
 
@@ -46,10 +51,6 @@ public class MethodSymbol extends Symbol implements Scope {
         return definitionScope;
     }
 
-    public Scope getDefinitionScope() {
-        return definitionScope;
-    }
-
     public Map<String, Symbol> getParameters() {
         return parameters;
     }
@@ -60,5 +61,14 @@ public class MethodSymbol extends Symbol implements Scope {
 
     public void setReturnTypeSymbol(Symbol returnTypeSymbol) {
         this.returnTypeSymbol = returnTypeSymbol;
+    }
+
+    public boolean isResolved() {
+        return isResolved;
+    }
+
+    public void resolve() {
+        isResolved = true;
+        returnTypeSymbol = SymbolTable.globals.lookup(returnTypeName);
     }
 }

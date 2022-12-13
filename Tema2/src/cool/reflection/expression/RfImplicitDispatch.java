@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RfImplicitDispatch extends RfExpression {
-    private final Token id;
+    private final Token dispatch;
     private final List<RfExpression> parameters;
 
     public RfImplicitDispatch(CoolParser.ImplicitDispatchContext ctx, Token id, List<RfExpression> parameters, Token token) {
         super(ctx, token);
-        this.id = id;
+        this.dispatch = id;
         this.parameters = parameters;
     }
 
-    public Token getId() {
-        return id;
+    public Token getDispatch() {
+        return dispatch;
     }
 
     public List<RfExpression> getParameters() {
@@ -32,6 +32,6 @@ public class RfImplicitDispatch extends RfExpression {
 
     @Override
     public String toString() {
-        return (id == null ? "null" : id.getText()) + "(" + parameters.stream().map(Object::toString).collect(Collectors.toList()) + ")";
+        return (dispatch == null ? "null" : dispatch.getText()) + "(" + parameters.stream().map(Object::toString).collect(Collectors.toList()) + ")";
     }
 }

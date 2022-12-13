@@ -160,7 +160,7 @@ public interface PrintVisitor {
             public Void visit(RfImplicitDispatch rfImplicitDispatch) {
                 printIndent("implicit dispatch");
                 indent++;
-                printIndent(rfImplicitDispatch.getId().getText());
+                printIndent(rfImplicitDispatch.getDispatch().getText());
                 rfImplicitDispatch.getParameters().forEach(rfExpression -> rfExpression.accept(this));
                 indent--;
                 return null;

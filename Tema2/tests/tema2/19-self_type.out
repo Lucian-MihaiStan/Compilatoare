@@ -1,9 +1,9 @@
 "19-self_type.cl", line 5:11, Semantic error: Method h of class A has formal parameter y with illegal type SELF_TYPE
-Exception in thread "main" java.lang.IllegalStateException: Unable to find let scope cool.reflection.expression.instructions.RfLet@79b4d0f
-	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:647)
+Exception in thread "main" java.lang.IllegalStateException: Unable to find let scope cool.reflection.expression.instructions.RfLet@7a5d012c
+	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:711)
 	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:39)
 	at cool.reflection.expression.instructions.RfLet.accept(RfLet.java:87)
-	at cool.visitor.resolution.ResolutionPassVisitor.lambda$visit$6(ResolutionPassVisitor.java:780)
+	at cool.visitor.resolution.ResolutionPassVisitor.lambda$visit$7(ResolutionPassVisitor.java:844)
 	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:195)
 	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1625)
 	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:484)
@@ -11,7 +11,7 @@ Exception in thread "main" java.lang.IllegalStateException: Unable to find let s
 	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:913)
 	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
 	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:578)
-	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:780)
+	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:844)
 	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:39)
 	at cool.reflection.expression.RfBody.accept(RfBody.java:24)
 	at cool.visitor.resolution.ResolutionPassVisitor.visit(ResolutionPassVisitor.java:292)

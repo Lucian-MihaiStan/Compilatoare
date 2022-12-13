@@ -93,7 +93,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             return null;
         }
 
-        IdSymbol idSymbolName = new IdSymbol(name);
+        IdSymbol idSymbolName = new IdSymbol(name, fieldType.getText());
         if (!currentScope.add(idSymbolName)) {
             if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to throw error for symbol with name " + name + " in the context of " + currentScope);
@@ -151,7 +151,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             return null;
         }
 
-        IdSymbol argSymbol = new IdSymbol(name);
+        IdSymbol argSymbol = new IdSymbol(name, type);
         if (!(currentScope.add(argSymbol))) {
             if (!(currentScope instanceof MethodSymbol))
                 throw new IllegalStateException("Unable to log error for redefined parameter " + rfArgument + " in context " + currentScope);
@@ -176,7 +176,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             throw new IllegalStateException("Unable to find method name in context " + currentScope);
 
         String name = methodName.getText();
-        MethodSymbol methodSymbol = new MethodSymbol(name, currentScope);
+        MethodSymbol methodSymbol = new MethodSymbol(name, rfMethod.getReturnType().getText(), currentScope);
 
         if (!(currentScope.add(methodSymbol))) {
             if (!(currentScope instanceof ClassTypeSymbol))
@@ -358,7 +358,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             return null;
         }
 
-        IdSymbol idSymbol = new IdSymbol(rfDeclareVariableName.getText());
+        IdSymbol idSymbol = new IdSymbol(rfDeclareVariableName.getText(), rfDeclareVariableType.getText());
         rfDeclareVariable.setIdSymbol(idSymbol);
 
         RfExpression initializedExpression = rfDeclareVariable.getValue();
