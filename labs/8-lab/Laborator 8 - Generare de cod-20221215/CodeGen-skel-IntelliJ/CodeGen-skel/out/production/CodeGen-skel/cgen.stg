@@ -1,0 +1,157 @@
+sequence(e) ::= "<e; separator=\"\n\">"
+sequenceSpaced(e) ::= "<e; separator=\"\n\n\">"
+newLine() ::= <<new_line: .asciiz "\n">>
+
+program(data, textFuncs, textMain) ::= <<
+.data
+<data>
+
+.text
+<textFuncs>
+
+main:
+<textMain>
+	li $v0, 10	
+	syscall		#exit
+>>
+
+literal(value) ::= <<
+	li $a0 <value>
+
+	li $v0, 1
+	syscall
+
+	sub $sp,$sp,4
+    sw $a0,($sp)
+
+	li $v0, 4
+	la $a0, new_line
+	syscall
+
+	lw $a0,($sp)
+    addiu $sp,$sp,4
+>>
+
+plus(e1, e2, dStr) ::= <<
+<e1>
+	sw $a0 0($sp)
+	addiu $sp $sp -4
+<e2>
+	lw $t1 4($sp)
+	add $a0 $t1 $a0
+	addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+
+	li $v0, 1
+    syscall
+
+    sub $sp,$sp,4
+    sw $a0,($sp)
+
+    li $v0, 4
+    la $a0, new_line
+    syscall
+
+    lw $a0,($sp)
+    addiu $sp,$sp,4
+>>
+
+uminus(e, dStr) ::= <<
+<e>
+    neg $a0 $a0        <if(dStr)># <dStr><else><endif>
+
+    li $v0, 1
+    syscall
+
+    sub $sp,$sp,4
+    sw $a0,($sp)
+
+    li $v0, 4
+    la $a0, new_line
+    syscall
+
+    lw $a0,($sp)
+    addiu $sp,$sp,4
+>>
+
+minus(e1, e2, dStr) ::= <<
+<e1>
+    sw $a0 0($sp)
+    addiu $sp $sp -4
+<e2>
+    lw $t1 4($sp)
+    neg $a0 $a0
+    add $a0 $t1 $a0
+
+    addiu $sp $sp 4     <if(dStr)># <dStr><else><endif>
+
+    li $v0, 1       # print part
+    syscall
+
+    sub $sp,$sp,4
+    sw $a0,($sp)
+
+    li $v0, 4
+    la $a0, new_line
+    syscall
+
+    lw $a0,($sp)
+    addiu $sp,$sp,4 # restore the result into $a0 which is stored on stack before print
+>>
+
+mult(e1, e2, dStr) ::= <<
+<e1>
+     sw $a0 0($sp)
+     addiu $sp $sp -4
+<e2>
+     lw $t1 4($sp)
+     mult $a0 $t1
+     addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+
+     mfhi $t0
+     mflo $t1
+
+     move $a0 $t1
+
+     li $v0, 1       # print part
+    syscall
+
+    sub $sp,$sp,4
+    sw $a0,($sp)
+
+    li $v0, 4
+    la $a0, new_line
+    syscall
+
+    lw $a0,($sp)
+    addiu $sp,$sp,4 # restore the result into $a0 which is stored on stack before print
+
+>>
+
+div(e1, e2, dStr) ::= <<
+<e1>
+    sw $a0 0($sp)
+    addiu $sp $sp -4
+<e2>
+    lw $t1 4($sp)
+     div $t1 $a0
+     addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+
+     mfhi $t0               # rest
+     mflo $t1               # cat
+
+     move $a0 $t1
+
+     li $v0, 1       # print part
+     syscall
+
+     sub $sp,$sp,4
+     sw $a0,($sp)
+
+     li $v0, 4
+     la $a0, new_line
+     syscall
+
+     lw $a0,($sp)
+     addiu $sp,$sp,4 # restore the result into $a0 which is stored on stack before print
+
+>>
