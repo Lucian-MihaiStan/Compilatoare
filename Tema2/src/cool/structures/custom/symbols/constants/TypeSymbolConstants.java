@@ -29,8 +29,6 @@ public interface TypeSymbolConstants {
 
     ClassTypeSymbol SELF_TYPE = new ClassTypeSymbol(SELF_TYPE_STR, OBJECT);
 
-    SelfSymbol SELF_SYMBOL = new SelfSymbol(SELF_STR);
-
     Set<Symbol> illegalParents = Set.of(INT, STRING, BOOL, SELF_TYPE);
 
 }

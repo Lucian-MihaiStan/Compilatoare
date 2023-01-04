@@ -20,10 +20,7 @@ import cool.reflection.feature.features.RfMethod;
 import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
-import cool.structures.CaseScope;
-import cool.structures.Scope;
-import cool.structures.Symbol;
-import cool.structures.SymbolTable;
+import cool.structures.*;
 import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.LetSymbol;
@@ -32,7 +29,6 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,8 +137,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         if (rfField.getRfExpression() != null) {
             Symbol initializationSymbol = rfField.getRfExpression().accept(this);
-            if (initializationSymbol == TypeSymbolConstants.SELF_SYMBOL)
-                return null;
+            // TODO Lucian what is this
+            if (initializationSymbol instanceof SelfSymbol)
+                initializationSymbol = ((SelfSymbol) initializationSymbol).getScope();
 
             if (initializationSymbol == null)
                 return null;
@@ -209,7 +206,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         Symbol overriddenReturnTypeSymbol = overriddenMethodSymbol.getReturnTypeSymbol();
 
         if (!overriddenReturnTypeSymbol.getName().equals(returnTypeSymbol.getName())) {
-            SymbolTable.error(rfMethod.getContext(), rfMethod.getReturnType(), new StringBuilder().append("Class ").append(((ClassTypeSymbol) scope).getName()).append(" overrides method ").append(rfMethod.getName().getText()).append(" but changes return type from ").append(overriddenReturnTypeSymbol.getName()).append(" to ").append(returnTypeSymbol.getName()).toString());
+            SymbolTable.error(rfMethod.getContext(), rfMethod.getReturnType(), new StringBuilder().append("Class ").append(scope.getName()).append(" overrides method ").append(rfMethod.getName().getText()).append(" but changes return type from ").append(overriddenReturnTypeSymbol.getName()).append(" to ").append(returnTypeSymbol.getName()).toString());
             return true;
         }
 
@@ -221,7 +218,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         Map<String, Symbol> overriddenParameters = overriddenMethodSymbol.getParameters();
 
         if (overriddenParameters.size() != parameters.size()) {
-            SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(((ClassTypeSymbol) scope).getName()).append(" overrides method ").append(methodSymbol.getName()).append(" with different number of formal parameters").toString());
+            SymbolTable.error(rfMethod.getContext(), rfMethod.getName(), new StringBuilder().append("Class ").append(scope.getName()).append(" overrides method ").append(methodSymbol.getName()).append(" with different number of formal parameters").toString());
             return true;
         }
 
@@ -249,7 +246,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
                 List<RfArgument> parametersMethod = rfMethod.getArgs();
 
-                SymbolTable.error(rfMethod.getContext(), parametersMethod.get(i).getType(), new StringBuilder("Class ").append(((ClassTypeSymbol) scope).getName()).append(" overrides method ").append(rfMethod.getName().getText()).append(" but changes type of formal parameter ").append(parameter.getKey()).append(" from ").append(overriddenParameterTypeSymbolName).append(" to ").append(parameterTypeSymbolName).toString());
+                SymbolTable.error(rfMethod.getContext(), parametersMethod.get(i).getType(), new StringBuilder("Class ").append(scope.getName()).append(" overrides method ").append(rfMethod.getName().getText()).append(" but changes type of formal parameter ").append(parameter.getKey()).append(" from ").append(overriddenParameterTypeSymbolName).append(" to ").append(parameterTypeSymbolName).toString());
                 return true;
             }
         }
@@ -304,7 +301,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
 
             // TOOD Lucian you have to check here if the self type is well checked
-            if (bodyMethodSymbol == TypeSymbolConstants.SELF_SYMBOL) {
+            if (bodyMethodSymbol instanceof SelfSymbol) {
                 currentScope = initialScope;
                 return null;
             }
@@ -338,7 +335,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         // TODO Lucian
         if (TypeSymbolConstants.SELF_STR.equals(idToken.getText()))
-            return TypeSymbolConstants.SELF_SYMBOL;
+            return new SelfSymbol(TypeSymbolConstants.SELF_STR, currentScope);
 
         Symbol symbol = currentScope.lookup(idToken.getText());
         if (symbol == null) {
@@ -467,8 +464,11 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
                 expressionSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
         }
 
-        if (!(expressionSymbol instanceof ClassTypeSymbol))
+        if (!(expressionSymbol instanceof ClassTypeSymbol) && !(expressionSymbol instanceof SelfSymbol))
             throw new IllegalStateException("Unable to compute class returned type of expression " + expression);
+
+        if (expressionSymbol instanceof SelfSymbol)
+            expressionSymbol = ((SelfSymbol) expressionSymbol).getScope();
 
         if (checkInheritanceType(typeSymbol, (ClassTypeSymbol) expressionSymbol))
             return expressionSymbol;
@@ -523,7 +523,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         RfExpression objectToCall = rfDispatch.getObjectToCall();
         if (objectToCall != null) {
             if (TypeSymbolConstants.SELF_STR.equals(objectToCall.getToken().getText())) {
-                symbolToCall = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
+                symbolToCall = new SelfSymbol(TypeSymbolConstants.SELF_STR, currentScope.getParentWithClassType(ClassTypeSymbol.class));
             } else {
                 symbolToCall = objectToCall.accept(this);
             }
@@ -568,13 +568,28 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (symbolToCall == null)
             return null;
 
-        if (!(symbolToCall instanceof ClassTypeSymbol))
+        if (!(symbolToCall instanceof ClassTypeSymbol) && !(symbolToCall instanceof SelfSymbol))
             throw new IllegalStateException("Unknown type of symbol to call " + symbolToCall);
 
-        if (symbolToCall.getName().equals("SELF_TYPE"))
-            System.err.println("DA");
+        MethodSymbol methodSymbol = null;
+        if (symbolToCall.getName().equals(TypeSymbolConstants.SELF_TYPE_STR)) {
+            Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
+            if (!(parentWithClassType instanceof ClassTypeSymbol))
+                throw new IllegalStateException("Unable to compute enclosing class symbol");
 
-        MethodSymbol methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchToken.getText());
+            methodSymbol = ((ClassTypeSymbol) parentWithClassType).lookUpMethod(dispatchToken.getText());
+        } else if (symbolToCall instanceof SelfSymbol) {
+            ClassTypeSymbol parentWithClassType = ((SelfSymbol) symbolToCall).getScope();
+            if (parentWithClassType == null)
+                throw new IllegalStateException("Unable to locate class type symbol of method " + dispatchToken.getText());
+
+            methodSymbol = parentWithClassType.lookUpMethod(dispatchToken.getText());
+
+        } else {
+
+            methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchToken.getText());
+        }
+
         if (methodSymbol == null) {
             SymbolTable.error(rfDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchToken.getText()).append(" in class ").append(symbolToCall.getName()).toString());
             return TypeSymbolConstants.OBJECT;
@@ -602,18 +617,27 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             if (!((IdSymbol) definitionSymbol).isResolved())
                 ((IdSymbol) definitionSymbol).resolve();
 
-            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i))))
+            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i)))) {
+                String className = symbolToCall.getName();
+                if (TypeSymbolConstants.SELF_STR.equals(className)) {
+                    Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
+                    if (!(parentWithClassType instanceof ClassTypeSymbol))
+                        throw new IllegalStateException("Unable to compute enclosing class of method " + rfDispatch.getDispatch().getText());
+
+                    className = ((ClassTypeSymbol) parentWithClassType).getName();
+                }
+
                 SymbolTable.error(rfDispatch.getContext(), rfDispatch.getParameters().get(i).getContext().start, new StringBuilder()
                         .append("In call to method ")
                         .append(dispatchToken.getText())
                         .append(" of class ")
-                        .append(symbolToCall.getName())
+                        .append(className)
                         .append(", actual type ")
                         .append(parametersSymbols.get(i).getName()).append(" of formal parameter ").append(definitionSymbol.getName())
                         .append(" is incompatible with declared type ").append(((IdSymbol) definitionSymbol).getTypeSymbol().getName())
                         .toString()
                 );
-
+            }
         }
 
         return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
@@ -633,9 +657,10 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (!(symbolToCall instanceof ClassTypeSymbol))
             throw new IllegalStateException("Unknown evaluation of symbol " + symbolToCall + " instead of ClassTypeSymbol");
 
-        MethodSymbol methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchToken.getText());
+        String dispatchTokenName = dispatchToken.getText();
+        MethodSymbol methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchTokenName);
         if (methodSymbol == null){
-            SymbolTable.error(rfImplicitDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchToken.getText()).append(" in class ").append(symbolToCall.getName()).toString());
+            SymbolTable.error(rfImplicitDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchTokenName).append(" in class ").append(symbolToCall.getName()).toString());
             return TypeSymbolConstants.OBJECT;
         }
 
@@ -647,7 +672,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         Map<String, Symbol> parametersOfDefinition = methodSymbol.getParameters();
 
         if (parametersSymbols.size() != parametersOfDefinition.size()) {
-            SymbolTable.error(rfImplicitDispatch.getContext(), dispatchToken, new StringBuilder().append("Method ").append(dispatchToken.getText()).append(" of class ").append(symbolToCall.getName()).append(" is applied to wrong number of arguments").toString());
+            SymbolTable.error(rfImplicitDispatch.getContext(), dispatchToken, new StringBuilder().append("Method ").append(dispatchTokenName).append(" of class ").append(symbolToCall.getName()).append(" is applied to wrong number of arguments").toString());
             return TypeSymbolConstants.OBJECT;
         }
 
@@ -661,17 +686,28 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             if (!((IdSymbol) definitionSymbol).isResolved())
                 ((IdSymbol) definitionSymbol).resolve();
 
-            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i))))
+            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i)))) {
+                String className = symbolToCall.getName();
+                if (TypeSymbolConstants.SELF_STR.equals(className)) {
+                    Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
+                    if (!(parentWithClassType instanceof ClassTypeSymbol))
+                        throw new IllegalStateException("Unable to compute enclosing class of method " + rfImplicitDispatch.getDispatch().getText());
+
+                    className = ((ClassTypeSymbol) parentWithClassType).getName();
+                }
+
+
                 SymbolTable.error(rfImplicitDispatch.getContext(), rfImplicitDispatch.getParameters().get(i).getContext().start, new StringBuilder()
                         .append("In call to method ")
-                        .append(dispatchToken.getText())
+                        .append(dispatchTokenName)
                         .append(" of class ")
-                        .append(symbolToCall.getName())
+                        .append(className)
                         .append(", actual type ")
                         .append(parametersSymbols.get(i).getName()).append(" of formal parameter ").append(definitionSymbol.getName())
                         .append(" is incompatible with declared type ").append(((IdSymbol) definitionSymbol).getTypeSymbol().getName())
                         .toString()
                 );
+            }
 
         }
 
@@ -700,7 +736,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         Symbol elseBranchSymbol = elseBranch.accept(this);
 
-        if (thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL && elseBranchSymbol == TypeSymbolConstants.SELF_SYMBOL) {
+        if (thenBranchSymbol instanceof SelfSymbol && elseBranchSymbol instanceof SelfSymbol) {
             Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
             if (!(parentWithClassType instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to compute enclosing class symbol");
@@ -708,9 +744,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return SymbolTable.globals.lookup(((ClassTypeSymbol) parentWithClassType).getName());
         }
 
-        if (thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL || elseBranchSymbol == TypeSymbolConstants.SELF_SYMBOL) {
-            List<Symbol> selfReplace = thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL ? computePossibleSelfTypes(thenBranchSymbol) : computePossibleSelfTypes(elseBranchSymbol);
-            Symbol otherSymbolBranch = thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL ? elseBranchSymbol : thenBranchSymbol;
+        if (thenBranchSymbol instanceof SelfSymbol  || elseBranchSymbol instanceof SelfSymbol) {
+            List<Symbol> selfReplace = thenBranchSymbol instanceof SelfSymbol ? computePossibleSelfTypes((SelfSymbol) thenBranchSymbol) : computePossibleSelfTypes((SelfSymbol) elseBranchSymbol);
+            Symbol otherSymbolBranch = thenBranchSymbol instanceof SelfSymbol ? elseBranchSymbol : thenBranchSymbol;
 
             if (otherSymbolBranch == TypeSymbolConstants.SELF_TYPE)
                 return selfReplace.get(0);
@@ -726,14 +762,13 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         return findCommonParent((ClassTypeSymbol) thenBranchSymbol, (ClassTypeSymbol) elseBranchSymbol);
     }
 
-    private List<Symbol> computePossibleSelfTypes(Symbol symbol) {
+    private List<Symbol> computePossibleSelfTypes(SelfSymbol symbol) {
         List<Symbol> possibleTypes = new LinkedList<>();
 
-        Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
-        if (!(parentWithClassType instanceof ClassTypeSymbol))
-            throw new IllegalStateException("Unable to compute enclosing scope of symbol " + symbol);
+        ClassTypeSymbol classTypeSymbol = symbol.getScope();
+        if (classTypeSymbol == null)
+            throw new IllegalStateException("Unable to compute class scope of symbol self type");
 
-        ClassTypeSymbol classTypeSymbol = (ClassTypeSymbol) parentWithClassType;
         possibleTypes.add(classTypeSymbol);
 
         while (classTypeSymbol != null) {

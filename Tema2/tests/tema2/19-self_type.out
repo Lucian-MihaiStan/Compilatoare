@@ -1,4 +1,5 @@
 "19-self_type.cl", line 5:11, Semantic error: Method h of class A has formal parameter y with illegal type SELF_TYPE
+"19-self_type.cl", line 2:22, Semantic error: Type A of initialization expression of attribute x is incompatible with declared type SELF_TYPE
 "19-self_type.cl", line 7:35, Semantic error: Operand of + has type SELF_TYPE instead of Int
 "19-self_type.cl", line 10:18, Semantic error: Type Object of assigned expression is incompatible with declared type SELF_TYPE of identifier x
 "19-self_type.cl", line 12:18, Semantic error: Type SELF_TYPE of assigned expression is incompatible with declared type Int of identifier u
