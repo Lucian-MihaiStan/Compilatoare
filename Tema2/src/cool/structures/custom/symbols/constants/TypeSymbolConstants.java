@@ -1,5 +1,6 @@
 package cool.structures.custom.symbols.constants;
 
+import cool.structures.SelfSymbol;
 import cool.structures.Symbol;
 import cool.structures.custom.symbols.ClassTypeSymbol;
 
@@ -27,6 +28,8 @@ public interface TypeSymbolConstants {
     ClassTypeSymbol IO = new ClassTypeSymbol(IO_STR, OBJECT);
 
     ClassTypeSymbol SELF_TYPE = new ClassTypeSymbol(SELF_TYPE_STR, OBJECT);
+
+    SelfSymbol SELF_SYMBOL = new SelfSymbol(SELF_STR);
 
     Set<Symbol> illegalParents = Set.of(INT, STRING, BOOL, SELF_TYPE);
 

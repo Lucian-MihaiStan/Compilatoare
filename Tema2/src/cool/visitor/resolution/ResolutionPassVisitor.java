@@ -32,6 +32,7 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -126,12 +127,13 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             return null;
         }
 
-        Symbol fieldSymbolType = SymbolTable.globals.lookup(fieldType.getText());
+        String typeName = fieldType.getText();
+        Symbol fieldSymbolType = SymbolTable.globals.lookup(typeName);
         if (fieldSymbolType == null) {
             if (!(currentScope instanceof ClassTypeSymbol))
-                throw new IllegalStateException("Unable to log error for undefined type " + fieldType.getText() + " of field " + rfField + " in context " + currentScope);
+                throw new IllegalStateException("Unable to log error for undefined type " + typeName + " of field " + rfField + " in context " + currentScope);
 
-            SymbolTable.error(rfField.getContext(), fieldType, new StringBuilder().append("Class ").append(((ClassTypeSymbol) currentScope).getName()).append(" has attribute ").append(fieldName.getText()).append(" with undefined type ").append(fieldType.getText()).toString());
+            SymbolTable.error(rfField.getContext(), fieldType, new StringBuilder().append("Class ").append(((ClassTypeSymbol) currentScope).getName()).append(" has attribute ").append(fieldName.getText()).append(" with undefined type ").append(typeName).toString());
             return null;
         }
 
@@ -139,6 +141,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         if (rfField.getRfExpression() != null) {
             Symbol initializationSymbol = rfField.getRfExpression().accept(this);
+            if (initializationSymbol == TypeSymbolConstants.SELF_SYMBOL)
+                return null;
+
             if (initializationSymbol == null)
                 return null;
 
@@ -297,6 +302,13 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
                 return null;
             }
 
+
+            // TOOD Lucian you have to check here if the self type is well checked
+            if (bodyMethodSymbol == TypeSymbolConstants.SELF_SYMBOL) {
+                currentScope = initialScope;
+                return null;
+            }
+
             if (!checkInheritanceType((ClassTypeSymbol) returnTypeSymbol, (ClassTypeSymbol) bodyMethodSymbol))
                 SymbolTable.error(rfMethod.getContext(), rfMethodBody.getContext().start, new StringBuilder("Type ").append(bodyMethodSymbol.getName()).append(" of the body of method ").append(methodName.getText()).append(" is incompatible with declared return type ").append(returnTypeSymbol.getName()).toString());
 
@@ -326,7 +338,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         // TODO Lucian
         if (TypeSymbolConstants.SELF_STR.equals(idToken.getText()))
-            return null;
+            return TypeSymbolConstants.SELF_SYMBOL;
 
         Symbol symbol = currentScope.lookup(idToken.getText());
         if (symbol == null) {
@@ -559,6 +571,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (!(symbolToCall instanceof ClassTypeSymbol))
             throw new IllegalStateException("Unknown type of symbol to call " + symbolToCall);
 
+        if (symbolToCall.getName().equals("SELF_TYPE"))
+            System.err.println("DA");
+
         MethodSymbol methodSymbol = ((ClassTypeSymbol) symbolToCall).lookUpMethod(dispatchToken.getText());
         if (methodSymbol == null) {
             SymbolTable.error(rfDispatch.getContext(), dispatchToken, new StringBuilder().append("Undefined method ").append(dispatchToken.getText()).append(" in class ").append(symbolToCall.getName()).toString());
@@ -685,7 +700,49 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         Symbol elseBranchSymbol = elseBranch.accept(this);
 
+        if (thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL && elseBranchSymbol == TypeSymbolConstants.SELF_SYMBOL) {
+            Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
+            if (!(parentWithClassType instanceof ClassTypeSymbol))
+                throw new IllegalStateException("Unable to compute enclosing class symbol");
+
+            return SymbolTable.globals.lookup(((ClassTypeSymbol) parentWithClassType).getName());
+        }
+
+        if (thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL || elseBranchSymbol == TypeSymbolConstants.SELF_SYMBOL) {
+            List<Symbol> selfReplace = thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL ? computePossibleSelfTypes(thenBranchSymbol) : computePossibleSelfTypes(elseBranchSymbol);
+            Symbol otherSymbolBranch = thenBranchSymbol == TypeSymbolConstants.SELF_SYMBOL ? elseBranchSymbol : thenBranchSymbol;
+
+            if (otherSymbolBranch == TypeSymbolConstants.SELF_TYPE)
+                return selfReplace.get(0);
+
+            for (Symbol symbolSelfReplace : selfReplace) {
+                if (symbolSelfReplace == otherSymbolBranch)
+                    return symbolSelfReplace;
+            }
+
+            return TypeSymbolConstants.OBJECT;
+        }
+
         return findCommonParent((ClassTypeSymbol) thenBranchSymbol, (ClassTypeSymbol) elseBranchSymbol);
+    }
+
+    private List<Symbol> computePossibleSelfTypes(Symbol symbol) {
+        List<Symbol> possibleTypes = new LinkedList<>();
+
+        Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
+        if (!(parentWithClassType instanceof ClassTypeSymbol))
+            throw new IllegalStateException("Unable to compute enclosing scope of symbol " + symbol);
+
+        ClassTypeSymbol classTypeSymbol = (ClassTypeSymbol) parentWithClassType;
+        possibleTypes.add(classTypeSymbol);
+
+        while (classTypeSymbol != null) {
+            classTypeSymbol = (ClassTypeSymbol) classTypeSymbol.getParent();
+            if (classTypeSymbol != null)
+                possibleTypes.add(classTypeSymbol);
+        }
+
+        return possibleTypes;
     }
 
     private static Symbol findCommonParent(ClassTypeSymbol thenBranchSymbol, ClassTypeSymbol elseBranchSymbol) {
