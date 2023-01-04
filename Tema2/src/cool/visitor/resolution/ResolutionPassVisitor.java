@@ -29,6 +29,7 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -125,6 +126,10 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         String typeName = fieldType.getText();
         Symbol fieldSymbolType = SymbolTable.globals.lookup(typeName);
+
+        if (fieldSymbolType == TypeSymbolConstants.SELF_TYPE)
+            fieldSymbolType = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
+
         if (fieldSymbolType == null) {
             if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to log error for undefined type " + typeName + " of field " + rfField + " in context " + currentScope);
@@ -470,11 +475,17 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (expressionSymbol instanceof SelfSymbol)
             expressionSymbol = ((SelfSymbol) expressionSymbol).getScope();
 
+        boolean exprReturnedSelfType = false;
+        if (expressionSymbol == TypeSymbolConstants.SELF_TYPE) {
+            expressionSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
+            exprReturnedSelfType = true;
+        }
+
         if (checkInheritanceType(typeSymbol, (ClassTypeSymbol) expressionSymbol))
             return expressionSymbol;
 
         if (typeSymbol != expressionSymbol)
-            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getValue().start, new StringBuilder("Type ").append(expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(actualTypeSymbol != null ? actualTypeSymbol.getName() : typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
+            SymbolTable.error(rfAssignment.getContext(), rfAssignment.getValue().start, new StringBuilder("Type ").append(exprReturnedSelfType ? TypeSymbolConstants.SELF_TYPE_STR : expressionSymbol.getName()).append(" of assigned expression is incompatible with declared type ").append(TypeSymbolConstants.SELF_TYPE_STR.equals(((IdSymbol) idSymbol).getRawTypeSymbolName()) ? TypeSymbolConstants.SELF_TYPE_STR : actualTypeSymbol != null ? actualTypeSymbol.getName() : typeSymbol.getName()).append(" of identifier ").append(idSymbol.getName()).toString());
 
         return expressionSymbol;
     }
@@ -640,7 +651,8 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             }
         }
 
-        return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
+//        return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
+        return methodSymbol.getReturnTypeSymbol();
     }
 
     @Override

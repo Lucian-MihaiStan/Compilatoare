@@ -26,6 +26,10 @@ public class IdSymbol extends Symbol {
         return classTypeSymbol;
     }
 
+    public String getRawTypeSymbolName() {
+        return type;
+    }
+
     public boolean isResolved() {
         return isResolved;
     }
