@@ -584,11 +584,24 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         MethodSymbol methodSymbol = null;
         if (symbolToCall.getName().equals(TypeSymbolConstants.SELF_TYPE_STR)) {
-            Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
-            if (!(parentWithClassType instanceof ClassTypeSymbol))
-                throw new IllegalStateException("Unable to compute enclosing class symbol");
 
-            methodSymbol = ((ClassTypeSymbol) parentWithClassType).lookUpMethod(dispatchToken.getText());
+            RfExpression toCall = rfDispatch.getObjectToCall();
+            while (toCall instanceof RfDispatch)
+                toCall = ((RfDispatch) toCall).getObjectToCall();
+
+            Symbol toCallClassSymbol = null;
+            if (toCall instanceof RfImplicitDispatch) {
+                toCallClassSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
+            } else {
+                toCallClassSymbol = toCall.accept(this);
+            }
+
+            symbolToCall = toCallClassSymbol;
+
+            if (toCallClassSymbol instanceof SelfSymbol)
+                toCallClassSymbol = ((SelfSymbol) toCallClassSymbol).getScope();
+
+            methodSymbol = ((ClassTypeSymbol) toCallClassSymbol).lookUpMethod(dispatchToken.getText());
         } else if (symbolToCall instanceof SelfSymbol) {
             ClassTypeSymbol parentWithClassType = ((SelfSymbol) symbolToCall).getScope();
             if (parentWithClassType == null)
@@ -628,7 +641,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             if (!((IdSymbol) definitionSymbol).isResolved())
                 ((IdSymbol) definitionSymbol).resolve();
 
-            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i)))) {
+            ClassTypeSymbol definitionParameterType = ((IdSymbol) definitionSymbol).getTypeSymbol();
+            ClassTypeSymbol expressionParameterType = (ClassTypeSymbol) parametersSymbols.get(i);
+            if (!(checkInheritanceType(definitionParameterType, expressionParameterType))) {
                 String className = symbolToCall.getName();
                 if (TypeSymbolConstants.SELF_STR.equals(className)) {
                     Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);

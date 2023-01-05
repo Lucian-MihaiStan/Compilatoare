@@ -40,7 +40,7 @@ public class SymbolTable {
         concat.setReturnTypeSymbol(TypeSymbolConstants.STRING);
         concat.setResolved(true);
 
-        IdSymbol xString = new IdSymbol("x", TypeSymbolConstants.STRING_STR);
+        IdSymbol xString = new IdSymbol("s", TypeSymbolConstants.STRING_STR);
         xString.setTypeSymbol(TypeSymbolConstants.STRING);
 
         concat.add(xString);
@@ -59,14 +59,14 @@ public class SymbolTable {
         substr.setReturnTypeSymbol(TypeSymbolConstants.STRING);
         substr.setResolved(true);
 
-        IdSymbol index = new IdSymbol("index", TypeSymbolConstants.INT_STR);
+        IdSymbol index = new IdSymbol("i", TypeSymbolConstants.INT_STR);
         index.setTypeSymbol(TypeSymbolConstants.INT);
         index.setResolved(true);
 
         substr.add(index);
 
-        IdSymbol str = new IdSymbol("str", TypeSymbolConstants.STRING_STR);
-        str.setTypeSymbol(TypeSymbolConstants.STRING);
+        IdSymbol str = new IdSymbol("l", TypeSymbolConstants.INT_STR);
+        str.setTypeSymbol(TypeSymbolConstants.INT);
         str.setResolved(true);
 
         substr.add(str);

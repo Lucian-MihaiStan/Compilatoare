@@ -4,6 +4,7 @@
 "19-self_type.cl", line 12:18, Semantic error: Type SELF_TYPE of assigned expression is incompatible with declared type Int of identifier u
 "19-self_type.cl", line 6:9, Semantic error: Type Int of the body of method h is incompatible with declared return type SELF_TYPE
 "19-self_type.cl", line 34:19, Semantic error: Undefined method g in class A
+"19-self_type.cl", line 35:24, Semantic error: Undefined method g in class A
 "19-self_type.cl", line 43:24, Semantic error: Undefined method g in class A
 "19-self_type.cl", line 46:21, Semantic error: Undefined method g in class A
 "19-self_type.cl", line 56:24, Semantic error: Type D of the body of method f1 is incompatible with declared return type SELF_TYPE
