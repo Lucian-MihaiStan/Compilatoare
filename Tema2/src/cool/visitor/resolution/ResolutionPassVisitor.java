@@ -29,7 +29,6 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -175,19 +174,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if  (argumentType == null)
             throw new IllegalStateException("Unable to find type token for field " + rfArgument);
 
-//        Scope parent = currentScope.getParent();
-//        if (parent == null)
-//            throw new IllegalStateException("Unable to locate parent scope of scope " + currentScope);
-
-//        Symbol symbolInherited = parent.lookup(argumentName.getText());
-//        if (symbolInherited != null) {
-//            if (!(currentScope instanceof TypeSymbol))
-//                throw new IllegalStateException("Unable to log error for redefined field " + rfField + " in context " + currentScope);
-//
-//            SymbolTable.error(rfField.getContext(), argumentName, new StringBuilder().append("Class ").append(((TypeSymbol) currentScope).getName()).append(" redefines inherited attribute ").append(argumentName.getText()).toString());
-//            return null;
-//        }
-
         Symbol symbolType = SymbolTable.globals.lookup(argumentType.getText());
         if (symbolType == null) {
             if (!(currentScope instanceof MethodSymbol))
@@ -305,7 +291,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             }
 
 
-            // TOOD Lucian you have to check here if the self type is well checked
             if (bodyMethodSymbol instanceof SelfSymbol) {
                 currentScope = initialScope;
                 return null;
@@ -582,14 +567,14 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (!(symbolToCall instanceof ClassTypeSymbol) && !(symbolToCall instanceof SelfSymbol))
             throw new IllegalStateException("Unknown type of symbol to call " + symbolToCall);
 
-        MethodSymbol methodSymbol = null;
+        MethodSymbol methodSymbol;
         if (symbolToCall.getName().equals(TypeSymbolConstants.SELF_TYPE_STR)) {
 
             RfExpression toCall = rfDispatch.getObjectToCall();
             while (toCall instanceof RfDispatch)
                 toCall = ((RfDispatch) toCall).getObjectToCall();
 
-            Symbol toCallClassSymbol = null;
+            Symbol toCallClassSymbol;
             if (toCall instanceof RfImplicitDispatch) {
                 toCallClassSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
             } else {

@@ -1,16 +1,14 @@
 package cool.structures;
 
-import java.io.File;
-import java.lang.reflect.Type;
-
+import cool.compiler.Compiler;
+import cool.parser.CoolParser;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
-import jdk.jshell.TypeDeclSnippet;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 
-import cool.compiler.Compiler;
-import cool.parser.CoolParser;
+import java.io.File;
 
 public class SymbolTable {
     public static Scope globals;

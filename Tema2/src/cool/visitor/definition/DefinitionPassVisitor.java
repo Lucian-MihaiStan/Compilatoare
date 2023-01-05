@@ -20,15 +20,14 @@ import cool.reflection.type.RfString;
 import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.LetSymbol;
-import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class DefinitionPassVisitor implements ASTVisitor<Void> {
@@ -271,7 +270,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
         RfExpression assignmentExpr = rfAssignment.getExpr();
         if (assignmentExpr == null)
-            throw new IllegalStateException("Unable to locate assignment expression of " + assignmentExpr);
+            throw new IllegalStateException("Unable to locate assignment expression of " + rfAssignment);
 
         assignmentExpr.accept(this);
 
