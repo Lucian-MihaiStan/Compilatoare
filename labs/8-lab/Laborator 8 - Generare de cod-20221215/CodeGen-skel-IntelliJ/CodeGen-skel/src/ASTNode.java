@@ -12,7 +12,7 @@ public abstract class ASTNode {
     ASTNode(Token token) {
         this.token = token;
     }
-    
+
     Token getToken() {
         return token;
     }
@@ -37,7 +37,7 @@ class Id extends Expression {
     Id(Token token) {
         super(token);
     }
-    
+
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -49,7 +49,7 @@ class Id extends Expression {
     void setSymbol(IdSymbol symbol) {
         this.symbol = symbol;
     }
-    
+
     Scope getScope() {
         return scope;
     }

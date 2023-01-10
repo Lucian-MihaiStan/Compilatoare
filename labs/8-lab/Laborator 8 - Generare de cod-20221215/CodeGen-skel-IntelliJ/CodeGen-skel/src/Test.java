@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.PrintStream;
 
 import org.antlr.v4.runtime.*;
 
@@ -23,13 +22,9 @@ public class Test {
         }
         */
 
-        String outPath = "asm_out.s";
-        var newOut = new PrintStream(outPath, "UTF-8");
-        System.setOut(newOut);
-
         var parser = new CPLangParser(tokenStream);
         var tree = parser.prog();
-//        System.out.println("\n" + tree.toStringTree(parser));
+        System.out.println("\n" + tree.toStringTree(parser));
 
         // Construcția AST-ului din arborele de derivare
         var astConstructionVisitor = new ASTConstructionVisitor();
@@ -38,11 +33,11 @@ public class Test {
         // Analiză semantică, trecerea 1: definire simboluri și domenii de vizibilitate
         var definitionPassVisitor = new DefinitionPassVisitor();
         ast.accept(definitionPassVisitor);
-        
+
         // Analiză semantică, trecerea 2: verificare simboluri
         var resolutionPassVisitor = new ResolutionPassVisitor();
         ast.accept(resolutionPassVisitor);
-        
+
         // Generarea de cod
         var codeGenVisitor = new CodeGenVisitor();
         var t = ast.accept(codeGenVisitor);
