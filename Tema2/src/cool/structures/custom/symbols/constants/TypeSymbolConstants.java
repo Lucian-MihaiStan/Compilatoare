@@ -1,5 +1,6 @@
 package cool.structures.custom.symbols.constants;
 
+import cool.structures.SelfSymbol;
 import cool.structures.Symbol;
 import cool.structures.custom.symbols.ClassTypeSymbol;
 

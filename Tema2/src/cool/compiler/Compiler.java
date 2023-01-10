@@ -135,7 +135,6 @@ public class Compiler {
 
         ast.accept(new DefinitionPassVisitor());
         ast.accept(new ResolutionPassVisitor());
-//        ast.accept(new ResolutionPassVisitor());
 
         // TODO Semantic analysis
         

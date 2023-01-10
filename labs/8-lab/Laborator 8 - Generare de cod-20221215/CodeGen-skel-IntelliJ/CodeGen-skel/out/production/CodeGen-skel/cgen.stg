@@ -1,0 +1,129 @@
+sequence(e) ::= "<e; separator=\"\n\">"
+fparam(e) ::= "<e; separator=\"\n\">"
+sequenceSpaced(e) ::= "<e; separator=\"\n\n\">"
+
+program(data, textFuncs, textMain) ::= <<
+.data
+<data>
+
+.text
+<textFuncs>
+
+main:
+<textMain>
+	li $v0, 10
+	syscall		#exit
+>>
+
+literal(value) ::= <<
+	li $a0 <value>
+>>
+
+uminus(e, dStr) ::= <<
+<e>
+    neg $a0, $a0       <if(dStr)># <dStr><else><endif>
+>>
+
+plus(e1, e2, dStr) ::= <<
+<e1>
+	sw $a0 0($sp)
+	addiu $sp $sp -4
+<e2>
+	lw $t1 4($sp)
+	add $a0 $t1 $a0
+	addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+>>
+
+minus(e1, e2, dStr) ::= <<
+<e1>
+	sw $a0 0($sp)
+	addiu $sp $sp -4
+<e2>
+	lw $t1 4($sp)
+	sub $a0 $t1 $a0
+	addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+>>
+
+mult(e1, e2, dStr) ::= <<
+<e1>
+	sw $a0 0($sp)
+	addiu $sp $sp -4
+<e2>
+	lw $t1 4($sp)
+	mult $a0 $t1
+	mflo $a0
+	addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+>>
+
+div(e1, e2, dStr) ::= <<
+<e1>
+	sw $a0 0($sp)
+	addiu $sp $sp -4
+<e2>
+	lw $t1 4($sp)
+	div $t1 $a0
+	mflo $a0
+	addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+>>
+
+binaryOp(e1, e2, dStr, op) ::= <<
+<e1>
+	sw $a0 0($sp)
+	addiu $sp $sp -4
+<e2>
+	lw $t1 4($sp)
+	<op> $a0 $t1 $a0
+	addiu $sp $sp 4		<if(dStr)># <dStr><else><endif>
+>>
+
+if(e1, e2, e3, thn, els, end, dStr) ::= <<
+<e1>
+    beq $a0, 0, <els>
+<thn>:
+<e2>
+    j <end>
+<els>:
+<e3>
+<end>:   <if(dStr)># <dStr><else><endif>
+>>
+
+assign(name, value) ::= <<
+<value>
+    sw $a0, <name>
+>>
+
+varDef(name, type, value) ::= <<
+<name>: .<type> <value>
+>>
+
+add_par(e) ::= <<
+<e>
+    sw $a0 0($sp)
+    addiu $sp $sp -4
+>>
+
+call(f, e) ::= <<
+    sw $fp 0($sp)
+<e>
+    jal <f>
+>>
+
+fdef(f, e, offset) ::= <<
+<f>:
+    move $fp $sp
+    sw $ra 0($sp)
+    addiu $sp $sp -4
+<e>
+    lw $ra 4($sp)
+    addiu $sp $sp <offset>
+    lw $fp 0($sp)
+    jr $ra
+>>
+
+id(name) ::= <<
+	lw $a0 <name>
+>>
+
+localVar(offset) ::= <<
+	lw $a0, <offset>($fp)
+>>

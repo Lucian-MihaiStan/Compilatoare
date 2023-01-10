@@ -51,6 +51,21 @@ public class MethodSymbol extends Symbol implements Scope {
         return definitionScope;
     }
 
+    @Override
+    public Scope getParentWithClassType(Class<?> clazz) {
+        if (definitionScope == null)
+            return null;
+
+        Scope currentScope = definitionScope;
+        while (!clazz.equals(currentScope.getClass())) {
+            currentScope = currentScope.getParent();
+            if (currentScope == null)
+                return null;
+        }
+
+        return currentScope;
+    }
+
     public Map<String, Symbol> getParameters() {
         return parameters;
     }
@@ -70,5 +85,9 @@ public class MethodSymbol extends Symbol implements Scope {
     public void resolve() {
         isResolved = true;
         returnTypeSymbol = SymbolTable.globals.lookup(returnTypeName);
+    }
+
+    public void setResolved(boolean resolved) {
+        isResolved = resolved;
     }
 }

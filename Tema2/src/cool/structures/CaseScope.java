@@ -29,4 +29,19 @@ public class CaseScope implements Scope {
     public Scope getParent() {
         return parentScope;
     }
+
+    @Override
+    public Scope getParentWithClassType(Class<?> clazz) {
+        if (parentScope == null)
+            return null;
+
+        Scope currentScope = parentScope;
+        while (!clazz.equals(currentScope.getClass())) {
+            currentScope = currentScope.getParent();
+            if (currentScope == null)
+                return null;
+        }
+
+        return currentScope;
+    }
 }

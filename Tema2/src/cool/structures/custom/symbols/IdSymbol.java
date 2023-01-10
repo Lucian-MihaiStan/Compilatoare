@@ -1,13 +1,17 @@
 package cool.structures.custom.symbols;
 
+import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
+import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 
 public class IdSymbol extends Symbol {
 
     private final String type;
     private boolean isResolved;
     private ClassTypeSymbol classTypeSymbol;
+
+    private ClassTypeSymbol currentTSelfTypeSymbol;
 
     public IdSymbol(String name, String type) {
         super(name);
@@ -22,6 +26,10 @@ public class IdSymbol extends Symbol {
         return classTypeSymbol;
     }
 
+    public String getRawTypeSymbolName() {
+        return type;
+    }
+
     public boolean isResolved() {
         return isResolved;
     }
@@ -29,5 +37,17 @@ public class IdSymbol extends Symbol {
     public void resolve() {
         isResolved = true;
         classTypeSymbol = (ClassTypeSymbol) SymbolTable.globals.lookup(type);
+    }
+
+    public void setResolved(boolean resolved) {
+        isResolved = resolved;
+    }
+
+    public void setCurrentSelfTypeSymbol(ClassTypeSymbol currentScope) {
+        currentTSelfTypeSymbol = currentScope;
+    }
+
+    public ClassTypeSymbol getCurrentTSelfTypeSymbol() {
+        return currentTSelfTypeSymbol;
     }
 }

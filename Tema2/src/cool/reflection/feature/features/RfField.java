@@ -42,7 +42,7 @@ public class RfField extends RfFeature {
 
     @Override
     public String toString() {
-        return (fieldType == null ? "null" : fieldType.getText()) + " : " + (fieldName == null ? "null" : fieldName.getText());
+        return (fieldName == null ? "null" : fieldName.getText()) + " : " + (fieldType == null ? "null" : fieldType.getText()) + (rfExpression != null ? (" <- " + rfExpression) : "");
     }
 
     public void setIdSymbol(IdSymbol idSymbolName) {

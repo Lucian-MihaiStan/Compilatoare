@@ -2,7 +2,6 @@ package cool.structures.custom.symbols;
 
 import cool.structures.Scope;
 import cool.structures.Symbol;
-import cool.structures.SymbolTable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,10 +52,10 @@ public class ClassTypeSymbol extends Symbol implements Scope {
     }
 
     public MethodSymbol lookUpMethod(String methodName) {
-        Symbol sym = methodsSymbols.get(methodName);
+        MethodSymbol sym = methodsSymbols.get(methodName);
 
         if (sym != null)
-            return (MethodSymbol) sym;
+            return sym;
 
         if (parentScope instanceof ClassTypeSymbol)
             return ((ClassTypeSymbol) parentScope).lookUpMethod(methodName);
@@ -67,6 +66,11 @@ public class ClassTypeSymbol extends Symbol implements Scope {
     @Override
     public Scope getParent() {
         return parentScope;
+    }
+
+    @Override
+    public Scope getParentWithClassType(Class<?> clazz) {
+        return this;
     }
 
     public String getParentScopeName() {

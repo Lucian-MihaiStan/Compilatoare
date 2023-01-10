@@ -1,6 +1,7 @@
 package cool.structures;
 
 import cool.reflection.RfClass;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 
 public interface Scope {
     public boolean add(Symbol sym);
@@ -16,4 +17,6 @@ public interface Scope {
     default RfClass getGlobalClassWithName(String name) {
         return null;
     }
+
+    Scope getParentWithClassType(Class<?> clazz);
 }

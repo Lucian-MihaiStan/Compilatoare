@@ -20,15 +20,14 @@ import cool.reflection.type.RfString;
 import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
+import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.LetSymbol;
-import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class DefinitionPassVisitor implements ASTVisitor<Void> {
@@ -93,7 +92,12 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
             return null;
         }
 
+
         IdSymbol idSymbolName = new IdSymbol(name, fieldType.getText());
+
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(fieldType.getText()))
+            idSymbolName.setCurrentSelfTypeSymbol((ClassTypeSymbol) currentScope.getParentWithClassType(ClassTypeSymbol.class));
+
         if (!currentScope.add(idSymbolName)) {
             if (!(currentScope instanceof ClassTypeSymbol))
                 throw new IllegalStateException("Unable to throw error for symbol with name " + name + " in the context of " + currentScope);
@@ -266,7 +270,7 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
         RfExpression assignmentExpr = rfAssignment.getExpr();
         if (assignmentExpr == null)
-            throw new IllegalStateException("Unable to locate assignment expression of " + assignmentExpr);
+            throw new IllegalStateException("Unable to locate assignment expression of " + rfAssignment);
 
         assignmentExpr.accept(this);
 
@@ -359,6 +363,9 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
         }
 
         IdSymbol idSymbol = new IdSymbol(rfDeclareVariableName.getText(), rfDeclareVariableType.getText());
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(rfDeclareVariableType.getText()))
+            idSymbol.setCurrentSelfTypeSymbol((ClassTypeSymbol) currentScope.getParentWithClassType(ClassTypeSymbol.class));
+
         rfDeclareVariable.setIdSymbol(idSymbol);
 
         RfExpression initializedExpression = rfDeclareVariable.getValue();
@@ -408,6 +415,9 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
     @Override
     public Void visit(RfBody rfBody) {
+        List<RfExpression> expressions = rfBody.getExpressions();
+        if (expressions != null)
+            expressions.forEach(rfExpression -> rfExpression.accept(this));
         return null;
     }
 }
