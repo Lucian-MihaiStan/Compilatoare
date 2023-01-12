@@ -2,6 +2,7 @@ package cool.reflection;
 
 import cool.parser.CoolParser;
 import cool.reflection.feature.RfFeature;
+import cool.reflection.feature.features.RfField;
 import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.tree.ASTNode;
 import cool.visitor.ASTVisitor;
@@ -69,4 +70,5 @@ public class RfClass extends ASTNode {
     public String toString() {
         return "Class " + getActualTokenType().getText() + (getInheritedTokenType() != null ? (" inherits " + getInheritedTokenType().getText()) : "");
     }
+
 }

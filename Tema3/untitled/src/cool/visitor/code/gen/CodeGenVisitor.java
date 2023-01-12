@@ -17,28 +17,47 @@ import cool.reflection.feature.features.RfMethod;
 import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
+import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupFile;
 
 public class CodeGenVisitor implements ASTVisitor<ST> {
 
-    private final static STGroupFile templates = new STGroupFile("cgen.stg");
-
+    private final CodeGenManager manager;
     private int i;
     private int offset;
 
-    private ST constants;
-    private ST classNames;
-
+    public CodeGenVisitor(CodeGenManager manager) {
+        this.manager = manager;
+    }
 
     @Override
     public ST visit(RfProgram rfProgram) {
-        rfProgram.getRfClasses().forEach(clazz -> clazz.accept(this));
-
-        templates.getInstanceOf()
-
-        return null;
+//        rfProgram.getRfClasses().forEach(clazz -> clazz.accept(this));
+        return manager.getTemplate(CodeGenVisitorConstants.PROGRAM_PATTERN)
+                .add(CodeGenVisitorConstants.DISPATCH_TABLES, manager.getDispatchTables())
+                .add(CodeGenVisitorConstants.INT_TAG,
+                        manager.getTemplate(CodeGenVisitorConstants.DEFAULT_TAG_PATTERN)
+                                .add(CodeGenVisitorConstants.NAME_TAG, TypeSymbolConstants.INT_STR.toLowerCase())
+                                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.INT.getTag())
+                )
+                .add(CodeGenVisitorConstants.BOOL_TAG,
+                        manager.getTemplate(CodeGenVisitorConstants.DEFAULT_TAG_PATTERN)
+                                .add(CodeGenVisitorConstants.NAME_TAG, TypeSymbolConstants.BOOL_STR.toLowerCase())
+                                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.BOOL.getTag())
+                )
+                .add(CodeGenVisitorConstants.STRING_TAG,
+                        manager.getTemplate(CodeGenVisitorConstants.DEFAULT_TAG_PATTERN)
+                                .add(CodeGenVisitorConstants.NAME_TAG, TypeSymbolConstants.STRING_STR.toLowerCase())
+                                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.STRING.getTag())
+                )
+                .add(CodeGenVisitorConstants.STR_CONSTANTS, manager.getStrConstants())
+                .add(CodeGenVisitorConstants.INT_CONSTANTS, manager.getIntConstants())
+                .add(CodeGenVisitorConstants.CLASS_NAME_TAB, manager.getClassNameTab())
+                .add(CodeGenVisitorConstants.CLASS_OBJECTS_TAB, manager.getClassObjectsTab())
+                .add(CodeGenVisitorConstants.CLASS_PROTOTYPES_TAB, manager.getClassPrototypesTab())
+                .add(CodeGenVisitorConstants.DISPATCH_TABLES, manager.getDispatchTables())
+                .add(CodeGenVisitorConstants.HEAP_START_TAB, manager.getHeapStartTab());
     }
 
     @Override

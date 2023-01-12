@@ -20,10 +20,10 @@ public class SymbolTable {
         semanticErrors = false;
         
         globals.add(TypeSymbolConstants.OBJECT);
+        globals.add(TypeSymbolConstants.IO);
         globals.add(TypeSymbolConstants.INT);
         globals.add(TypeSymbolConstants.STRING);
         globals.add(TypeSymbolConstants.BOOL);
-        globals.add(TypeSymbolConstants.IO);
         globals.add(TypeSymbolConstants.SELF_TYPE);
 
         implicitDefinitionOfObjectMethods();

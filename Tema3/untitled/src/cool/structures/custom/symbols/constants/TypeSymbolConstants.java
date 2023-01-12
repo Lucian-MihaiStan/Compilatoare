@@ -19,16 +19,18 @@ public interface TypeSymbolConstants {
 
     ClassTypeSymbol OBJECT = new ClassTypeSymbol(OBJECT_STR, null);
 
+    ClassTypeSymbol IO = new ClassTypeSymbol(IO_STR, OBJECT);
+
     ClassTypeSymbol INT = new ClassTypeSymbol(INT_STR, OBJECT);
 
     ClassTypeSymbol STRING = new ClassTypeSymbol(STRING_STR, OBJECT);
 
     ClassTypeSymbol BOOL = new ClassTypeSymbol(BOOL_STR, OBJECT);
 
-    ClassTypeSymbol IO = new ClassTypeSymbol(IO_STR, OBJECT);
 
     ClassTypeSymbol SELF_TYPE = new ClassTypeSymbol(SELF_TYPE_STR, OBJECT);
 
     Set<Symbol> illegalParents = Set.of(INT, STRING, BOOL, SELF_TYPE);
 
+    String MAIN_STR = "Main";
 }

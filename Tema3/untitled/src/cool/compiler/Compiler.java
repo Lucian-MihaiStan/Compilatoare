@@ -1,5 +1,8 @@
 package cool.compiler;
 
+import cool.structures.custom.symbols.constants.TypeSymbolConstants;
+import cool.visitor.code.gen.CodeGenManager;
+import cool.visitor.code.gen.CodeGenVisitor;
 import cool.visitor.construction.Visitor;
 import cool.visitor.resolution.ResolutionPassVisitor;
 import cool.visitor.definition.DefinitionPassVisitor;
@@ -136,13 +139,13 @@ public class Compiler {
         ast.accept(new DefinitionPassVisitor());
         ast.accept(new ResolutionPassVisitor());
 
-        // TODO Semantic analysis
-
         if (SymbolTable.hasSemanticErrors()) {
             System.err.println("Compilation halted");
             return;
         }
 
+        TypeSymbolConstants.OBJECT.visitTag();
 
+        System.out.println(ast.accept(new CodeGenVisitor(new CodeGenManager("cgen.stg").visitSymbols())).render());
     }
 }

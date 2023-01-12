@@ -71,4 +71,16 @@ public class DefaultScope implements Scope {
     public Scope getParentWithClassType(Class<?> clazz) {
         return null;
     }
+
+    public Map<String, RfClass> getGlobalClasses() {
+        return globalClasses;
+    }
+
+    public Map<String, Symbol> getSymbols() {
+        return symbols;
+    }
+
+    public Symbol getClassSymbol(String className) {
+        return symbols.get(className);
+    }
 }
