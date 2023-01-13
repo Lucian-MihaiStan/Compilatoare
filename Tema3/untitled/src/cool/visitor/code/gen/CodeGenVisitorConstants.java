@@ -42,6 +42,8 @@ public interface CodeGenVisitorConstants {
 
     String INT_CONSTANTS = "intConstants";
 
+    String BOOL_CONSTANTS = "boolConstants";
+
     String EMPTY_STRING = "";
     String DEFAULT_VALUE = "defaultValue";
 
@@ -77,4 +79,27 @@ public interface CodeGenVisitorConstants {
     String OBJECT_INITS = "objectInits";
 
     String MAIN_DOT_MAIN = "\t.globl Main.main";
+
+    String INIT_CONSTRUCTOR_PATTERN = "initConstructor";
+
+    String PARENT_CLASS_NAME = "parentClassName";
+
+    String ATTRIB = "attrib";
+
+    String INIT_CONSTRUCT_TAB = "initConstructTab";
+
+    String CUSTOM_METHOD_PATTERN = "customMethod";
+    String METHOD_BODY = "methodBody";
+    String INCREMENT_STACK_NUMBER = "incrementStackNumber";
+    String LITERAL_PATTERN = "literal";
+
+    String ADDRESS_CONSTANT = "addressConstant";
+
+    String CUSTOM_METHODS_TAB = "customMethodsTab";
+    String DEFAULT_INT_PROTOTYPE_VALUE = "\t.word\t0\n";
+
+    String DEFAULT_STRING_PROTOTYPE_VALUE = "\t.word\tint_const0\n\t.asciiz\t\"\"\n\t.align\t2\n";
+    String DEFAULT_BOOL_PROTOTYPE_VALUE = "\t.word\t0\n";;
+
+    String BOOL_CONST_PATTERN = "boolConst";
 }

@@ -22,15 +22,13 @@ public class CodeGenManager {
     private final ST strConstants;
     private final ST classNameTab;
     private final ST classPrototypesTab;
-
     private final ST classObjectsTab;
     private final ST dispatchTables;
-    private final ST methods;
-    private final ST prototypeObject;
-
+    private final ST initMethods;
+    private final ST customMethods;
     private final ST intConstants;
-
     private final ST heapStartTab;
+    private final ST boolConstants;
 
     private int strConstNumber;
 
@@ -48,12 +46,13 @@ public class CodeGenManager {
         classNameTab = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
         classPrototypesTab = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
         dispatchTables = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
-        prototypeObject = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
         intConstants = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
+        boolConstants = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
         classObjectsTab = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
         heapStartTab = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
 
-        methods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
+        initMethods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
+        customMethods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
     }
 
     public STGroupFile getTemplates() {
@@ -76,12 +75,16 @@ public class CodeGenManager {
         return dispatchTables;
     }
 
-    public ST getMethods() {
-        return methods;
+    public ST getCustomMethods() {
+        return customMethods;
     }
 
-    public ST getPrototypeObject() {
-        return prototypeObject;
+    public ST getBoolConstants() {
+        return boolConstants;
+    }
+
+    public ST getInitMethods() {
+        return initMethods;
     }
 
     public CodeGenManager visitSymbols() {
@@ -98,8 +101,6 @@ public class CodeGenManager {
 
         Collection<Symbol> symbols = symbolsName.values();
         List<Symbol> sortedSymbols = symbols.stream().sorted(Comparator.comparingInt(s -> ((ClassTypeSymbol) s).getTag())).collect(Collectors.toList());
-
-
 
         for (Symbol symbol : sortedSymbols) {
             if (symbol == TypeSymbolConstants.SELF_TYPE)
@@ -130,6 +131,20 @@ public class CodeGenManager {
                 .add(CodeGenVisitorConstants.E, objectInits)
                 .add(CodeGenVisitorConstants.E, CodeGenVisitorConstants.MAIN_DOT_MAIN);
 
+
+        boolConstants
+                .add(CodeGenVisitorConstants.E,
+                        templates.getInstanceOf(CodeGenVisitorConstants.BOOL_CONST_PATTERN)
+                                .add(CodeGenVisitorConstants.COUNT, 0)
+                                .add(CodeGenVisitorConstants.TAG_ID, stringMIPSConstants.get(TypeSymbolConstants.BOOL_STR))
+                                .add(CodeGenVisitorConstants.DEFAULT_VALUE, 0)
+                )
+                .add(CodeGenVisitorConstants.E,
+                        templates.getInstanceOf(CodeGenVisitorConstants.BOOL_CONST_PATTERN)
+                                .add(CodeGenVisitorConstants.COUNT, 1)
+                                .add(CodeGenVisitorConstants.TAG_ID, stringMIPSConstants.get(TypeSymbolConstants.BOOL_STR))
+                                .add(CodeGenVisitorConstants.DEFAULT_VALUE,1)
+                );
 
         return this;
     }
@@ -192,10 +207,25 @@ public class CodeGenManager {
 
         ST classPrototypeObject = templates.getInstanceOf(CodeGenVisitorConstants.CLASS_PROTOTYPE_OBJ_PATTERN)
                 .add(CodeGenVisitorConstants.CLASS_NAME, className)
-                .add(CodeGenVisitorConstants.TAG_ID, classPrototypeObjectNumber++)
-                .add(CodeGenVisitorConstants.SIZE, CodeGenVisitorConstants.DEFAULT_SIZE_PROTOTYPE + noFields);
+                .add(CodeGenVisitorConstants.TAG_ID, classPrototypeObjectNumber++);
 
-        // TODO Lucian continue here with attributes declaration
+        switch (className) {
+        case TypeSymbolConstants.INT_STR:
+            classPrototypeObject.add(CodeGenVisitorConstants.ATTRIB, CodeGenVisitorConstants.DEFAULT_INT_PROTOTYPE_VALUE);
+            noFields += 1;
+            break;
+        case TypeSymbolConstants.STRING_STR:
+            classPrototypeObject.add(CodeGenVisitorConstants.ATTRIB, CodeGenVisitorConstants.DEFAULT_STRING_PROTOTYPE_VALUE);
+            noFields += 2;
+            break;
+        case TypeSymbolConstants.BOOL_STR:
+            classPrototypeObject.add(CodeGenVisitorConstants.ATTRIB, CodeGenVisitorConstants.DEFAULT_BOOL_PROTOTYPE_VALUE);
+            noFields += 1;
+            break;
+        default:
+        }
+
+        classPrototypeObject.add(CodeGenVisitorConstants.SIZE, CodeGenVisitorConstants.DEFAULT_SIZE_PROTOTYPE + noFields);
 
         classPrototypesTab.add(CodeGenVisitorConstants.E, classPrototypeObject);
 
@@ -232,5 +262,20 @@ public class CodeGenManager {
 
     public ST getIntConstants() {
         return intConstants;
+    }
+
+    public String getIntConstantCount(Integer value) {
+        if (intMIPSConstants.containsKey(value))
+            return String.valueOf(intMIPSConstants.get(value));
+
+        intMIPSConstants.put(value, value);
+
+        ST intConst = templates.getInstanceOf(CodeGenVisitorConstants.INT_CONST_PATTERN)
+                .add(CodeGenVisitorConstants.COUNT,  intMIPSConstants.size())
+                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.INT.getTag())
+                .add(CodeGenVisitorConstants.DEFAULT_VALUE, value);
+        intConstants.add(CodeGenVisitorConstants.E, intConst);
+
+        return String.valueOf(value);
     }
 }

@@ -1,14 +1,14 @@
 sequence(e) ::= "<e; separator=\"\n\">"
 sequenceSpaced(e) ::= "<e; separator=\"\n\n\">"
 
-program(intTag, boolTag, stringTag, strConstants, intConstants, classNameTab, classObjectsTab, classPrototypesTab, dispatchTables, heapStartTab) ::= <<
+program(intTag, boolTag, stringTag, strConstants, intConstants, boolConstants, classNameTab, classObjectsTab, classPrototypesTab, dispatchTables, heapStartTab, initConstructTab, customMethodsTab) ::= <<
 .data
     .align	2
     .globl	class_nameTab
     .globl	Int_protObj
     .globl	String_protObj
-    .globl	bool_const_false
-    .globl	bool_const_true
+    .globl	bool_const0
+    .globl	bool_const1
     .globl	Main_protObj
     .globl	_int_tag
     .globl	_string_tag
@@ -20,6 +20,8 @@ program(intTag, boolTag, stringTag, strConstants, intConstants, classNameTab, cl
 <strConstants>
 
 <intConstants>
+
+<boolConstants>
 
 class_nameTab:
 <classNameTab>
@@ -33,6 +35,10 @@ class_objTab:
 
 heap_start:
 <heapStartTab>
+
+<initConstructTab>
+
+<customMethodsTab>
 >>
 
 defaultTag(nameTag, tagId) ::=<<
@@ -42,27 +48,35 @@ _<nameTag>_tag:
 
 strConst(count, tagId, size, classNameLength, className) ::= <<
 str_const<count>:
-    .word <tagId>
-    .word <size>
-    .word String_dispTab
-    .word <classNameLength>
+    .word   <tagId>
+    .word   <size>
+    .word   String_dispTab
+    .word   <classNameLength>
     .asciiz "<className>"
     .align 2
 >>
 
 intConst(count, tagId, defaultValue) ::= <<
-int_const_<count>:
-    .word <tagId>
-    .word 4
-    .word Int_dispTab
-    .word <defaultValue>
+int_const<count>:
+    .word   <tagId>
+    .word   4
+    .word   Int_dispTab
+    .word   <defaultValue>
+>>
+
+boolConst(count, tagId, defaultValue) ::= <<
+bool_const<count>:
+    .word   <tagId>
+    .word   4
+    .word   Bool_dispTab
+    .word   <defaultValue>
 >>
 
 classProtObj(className, tagId, size, attrib) ::= <<
 <className>_protObj:
-    .word <tagId>
-    .word <size>
-    .word <className>_dispTab
+    .word   <tagId>
+    .word   <size>
+    .word   <className>_dispTab
 <attrib>
 >>
 
@@ -92,3 +106,44 @@ globalObjectInit(className) ::= <<
     .globl <className>_init
 
 >>
+
+initConstructor(className, parentClassName, attrib) ::= <<
+<className>_init:
+    addiu	$sp $sp -12
+    sw		$fp 12($sp)
+    sw		$s0 8($sp)
+    sw		$ra 4($sp)
+    addiu	$fp $sp 4
+    move	$s0 $a0
+<if (parentClassName)>
+    jal     <parentClassName>_init
+<endif>
+<attrib>
+    move	$a0 $s0
+    lw		$fp 12($sp)
+    lw		$s0 8($sp)
+    lw		$ra 4($sp)
+    addiu	$sp $sp 12
+    jr		$ra
+>>
+
+customMethod(className, methodName, methodBody, incrementStackNumber) ::= <<
+<className>.<methodName>:
+    addiu	$sp $sp -12
+    sw		$fp 12($sp)
+    sw		$s0 8($sp)
+    sw		$ra 4($sp)
+    addiu	$fp $sp 4
+    move	$s0 $a0
+<methodBody>
+    lw		$fp 12($sp)
+	lw		$s0 8($sp)
+	lw		$ra 4($sp)
+	addiu	$sp $sp <incrementStackNumber>
+	jr		$ra
+>>
+
+literal(addressConstant) ::= <<
+    la      $a0 <addressConstant>
+>>
+
