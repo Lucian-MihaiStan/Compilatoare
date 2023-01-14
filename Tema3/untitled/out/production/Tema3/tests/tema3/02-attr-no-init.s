@@ -272,10 +272,10 @@ IO_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
 
 Int_dispTab:
     .word   Object.abort
@@ -515,7 +515,7 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 0
+    la      $a0 int_const0
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)

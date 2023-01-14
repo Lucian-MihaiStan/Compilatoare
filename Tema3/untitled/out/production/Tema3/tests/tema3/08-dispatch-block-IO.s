@@ -106,6 +106,20 @@ str_const12:
     .word   int_const4
     .asciiz "Bool"
     .align 2
+str_const13:
+    .word   10
+    .word   6
+    .word   String_dispTab
+    .word   int_const5
+    .asciiz "abc"
+    .align 2
+str_const14:
+    .word   10
+    .word   11
+    .word   String_dispTab
+    .word   int_const7
+    .asciiz "08-dispatch-block-IO.cl"
+    .align 2
 int_const0:
     .word   9
     .word   4
@@ -136,6 +150,16 @@ int_const5:
     .word   4
     .word   Int_dispTab
     .word   3
+int_const100:
+    .word   9
+    .word   4
+    .word   Int_dispTab
+    .word   100
+int_const7:
+    .word   9
+    .word   4
+    .word   Int_dispTab
+    .word   23
 bool_const0:
     .word   12
     .word   4
@@ -272,29 +296,29 @@ IO_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
 
 A_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
 
 B_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
 
@@ -302,10 +326,10 @@ D_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
 
@@ -313,10 +337,10 @@ E_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
 
@@ -324,10 +348,10 @@ Main_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
     .word   Main.main
@@ -336,10 +360,10 @@ C_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   C.h
     .word   C.f
@@ -348,10 +372,10 @@ F_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   C.h
     .word   C.f
@@ -461,6 +485,8 @@ A_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     IO_init
+    la      $a0 int_const100
+    sw      $a0 12($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -475,6 +501,8 @@ B_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     A_init
+    la      $a0 str_const13
+    sw      $a0 16($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -489,6 +517,8 @@ C_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     A_init
+    la      $a0 bool_const1
+    sw      $a0 16($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -558,7 +588,7 @@ A.f:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 3
+    la      $a0 int_const3
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -571,7 +601,7 @@ B.g:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 2
+    la      $a0 int_const2
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -584,7 +614,7 @@ C.f:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 5
+    la      $a0 int_const5
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -597,7 +627,7 @@ C.h:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 4
+    la      $a0 int_const4
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -610,6 +640,30 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
+    la      $a0 str_const13
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+    move    $a0 $s0
+    bnez    $a0 dispatch0    # out_string
+    la      $a0 str_const14
+    li      $t1 31
+    jal     _dispatch_abort
+dispatch0:
+    lw      $t1 8($a0)
+    lw      $t1 12($t1)
+    jalr    $t1
+    la      $a0 int_const100
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+    move    $a0 $s0
+    bnez    $a0 dispatch1    # out_int
+    la      $a0 str_const14
+    li      $t1 32
+    jal     _dispatch_abort
+dispatch1:
+    lw      $t1 8($a0)
+    lw      $t1 16($t1)
+    jalr    $t1
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)

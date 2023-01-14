@@ -108,9 +108,16 @@ str_const12:
     .align 2
 str_const13:
     .word   3
+    .word   6
+    .word   String_dispTab
+    .word   int_const3
+    .asciiz "abc"
+    .align 2
+str_const14:
+    .word   3
     .word   12
     .word   String_dispTab
-    .word   int_const6
+    .word   int_const7
     .asciiz "07-dispatch-on-void-abort.cl"
     .align 2
 int_const0:
@@ -143,7 +150,12 @@ int_const5:
     .word   4
     .word   Int_dispTab
     .word   1
-int_const6:
+int_const100:
+    .word   2
+    .word   4
+    .word   Int_dispTab
+    .word   100
+int_const7:
     .word   2
     .word   4
     .word   Int_dispTab
@@ -284,10 +296,10 @@ IO_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
 
 Int_dispTab:
     .word   Object.abort
@@ -445,6 +457,8 @@ A_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     Object_init
+    la      $a0 int_const100
+    sw      $a0 12($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -459,6 +473,8 @@ B_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     A_init
+    la      $a0 str_const13
+    sw      $a0 16($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -473,6 +489,8 @@ C_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     A_init
+    la      $a0 bool_const1
+    sw      $a0 16($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -542,7 +560,7 @@ A.f:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 5
+    la      $a0 int_const5
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -555,7 +573,7 @@ B.g:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 2
+    la      $a0 int_const2
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -568,7 +586,7 @@ C.f:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 3
+    la      $a0 int_const3
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -581,7 +599,7 @@ C.h:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 4
+    la      $a0 int_const4
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
@@ -596,7 +614,7 @@ Main.main:
     move	$s0 $a0
     lw      $a0 20($s0)
     bnez    $a0 dispatch0    # abort
-    la      $a0 str_const13
+    la      $a0 str_const14
     li      $t1 28
     jal     _dispatch_abort
 dispatch0:

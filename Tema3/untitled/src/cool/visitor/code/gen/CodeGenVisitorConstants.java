@@ -129,4 +129,6 @@ public interface CodeGenVisitorConstants {
 
     String FP = "fp";
 
+    String INIT_ATTRIBUTE = "initAttribute";
+
 }

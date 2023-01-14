@@ -170,6 +170,8 @@ public class ClassTypeSymbol extends Symbol implements Scope {
         int currentTotalAttributes = symbols.size() * 4;
         Scope currentScopeEval = parentScope;
         while (currentScopeEval instanceof ClassTypeSymbol) {
+            if (currentScopeEval == this)
+                return currentTotalAttributes;
             Map<String, IdSymbol> parentsSymbols = ((ClassTypeSymbol) currentScopeEval).getSymbols();
             currentTotalAttributes += parentsSymbols.size() * 4;
             currentScopeEval = currentScopeEval.getParent();

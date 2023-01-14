@@ -163,3 +163,8 @@ dispatchArg(arg) ::= <<
 idAttributeVar(offset, pointer) ::= <<
     lw      $a0 <offset>($<pointer>)
 >>
+
+initAttribute(defaultValue, offset) ::= <<
+<defaultValue>
+    sw      $a0 <offset>($s0)
+>>

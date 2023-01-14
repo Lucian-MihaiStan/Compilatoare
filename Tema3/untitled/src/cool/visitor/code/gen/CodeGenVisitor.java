@@ -29,6 +29,7 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 
+import javax.management.StandardEmitterMBean;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -131,12 +132,20 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfField rfField) {
-        return null;
+        RfExpression rfExpression = rfField.getRfExpression();
+        if (rfExpression == null)
+            return null;
+
+        return manager.getTemplate(CodeGenVisitorConstants.INIT_ATTRIBUTE)
+                .add(CodeGenVisitorConstants.DEFAULT_VALUE, rfExpression.accept(this))
+                .add(CodeGenVisitorConstants.OFFSET, rfField.getIdSymbolName().getOffset());
     }
 
     @Override
     public ST visit(RfInt rfInt) {
-        return manager.getTemplate(CodeGenVisitorConstants.LITERAL_PATTERN).add(CodeGenVisitorConstants.ADDRESS_CONSTANT, manager.getIntConstantCount(rfInt.getValue()));
+        return manager
+                .getTemplate(CodeGenVisitorConstants.LITERAL_PATTERN)
+                .add(CodeGenVisitorConstants.ADDRESS_CONSTANT, manager.getIntConstantCount(rfInt.getValue()));
     }
 
     @Override
@@ -166,12 +175,16 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfString rfString) {
-        return null;
+        return manager
+                .getTemplate(CodeGenVisitorConstants.LITERAL_PATTERN)
+                .add(CodeGenVisitorConstants.ADDRESS_CONSTANT, "str_const" + manager.addStringConstant(rfString.getValue()));
     }
 
     @Override
     public ST visit(RfBool rfBool) {
-        return null;
+        return manager
+                .getTemplate(CodeGenVisitorConstants.LITERAL_PATTERN)
+                .add(CodeGenVisitorConstants.ADDRESS_CONSTANT, "bool_const" + (rfBool.getValue() ? "1" : "0"));
     }
 
     @Override
@@ -309,7 +322,10 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
         Collections.reverse(args);
 
         StringBuilder argsRender = new StringBuilder();
-        args.forEach(param -> argsRender.append(manager.getTemplate(CodeGenVisitorConstants.DISPATCH_ARG_PATTERN).add(CodeGenVisitorConstants.ARG, param.accept(this)).render()));
+        args.forEach(param -> argsRender.append(
+                manager.getTemplate(CodeGenVisitorConstants.DISPATCH_ARG_PATTERN)
+                        .add(CodeGenVisitorConstants.ARG, param.accept(this)).render())
+        );
 
         ParserPath parserPath = manager.computeParserPathContext(dispatchToken, rfImplicitDispatch.getContext());
 
@@ -364,6 +380,15 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfBody rfBody) {
-        return null;
+        ST template = manager.getTemplate(CodeGenVisitorConstants.SEQUENCE_PATTERN);
+        if (template == null)
+            throw new IllegalStateException("Unable to locate template " + CodeGenVisitorConstants.SEQUENCE_PATTERN);
+
+        for (RfExpression expression : rfBody.getExpressions()) {
+            ST expressionSolved = expression.accept(this);
+            template.add(CodeGenVisitorConstants.E, expressionSolved);
+        }
+
+        return template;
     }
 }

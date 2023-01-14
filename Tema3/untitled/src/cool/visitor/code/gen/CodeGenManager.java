@@ -256,7 +256,7 @@ public class CodeGenManager {
         classPrototypeObject.add(CodeGenVisitorConstants.ATTRIB, sb.toString());
     }
 
-    private Integer addStringConstant(String className) {
+    public Integer addStringConstant(String className) {
         if (stringMIPSConstants.containsKey(className))
             return stringMIPSConstants.get(className);
 
@@ -308,17 +308,17 @@ public class CodeGenManager {
 
     public String getIntConstantCount(Integer value) {
         if (intMIPSConstants.containsKey(value))
-            return String.valueOf(intMIPSConstants.get(value));
+            return "int_const" + intMIPSConstants.get(value);
 
         intMIPSConstants.put(value, value);
 
         ST intConst = templates.getInstanceOf(CodeGenVisitorConstants.INT_CONST_PATTERN)
-                .add(CodeGenVisitorConstants.COUNT,  intMIPSConstants.size())
+                .add(CodeGenVisitorConstants.COUNT, value)
                 .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.INT.getTag())
                 .add(CodeGenVisitorConstants.DEFAULT_VALUE, value);
         intConstants.add(CodeGenVisitorConstants.E, intConst);
 
-        return String.valueOf(value);
+        return "int_const" + value;
     }
 
     public int getMethodId() {
@@ -344,4 +344,5 @@ public class CodeGenManager {
 
         return new ParserPath(parserPath, dispatchToken.getLine(), stringConstId);
     }
+
 }

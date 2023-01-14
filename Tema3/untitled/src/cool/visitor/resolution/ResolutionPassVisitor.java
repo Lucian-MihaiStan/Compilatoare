@@ -30,6 +30,7 @@ import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,13 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
             if (rfFeature instanceof RfField) {
                 IdSymbol idSymbolName = ((RfField) rfFeature).getIdSymbolName();
+                if (idSymbolName == null) {
+                    continue;
+//                    if (TypeSymbolConstants.SELF_STR.equals(((RfField) rfFeature).getFieldName().getText()))
+//                        continue;
+//
+//                    throw new IllegalStateException("Unable to locate id symbol");
+                }
                 idSymbolName.setOffset(j);
                 j += 4;
             }
@@ -699,7 +707,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (!methodSymbol.isResolved())
             methodSymbol.resolve();
 
-        List<Symbol> parametersSymbols = rfImplicitDispatch.getParameters().stream().map(rfExpression -> rfExpression.accept(this)).collect(Collectors.toList());
+        List<Symbol> parametersSymbols = rfImplicitDispatch.getParameters().stream().map(
+                rfExpression -> rfExpression.accept(this))
+                .collect(Collectors.toList());
 
         Map<String, Symbol> parametersOfDefinition = methodSymbol.getParameters();
 

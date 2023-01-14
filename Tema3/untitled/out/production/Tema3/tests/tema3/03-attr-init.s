@@ -106,6 +106,13 @@ str_const12:
     .word   int_const5
     .asciiz "F"
     .align 2
+str_const13:
+    .word   3
+    .word   6
+    .word   String_dispTab
+    .word   int_const3
+    .asciiz "abc"
+    .align 2
 int_const0:
     .word   2
     .word   4
@@ -136,6 +143,11 @@ int_const5:
     .word   4
     .word   Int_dispTab
     .word   1
+int_const100:
+    .word   2
+    .word   4
+    .word   Int_dispTab
+    .word   100
 bool_const0:
     .word   5
     .word   4
@@ -272,10 +284,10 @@ IO_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
 
 Int_dispTab:
     .word   Object.abort
@@ -418,6 +430,8 @@ A_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     Object_init
+    la      $a0 int_const100
+    sw      $a0 12($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -432,6 +446,8 @@ B_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     A_init
+    la      $a0 str_const13
+    sw      $a0 16($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -446,6 +462,8 @@ C_init:
     addiu	$fp $sp 4
     move	$s0 $a0
     jal     A_init
+    la      $a0 bool_const1
+    sw      $a0 16($s0)
     move	$a0 $s0
     lw		$fp 12($sp)
     lw		$s0 8($sp)
@@ -515,7 +533,7 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 0
+    la      $a0 int_const0
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)

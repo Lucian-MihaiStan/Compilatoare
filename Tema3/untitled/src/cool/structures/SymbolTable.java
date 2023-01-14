@@ -76,6 +76,36 @@ public class SymbolTable {
     }
 
     private static void implicitDefinitionOfIOMethods() {
+        // in_string
+        MethodSymbol inString = new MethodSymbol("in_string", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.IO);
+        inString.setReturnTypeSymbol(TypeSymbolConstants.STRING);
+        inString.setResolved(true);
+        inString.setOffset(20);
+
+        TypeSymbolConstants.IO.add(inString);
+
+        // in_int
+        MethodSymbol inInt = new MethodSymbol("in_int", TypeSymbolConstants.INT_STR, TypeSymbolConstants.IO);
+        inInt.setReturnTypeSymbol(TypeSymbolConstants.INT);
+        inInt.setResolved(true);
+        inString.setOffset(24);
+
+        TypeSymbolConstants.IO.add(inInt);
+
+        // out_int definition
+        MethodSymbol outInt = new MethodSymbol("out_int", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.IO);
+        outInt.setReturnTypeSymbol(TypeSymbolConstants.SELF_TYPE);
+        outInt.setResolved(true);
+        outInt.setOffset(16);
+
+        IdSymbol xInt = new IdSymbol("x", TypeSymbolConstants.INT_STR);
+        xInt.setTypeSymbol(TypeSymbolConstants.INT);
+        xInt.setResolved(true);
+
+        outInt.add(xInt);
+
+        TypeSymbolConstants.IO.add(outInt);
+
         // out_string definition
 
         MethodSymbol outString = new MethodSymbol("out_string", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.IO);
@@ -90,39 +120,6 @@ public class SymbolTable {
         outString.add(xString);
 
         TypeSymbolConstants.IO.add(outString);
-
-        // out_int definition
-
-        MethodSymbol outInt = new MethodSymbol("out_int", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.IO);
-        outInt.setReturnTypeSymbol(TypeSymbolConstants.SELF_TYPE);
-        outInt.setResolved(true);
-        outInt.setOffset(16);
-
-        IdSymbol xInt = new IdSymbol("x", TypeSymbolConstants.INT_STR);
-        xInt.setTypeSymbol(TypeSymbolConstants.INT);
-        xInt.setResolved(true);
-
-        outInt.add(xInt);
-
-        TypeSymbolConstants.IO.add(outInt);
-
-        // in_string
-
-        MethodSymbol inString = new MethodSymbol("in_string", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.IO);
-        inString.setReturnTypeSymbol(TypeSymbolConstants.STRING);
-        inString.setResolved(true);
-        inString.setOffset(20);
-
-        TypeSymbolConstants.IO.add(inString);
-
-        // in_int
-
-        MethodSymbol inInt = new MethodSymbol("in_int", TypeSymbolConstants.INT_STR, TypeSymbolConstants.IO);
-        inInt.setReturnTypeSymbol(TypeSymbolConstants.INT);
-        inInt.setResolved(true);
-        inString.setOffset(24);
-
-        TypeSymbolConstants.IO.add(inInt);
     }
 
     private static void implicitDefinitionOfObjectMethods() {
