@@ -161,11 +161,16 @@ dispatchArg(arg) ::= <<
 
 >>
 
-idAttributeVar(offset, pointer) ::= <<
+loadIdAttributeVar(offset, pointer) ::= <<
     lw      $a0 <offset>($<pointer>)
 >>
 
 initAttribute(defaultValue, offset) ::= <<
 <defaultValue>
     sw      $a0 <offset>($s0)
+>>
+
+storeIdAttributeVar(defaultValue, offset, pointer) ::= <<
+<defaultValue>
+    sw      $a0 <offset>($<pointer>)
 >>

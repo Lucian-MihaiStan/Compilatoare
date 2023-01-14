@@ -121,7 +121,7 @@ public interface CodeGenVisitorConstants {
 
     String CALLER = "caller";
 
-    String ID_ATTRIBUTE_VAR = "idAttributeVar";
+    String LOAD_ID_ATTRIBUTE_VAR = "loadIdAttributeVar";
 
     String POINTER = "pointer";
 
@@ -130,5 +130,7 @@ public interface CodeGenVisitorConstants {
     String FP = "fp";
 
     String INIT_ATTRIBUTE = "initAttribute";
+
+    String STORE_ID_ATTRIBUTE_VAR = "storeIdAttributeVar";
 
 }

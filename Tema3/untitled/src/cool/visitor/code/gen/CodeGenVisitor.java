@@ -29,8 +29,6 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 
-import javax.management.StandardEmitterMBean;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -189,7 +187,7 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfId rfId) {
-        ST idAttributeTemplate = manager.getTemplate(CodeGenVisitorConstants.ID_ATTRIBUTE_VAR);
+        ST idAttributeTemplate = manager.getTemplate(CodeGenVisitorConstants.LOAD_ID_ATTRIBUTE_VAR);
         if (idAttributeTemplate == null)
             throw new IllegalStateException("Unable to locate id attribute or local variable template");
 
@@ -250,6 +248,45 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfAssignment rfAssignment) {
+        ST value = rfAssignment.getExpr().accept(this);
+
+        ST template = manager.getTemplate(CodeGenVisitorConstants.STORE_ID_ATTRIBUTE_VAR);
+        if (template == null)
+            throw new IllegalStateException("Unable to locate template " + CodeGenVisitorConstants.STORE_ID_ATTRIBUTE_VAR);
+
+        template.add(CodeGenVisitorConstants.DEFAULT_VALUE, value);
+
+        String symbol = rfAssignment.getId().getText();
+        Symbol idSymbol = null;
+        boolean isParameter = false;
+        boolean isField = false;
+        if (scope instanceof MethodSymbol) {
+            Map<String, Symbol> parameters = ((MethodSymbol) scope).getParameters();
+            idSymbol = parameters.get(symbol);
+            if (idSymbol != null)
+                isParameter = true;
+
+            if (idSymbol == null) {
+                Scope parentWithClassType = scope.getParentWithClassType(ClassTypeSymbol.class);
+                idSymbol  = parentWithClassType.lookup(symbol);
+                isField = idSymbol != null;
+            }
+        }
+
+        if (idSymbol instanceof IdSymbol)
+            template.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
+
+        if (isParameter) {
+            template.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
+            // TODO Lucian continue here
+        }
+
+        if (isField && idSymbol instanceof IdSymbol) {
+            template
+                    .add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.S0);
+            return template;
+        }
+
         return null;
     }
 

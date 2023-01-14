@@ -701,6 +701,7 @@ Main.i:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
+    sw      $a0 20($s0)
     lw      $a0 20($s0)
     bnez    $a0 dispatch1    # type_name
     la      $a0 str_const15

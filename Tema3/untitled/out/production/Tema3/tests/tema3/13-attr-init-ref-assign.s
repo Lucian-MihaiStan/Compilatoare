@@ -120,6 +120,13 @@ str_const14:
     .word   int_const7
     .asciiz "13-attr-init-ref-assign.cl"
     .align 2
+str_const15:
+    .word   10
+    .word   6
+    .word   String_dispTab
+    .word   int_const5
+    .asciiz "def"
+    .align 2
 int_const0:
     .word   9
     .word   4
@@ -160,6 +167,11 @@ int_const7:
     .word   4
     .word   Int_dispTab
     .word   26
+int_const117:
+    .word   9
+    .word   4
+    .word   Int_dispTab
+    .word   117
 bool_const0:
     .word   11
     .word   4
@@ -653,6 +665,8 @@ dispatch0:
     lw      $t1 8($a0)
     lw      $t1 16($t1)
     jalr    $t1
+    la      $a0 int_const117
+    sw      $a0 12($s0)
     lw      $a0 12($s0)
     sw      $a0 0($sp)
     addiu   $sp $sp -4
@@ -679,6 +693,8 @@ dispatch2:
     lw      $t1 8($a0)
     lw      $t1 12($t1)
     jalr    $t1
+    la      $a0 str_const15
+    sw      $a0 16($s0)
     lw      $a0 16($s0)
     sw      $a0 0($sp)
     addiu   $sp $sp -4
