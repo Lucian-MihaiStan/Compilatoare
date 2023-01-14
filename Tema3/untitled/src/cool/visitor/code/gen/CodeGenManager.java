@@ -7,6 +7,7 @@ import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.ClassTypeSymbol;
+import cool.structures.custom.symbols.IdSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.utils.Pair;
@@ -16,6 +17,7 @@ import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,8 +58,8 @@ public class CodeGenManager {
         classObjectsTab = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
         heapStartTab = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
 
-        initMethods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
-        customMethods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
+        initMethods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
+        customMethods = templates.getInstanceOf(CodeGenVisitorConstants.SEQUENCE_PATTERN);
     }
 
     public STGroupFile getTemplates() {
@@ -201,6 +203,8 @@ public class CodeGenManager {
             noFields += 1;
             break;
         default:
+            genAttributesCode(classPrototypeObject, (ClassTypeSymbol) classSymbol);
+            break;
         }
 
         classPrototypeObject.add(CodeGenVisitorConstants.SIZE, CodeGenVisitorConstants.DEFAULT_SIZE_PROTOTYPE + noFields);
@@ -219,15 +223,37 @@ public class CodeGenManager {
             classDispatchTable.add(CodeGenVisitorConstants.METHODS, methodDeclaration);
         });
 
-        if (CodeGenVisitorConstants.MAIN.equals(className))
-            classDispatchTable.add(CodeGenVisitorConstants.METHODS, CodeGenVisitorConstants.HEAP_START);
-
         dispatchTables.add(CodeGenVisitorConstants.E, classDispatchTable);
 
         ST objectDeclarationTab = templates.getInstanceOf(CodeGenVisitorConstants.OBJECT_DECLARATION_TAB_PATTERN)
                 .add(CodeGenVisitorConstants.CLASS_NAME, className);
 
         classObjectsTab.add(CodeGenVisitorConstants.E, objectDeclarationTab);
+    }
+
+    private void genAttributesCode(ST classPrototypeObject, ClassTypeSymbol classSymbol) {
+
+        StringBuilder sb = new StringBuilder();
+
+        List<Symbol> allFields = classSymbol.getAllFields();
+
+        Collections.reverse(allFields);
+        allFields.forEach(field -> {
+            if (!(field instanceof IdSymbol))
+                throw new IllegalStateException("Unknown field type " + field);
+
+            ClassTypeSymbol typeSymbol = ((IdSymbol) field).getTypeSymbol();
+            if (typeSymbol == TypeSymbolConstants.STRING)
+                sb.append("\t.word\tstr_const0\n");
+            else if (typeSymbol == TypeSymbolConstants.INT)
+                sb.append("\t.word\tint_const0\n");
+            else if (typeSymbol == TypeSymbolConstants.BOOL)
+                sb.append("\t.word\tbool_const0\n");
+            else
+                sb.append("\t.word\t0\n");
+        });
+
+        classPrototypeObject.add(CodeGenVisitorConstants.ATTRIB, sb.toString());
     }
 
     private Integer addStringConstant(String className) {

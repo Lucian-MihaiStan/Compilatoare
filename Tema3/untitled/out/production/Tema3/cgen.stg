@@ -16,28 +16,19 @@ program(intTag, boolTag, stringTag, strConstants, intConstants, boolConstants, c
 <intTag>
 <stringTag>
 <boolTag>
-
 <strConstants>
-
 <intConstants>
-
 <boolConstants>
-
 class_nameTab:
 <classNameTab>
-
 class_objTab:
 <classObjectsTab>
-
 <classPrototypesTab>
-
 <dispatchTables>
-
+    .globl  heap_start
 heap_start:
 <heapStartTab>
-
 <initConstructTab>
-
 <customMethodsTab>
 >>
 
@@ -93,7 +84,6 @@ methodDeclarationDispatchTable(className, methodName) ::= <<
 objectDeclarationTab(className) ::= <<
     .word   <className>_protObj
     .word   <className>_init
-
 >>
 
 heapStart(objectInits) ::= <<
@@ -147,9 +137,13 @@ literal(addressConstant) ::= <<
     la      $a0 <addressConstant>
 >>
 
-dispatchMethod(methodName, args, methodId, parserPath, parserPathLine, offset) ::= <<
+dispatchMethod(methodName, args, methodId, parserPath, parserPathLine, offset, caller) ::= <<
 <args>
+<if (caller)>
+<caller>
+<else>
     move    $a0 $s0
+<endif>
     bnez    $a0 dispatch<methodId>    # <methodName>
     la      $a0 <parserPath>
     li      $t1 <parserPathLine>
@@ -164,4 +158,8 @@ dispatchArg(arg) ::= <<
 <arg>
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+>>
+
+idAttributeVar(offset, pointer) ::= <<
+    lw      $a0 <offset>($<pointer>)
 >>

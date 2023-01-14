@@ -16,6 +16,7 @@ public class MethodSymbol extends Symbol implements Scope {
     private boolean isResolved;
 
     private Symbol returnTypeSymbol;
+    private int offset;
 
     public MethodSymbol(String name, String returnTypeName, Scope currentScope) {
         super(name);
@@ -89,5 +90,13 @@ public class MethodSymbol extends Symbol implements Scope {
 
     public void setResolved(boolean resolved) {
         isResolved = resolved;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 }

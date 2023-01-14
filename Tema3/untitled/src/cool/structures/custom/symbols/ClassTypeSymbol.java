@@ -6,7 +6,9 @@ import cool.structures.Symbol;
 import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.utils.Pair;
+import cool.visitor.code.gen.CodeGenVisitorConstants;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public class ClassTypeSymbol extends Symbol implements Scope {
 
         if (this.parentScope instanceof ClassTypeSymbol && this.parentScope != TypeSymbolConstants.SELF_TYPE)
             ((ClassTypeSymbol) this.parentScope).addChildren(this);
+
     }
 
     private void addChildren(ClassTypeSymbol childSymbol) {
@@ -161,5 +164,17 @@ public class ClassTypeSymbol extends Symbol implements Scope {
 
     public Map<String, MethodSymbol> getMethodsSymbols() {
         return methodsSymbols;
+    }
+
+    public int getParentLastOffset() {
+        int currentTotalAttributes = symbols.size() * 4;
+        Scope currentScopeEval = parentScope;
+        while (currentScopeEval instanceof ClassTypeSymbol) {
+            Map<String, IdSymbol> parentsSymbols = ((ClassTypeSymbol) currentScopeEval).getSymbols();
+            currentTotalAttributes += parentsSymbols.size() * 4;
+            currentScopeEval = currentScopeEval.getParent();
+        }
+
+        return currentTotalAttributes;
     }
 }

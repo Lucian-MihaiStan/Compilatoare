@@ -19,13 +19,17 @@ import cool.reflection.type.RfBool;
 import cool.reflection.type.RfInt;
 import cool.reflection.type.RfString;
 import cool.structures.Scope;
+import cool.structures.Symbol;
 import cool.structures.custom.symbols.ClassTypeSymbol;
+import cool.structures.custom.symbols.IdSymbol;
+import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.utils.ParserPath;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -172,6 +176,42 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfId rfId) {
+        ST idAttributeTemplate = manager.getTemplate(CodeGenVisitorConstants.ID_ATTRIBUTE_VAR);
+        if (idAttributeTemplate == null)
+            throw new IllegalStateException("Unable to locate id attribute or local variable template");
+
+        String id = rfId.getToken().getText();
+
+        Symbol idSymbol = null;
+        boolean isParameter = false;
+        boolean isField = false;
+        if (scope instanceof MethodSymbol) {
+            Map<String, Symbol> parameters = ((MethodSymbol) scope).getParameters();
+            idSymbol = parameters.get(id);
+            if (idSymbol != null)
+                isParameter = true;
+
+            if (idSymbol == null) {
+                Scope parentWithClassType = scope.getParentWithClassType(ClassTypeSymbol.class);
+                idSymbol  = parentWithClassType.lookup(id);
+                isField = idSymbol != null;
+            }
+        }
+
+        if (idSymbol instanceof IdSymbol)
+            idAttributeTemplate.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
+
+        if (isParameter) {
+            idAttributeTemplate.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
+            // TODO Lucian continue here
+        }
+
+        if (isField && idSymbol instanceof IdSymbol) {
+            idAttributeTemplate
+                    .add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.S0);
+            return idAttributeTemplate;
+        }
+
         return null;
     }
 
@@ -231,14 +271,65 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
                 .add(CodeGenVisitorConstants.PARSER_PATH, String.format(CodeGenVisitorConstants.STR_CONST_FORMAT, parserPath.getStringConstId()))
                 .add(CodeGenVisitorConstants.PARSER_PATH_LINE, parserPath.getLine());
 
-//        rfDispatch.getObjectToCall().get
+        Symbol callerType = rfDispatch.getCallerType();
+        if (callerType instanceof  ClassTypeSymbol) {
+            MethodSymbol methodSymbol = ((ClassTypeSymbol) callerType).lookUpMethod(methodDispatchName);
+            if (methodSymbol == null)
+                throw new IllegalStateException("Unable to locate method dispatch with name " + methodDispatchName);
+
+            int offset = methodSymbol.getOffset();
+            dispatchTemplate
+                    .add(CodeGenVisitorConstants.OFFSET, offset);
+        }
+
+        RfExpression objectToCall = rfDispatch.getObjectToCall();
+        if (objectToCall != null && !TypeSymbolConstants.SELF_STR.equals(objectToCall.getToken().getText())) {
+            ST objectToCallST = objectToCall.accept(this);
+            if (objectToCallST != null)
+                dispatchTemplate.add(CodeGenVisitorConstants.CALLER, objectToCallST);
+        }
 
         return dispatchTemplate;
     }
 
     @Override
     public ST visit(RfImplicitDispatch rfImplicitDispatch) {
-        return null;
+
+        ST dispatchTemplate = manager.getTemplate(CodeGenVisitorConstants.DISPATCH_METHOD_PATTERN);
+        if (dispatchTemplate == null)
+            throw new IllegalStateException("Unable to locate dispatch method pattern");
+
+        Token dispatchToken = rfImplicitDispatch.getDispatch();
+        String methodDispatchName = dispatchToken.getText();
+        dispatchTemplate
+                .add(CodeGenVisitorConstants.METHOD_NAME, methodDispatchName)
+                .add(CodeGenVisitorConstants.METHOD_ID, manager.getMethodId());
+
+        List<RfExpression> args = rfImplicitDispatch.getParameters();
+        Collections.reverse(args);
+
+        StringBuilder argsRender = new StringBuilder();
+        args.forEach(param -> argsRender.append(manager.getTemplate(CodeGenVisitorConstants.DISPATCH_ARG_PATTERN).add(CodeGenVisitorConstants.ARG, param.accept(this)).render()));
+
+        ParserPath parserPath = manager.computeParserPathContext(dispatchToken, rfImplicitDispatch.getContext());
+
+        dispatchTemplate
+                .add(CodeGenVisitorConstants.ARGS, argsRender)
+                .add(CodeGenVisitorConstants.PARSER_PATH, String.format(CodeGenVisitorConstants.STR_CONST_FORMAT, parserPath.getStringConstId()))
+                .add(CodeGenVisitorConstants.PARSER_PATH_LINE, parserPath.getLine());
+
+        Symbol callerType = rfImplicitDispatch.getCallerType();
+        if (callerType instanceof ClassTypeSymbol) {
+            MethodSymbol methodSymbol = ((ClassTypeSymbol) callerType).lookUpMethod(methodDispatchName);
+            if (methodSymbol == null)
+                throw new IllegalStateException("Unable to locate method dispatch with name " + methodDispatchName);
+
+            int offset = methodSymbol.getOffset();
+            dispatchTemplate
+                    .add(CodeGenVisitorConstants.OFFSET, offset);
+        }
+
+        return dispatchTemplate;
     }
 
     @Override

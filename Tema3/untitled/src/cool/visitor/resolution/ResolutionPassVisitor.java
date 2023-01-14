@@ -15,6 +15,7 @@ import cool.reflection.expression.single.value.RfBitNegExpression;
 import cool.reflection.expression.single.value.RfIsVoidExpression;
 import cool.reflection.expression.single.value.RfNotExpression;
 import cool.reflection.expression.single.value.RfParenExpression;
+import cool.reflection.feature.RfFeature;
 import cool.reflection.feature.features.RfField;
 import cool.reflection.feature.features.RfMethod;
 import cool.reflection.type.RfBool;
@@ -53,6 +54,22 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         currentScope = classScope;
         rfClass.getRfFeatures().forEach(rfFeature -> rfFeature.accept(this));
 
+        Scope parent = classScope.getParent();
+
+        int j = parent instanceof ClassTypeSymbol ? ((ClassTypeSymbol) parent).getParentLastOffset() + 12 : 12;
+        for (RfFeature rfFeature : rfClass.getRfFeatures()) {
+            if (rfFeature instanceof RfMethod) {
+                // TODO Lucian you have to continue here for methods offset
+                continue;
+            }
+
+            if (rfFeature instanceof RfField) {
+                IdSymbol idSymbolName = ((RfField) rfFeature).getIdSymbolName();
+                idSymbolName.setOffset(j);
+                j += 4;
+            }
+
+        }
         return null;
     }
 
@@ -568,13 +585,14 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             throw new IllegalStateException("Unknown type of symbol to call " + symbolToCall);
 
         MethodSymbol methodSymbol;
-        if (symbolToCall.getName().equals(TypeSymbolConstants.SELF_TYPE_STR)) {
+        Symbol toCallClassSymbol = null;
+        if (symbolToCall.getName().equals(TypeSymbolConstants.SELF_TYPE_STR) || symbolToCall.getName().equals(TypeSymbolConstants.SELF_STR)) {
 
             RfExpression toCall = rfDispatch.getObjectToCall();
             while (toCall instanceof RfDispatch)
                 toCall = ((RfDispatch) toCall).getObjectToCall();
 
-            Symbol toCallClassSymbol;
+
             if (toCall instanceof RfImplicitDispatch) {
                 toCallClassSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
             } else {
@@ -651,6 +669,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             }
         }
 
+        rfDispatch.setCallerType(toCallClassSymbol != null ? toCallClassSymbol : symbolToCall);
 
 //        return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
         return methodSymbol.getReturnTypeSymbol();
@@ -723,6 +742,10 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             }
 
         }
+
+//        rfImplicitDispatch.setCallerType(currentScope != null ? toCallClassSymbol : symbolToCall);
+
+        rfImplicitDispatch.setCallerType((Symbol) parentScope);
 
         return methodSymbol.getReturnTypeSymbol();
     }

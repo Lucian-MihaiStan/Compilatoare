@@ -1,6 +1,7 @@
 package cool.reflection.expression;
 
 import cool.parser.CoolParser;
+import cool.structures.Symbol;
 import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 
@@ -13,6 +14,7 @@ public class RfDispatch extends RfExpression {
     private final Token atType;
     private final Token dispatchName;
     private final List<RfExpression> parameters;
+    private Symbol callerType;
 
     public RfDispatch(CoolParser.DispatchContext ctx, RfExpression objectToCall, Token atType, Token dispatchName, List<RfExpression> parameters, Token token) {
         super(ctx, token);
@@ -50,5 +52,13 @@ public class RfDispatch extends RfExpression {
     @Override
     public String toString() {
         return objectToCall.toString() + (atType == null ? "" : ("@" + atType.getText())) + "." + (dispatchName == null ? "null" : dispatchName.getText()) + "(" + parameters.stream().map(Object::toString).collect(Collectors.toList()) + ")";
+    }
+
+    public void setCallerType(Symbol symbol) {
+        this.callerType = symbol;
+    }
+
+    public Symbol getCallerType() {
+        return callerType;
     }
 }

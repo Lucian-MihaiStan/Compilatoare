@@ -37,6 +37,7 @@ public class SymbolTable {
         MethodSymbol concat = new MethodSymbol("concat", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.STRING);
         concat.setReturnTypeSymbol(TypeSymbolConstants.STRING);
         concat.setResolved(true);
+        concat.setOffset(12);
 
         IdSymbol xString = new IdSymbol("s", TypeSymbolConstants.STRING_STR);
         xString.setTypeSymbol(TypeSymbolConstants.STRING);
@@ -50,12 +51,14 @@ public class SymbolTable {
         MethodSymbol length = new MethodSymbol("length", TypeSymbolConstants.INT_STR, TypeSymbolConstants.STRING);
         length.setReturnTypeSymbol(TypeSymbolConstants.INT);
         length.setResolved(true);
+        length.setOffset(16);
 
         TypeSymbolConstants.STRING.add(length);
 
         MethodSymbol substr = new MethodSymbol("substr", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.STRING);
         substr.setReturnTypeSymbol(TypeSymbolConstants.STRING);
         substr.setResolved(true);
+        substr.setOffset(20);
 
         IdSymbol index = new IdSymbol("i", TypeSymbolConstants.INT_STR);
         index.setTypeSymbol(TypeSymbolConstants.INT);
@@ -78,6 +81,7 @@ public class SymbolTable {
         MethodSymbol outString = new MethodSymbol("out_string", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.IO);
         outString.setReturnTypeSymbol(TypeSymbolConstants.SELF_TYPE);
         outString.setResolved(true);
+        outString.setOffset(12);
 
         IdSymbol xString = new IdSymbol("x", TypeSymbolConstants.STRING_STR);
         xString.setTypeSymbol(TypeSymbolConstants.STRING);
@@ -92,6 +96,7 @@ public class SymbolTable {
         MethodSymbol outInt = new MethodSymbol("out_int", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.IO);
         outInt.setReturnTypeSymbol(TypeSymbolConstants.SELF_TYPE);
         outInt.setResolved(true);
+        outInt.setOffset(16);
 
         IdSymbol xInt = new IdSymbol("x", TypeSymbolConstants.INT_STR);
         xInt.setTypeSymbol(TypeSymbolConstants.INT);
@@ -106,6 +111,7 @@ public class SymbolTable {
         MethodSymbol inString = new MethodSymbol("in_string", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.IO);
         inString.setReturnTypeSymbol(TypeSymbolConstants.STRING);
         inString.setResolved(true);
+        inString.setOffset(20);
 
         TypeSymbolConstants.IO.add(inString);
 
@@ -114,28 +120,32 @@ public class SymbolTable {
         MethodSymbol inInt = new MethodSymbol("in_int", TypeSymbolConstants.INT_STR, TypeSymbolConstants.IO);
         inInt.setReturnTypeSymbol(TypeSymbolConstants.INT);
         inInt.setResolved(true);
+        inString.setOffset(24);
 
         TypeSymbolConstants.IO.add(inInt);
     }
 
     private static void implicitDefinitionOfObjectMethods() {
-        MethodSymbol abort = new MethodSymbol("abort", TypeSymbolConstants.OBJECT_STR, TypeSymbolConstants.OBJECT);
-        abort.setReturnTypeSymbol(TypeSymbolConstants.OBJECT);
-        abort.setResolved(true);
+        MethodSymbol copy = new MethodSymbol("copy", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.OBJECT);
+        copy.setReturnTypeSymbol(TypeSymbolConstants.SELF_TYPE);
+        copy.setResolved(true);
+        copy.setOffset(8);
 
-        TypeSymbolConstants.OBJECT.add(abort);
+        TypeSymbolConstants.OBJECT.add(copy);
 
         MethodSymbol typeName = new MethodSymbol("type_name", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.OBJECT);
         typeName.setReturnTypeSymbol(TypeSymbolConstants.STRING);
         typeName.setResolved(true);
+        typeName.setOffset(4);
 
         TypeSymbolConstants.OBJECT.add(typeName);
 
-        MethodSymbol copy = new MethodSymbol("copy", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.OBJECT);
-        copy.setReturnTypeSymbol(TypeSymbolConstants.SELF_TYPE);
-        copy.setResolved(true);
+        MethodSymbol abort = new MethodSymbol("abort", TypeSymbolConstants.OBJECT_STR, TypeSymbolConstants.OBJECT);
+        abort.setReturnTypeSymbol(TypeSymbolConstants.OBJECT);
+        abort.setResolved(true);
+        abort.setOffset(0);
 
-        TypeSymbolConstants.OBJECT.add(copy);
+        TypeSymbolConstants.OBJECT.add(abort);
     }
     
     /**

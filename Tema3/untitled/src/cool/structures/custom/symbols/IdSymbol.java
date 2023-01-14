@@ -13,6 +13,8 @@ public class IdSymbol extends Symbol {
 
     private ClassTypeSymbol currentTSelfTypeSymbol;
 
+    private int offset;
+
     public IdSymbol(String name, String type) {
         super(name);
         this.type = type;
@@ -49,5 +51,13 @@ public class IdSymbol extends Symbol {
 
     public ClassTypeSymbol getCurrentTSelfTypeSymbol() {
         return currentTSelfTypeSymbol;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public int getOffset() {
+        return offset;
     }
 }

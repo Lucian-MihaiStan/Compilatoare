@@ -70,8 +70,6 @@ public interface CodeGenVisitorConstants {
 
     String MAIN = "Main";
 
-    String HEAP_START = "\t.globl\theap_start";
-
     String HEAP_START_PATTERN = "heapStart";
 
     String HEAP_START_TAB = "heapStartTab";
@@ -121,5 +119,14 @@ public interface CodeGenVisitorConstants {
 
     String DISPATCH_ARG_PATTERN = "dispatchArg";
 
+    String CALLER = "caller";
+
+    String ID_ATTRIBUTE_VAR = "idAttributeVar";
+
+    String POINTER = "pointer";
+
+    String S0 = "s0";
+
+    String FP = "fp";
 
 }
