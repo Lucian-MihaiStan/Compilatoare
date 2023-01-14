@@ -133,4 +133,12 @@ public interface CodeGenVisitorConstants {
 
     String STORE_ID_ATTRIBUTE_VAR = "storeIdAttributeVar";
 
+    String PUSH_STACK = "pushStack";
+
+    String LOAD_ADDRESS_INT = "\tla\t\t$a0 int_const0";
+
+    String LOAD_ADDRESS_STRING = "\tla\t\t$a0 str_const0";
+
+    String LOAD_ADDRESS_BOOL = "\tla\t\t$a0 bool_const0";
+
 }

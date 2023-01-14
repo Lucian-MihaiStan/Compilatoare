@@ -22,6 +22,7 @@ import cool.structures.Scope;
 import cool.structures.Symbol;
 import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.IdSymbol;
+import cool.structures.custom.symbols.LetSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.utils.ParserPath;
@@ -209,6 +210,27 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
             }
         }
 
+        boolean isDeclaredVariable = false;
+
+        if (scope instanceof LetSymbol) {
+            Map<String, Symbol> declaredVariables = ((LetSymbol) scope).getSymbols();
+            idSymbol = declaredVariables.get(id);
+            if (idSymbol != null)
+                isDeclaredVariable = true;
+
+            if (idSymbol == null) {
+                Scope parentWithClassType = scope.getParentWithClassType(ClassTypeSymbol.class);
+                idSymbol = parentWithClassType.lookup(id);
+                isField = idSymbol != null;
+            }
+        }
+
+        if (isDeclaredVariable && idSymbol instanceof IdSymbol) {
+            idAttributeTemplate.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
+            idAttributeTemplate.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
+            return idAttributeTemplate;
+        }
+
         if (isParameter && idSymbol instanceof IdSymbol) {
             idAttributeTemplate.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
             idAttributeTemplate.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
@@ -360,7 +382,8 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
         StringBuilder argsRender = new StringBuilder();
         args.forEach(param -> argsRender.append(
                 manager.getTemplate(CodeGenVisitorConstants.DISPATCH_ARG_PATTERN)
-                        .add(CodeGenVisitorConstants.ARG, param.accept(this)).render())
+                        .add(CodeGenVisitorConstants.ARG, param.accept(this))
+                        .render())
         );
 
         ParserPath parserPath = manager.computeParserPathContext(dispatchToken, rfImplicitDispatch.getContext());
@@ -396,12 +419,74 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfLet rfLet) {
-        return null;
+        ST pushStack = manager.getTemplate(CodeGenVisitorConstants.PUSH_STACK);
+        if (pushStack == null)
+            throw new IllegalStateException("Unable to locate template " + CodeGenVisitorConstants.PUSH_STACK);
+
+        List<RfLet.RfDeclareVariable> vars = rfLet.getVars();
+        pushStack.add(CodeGenVisitorConstants.OFFSET, vars.size() * (-4));
+
+        ST template = manager.getTemplate(CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
+        if (template == null)
+            throw new IllegalStateException("Unable to locate template " + CodeGenVisitorConstants.SEQUENCE_SPACED_PATTERN);
+
+        template.add(CodeGenVisitorConstants.E, pushStack);
+
+        Scope currentScope = scope;
+        scope = rfLet.getLetScope();
+
+        int i = -4;
+        for (RfLet.RfDeclareVariable var : vars) {
+            var.getIdSymbol().setOffset(i);
+            template.add(CodeGenVisitorConstants.E, var.accept(this));
+            i -= 4;
+        }
+
+        template.add(CodeGenVisitorConstants.E, rfLet.getBody().accept(this));
+        scope = currentScope;
+
+        ST popStack = manager.getTemplate(CodeGenVisitorConstants.PUSH_STACK);
+        if (popStack == null)
+            throw new IllegalStateException("Unable to locate template " + CodeGenVisitorConstants.PUSH_STACK);
+
+        popStack.add(CodeGenVisitorConstants.OFFSET, vars.size() * 4);
+        template.add(CodeGenVisitorConstants.E, popStack);
+
+        return template;
     }
 
     @Override
     public ST visit(RfLet.RfDeclareVariable rfDeclareVariable) {
-        return null;
+        ST storeIdVar = manager.getTemplate(CodeGenVisitorConstants.STORE_ID_ATTRIBUTE_VAR);
+        if (storeIdVar == null)
+            throw new IllegalStateException("Unable to locate store var attribute");
+
+        RfExpression rfExpression = rfDeclareVariable.getValue();
+        IdSymbol idSymbol = rfDeclareVariable.getIdSymbol();
+        ClassTypeSymbol typeSymbol = idSymbol.getTypeSymbol();
+
+        String value = null;
+        if (rfExpression == null) {
+            switch (typeSymbol.getName()) {
+            case TypeSymbolConstants.INT_STR:
+                value = CodeGenVisitorConstants.LOAD_ADDRESS_INT;
+                break;
+            case TypeSymbolConstants.BOOL_STR:
+                value = CodeGenVisitorConstants.LOAD_ADDRESS_BOOL;
+                break;
+            case TypeSymbolConstants.STRING_STR:
+                value = CodeGenVisitorConstants.LOAD_ADDRESS_STRING;
+                break;
+            }
+        } else {
+            value = rfExpression.accept(this).render();
+        }
+
+        storeIdVar.add(CodeGenVisitorConstants.DEFAULT_VALUE, value);
+        storeIdVar.add(CodeGenVisitorConstants.OFFSET, idSymbol.getOffset());
+        storeIdVar.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
+
+        return storeIdVar;
     }
 
     @Override

@@ -115,10 +115,10 @@ str_const13:
     .align 2
 str_const14:
     .word   10
-    .word   11
+    .word   10
     .word   String_dispTab
     .word   int_const7
-    .asciiz "14-formals-ref-assign.cl"
+    .asciiz "15-let-no-init-ref.cl"
     .align 2
 int_const0:
     .word   9
@@ -159,7 +159,7 @@ int_const7:
     .word   9
     .word   4
     .word   Int_dispTab
-    .word   24
+    .word   21
 bool_const0:
     .word   11
     .word   4
@@ -355,7 +355,6 @@ Main_dispTab:
     .word   A.f
     .word   B.g
     .word   Main.main
-    .word   Main.charAt
 
 C_dispTab:
     .word   Object.abort
@@ -641,66 +640,44 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 int_const2
-    sw      $a0 0($sp)
-    addiu   $sp $sp -4
-    la      $a0 str_const13
+    addiu   $sp $sp -8
+
+	la		$a0 int_const0
+    sw      $a0 -4($fp)
+
+	la		$a0 str_const0
+    sw      $a0 -8($fp)
+
+    lw      $a0 -4($fp)
     sw      $a0 0($sp)
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch1    # charAt
+    bnez    $a0 dispatch0    # out_int
     la      $a0 str_const14
-    li      $t1 30
-    jal     _dispatch_abort
-dispatch1:
-    lw      $t1 8($a0)
-    lw      $t1 40($t1)
-    jalr    $t1
-    sw      $a0 0($sp)
-    addiu   $sp $sp -4
-
-    move    $a0 $s0
-    bnez    $a0 dispatch0    # out_string
-    la      $a0 str_const14
-    li      $t1 30
+    li      $t1 33
     jal     _dispatch_abort
 dispatch0:
     lw      $t1 8($a0)
+    lw      $t1 16($t1)
+    jalr    $t1
+    lw      $a0 -8($fp)
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+
+    move    $a0 $s0
+    bnez    $a0 dispatch1    # out_string
+    la      $a0 str_const14
+    li      $t1 34
+    jal     _dispatch_abort
+dispatch1:
+    lw      $t1 8($a0)
     lw      $t1 12($t1)
     jalr    $t1
+
+    addiu   $sp $sp 8
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)
 	addiu	$sp $sp 12
-	jr		$ra
-Main.charAt:
-    addiu	$sp $sp -12
-    sw		$fp 12($sp)
-    sw		$s0 8($sp)
-    sw		$ra 4($sp)
-    addiu	$fp $sp 4
-    move	$s0 $a0
-    la      $a0 int_const3
-    sw      $a0 0($sp)
-    addiu   $sp $sp -4
-    lw      $a0 16($fp)
-    sw      $a0 0($sp)
-    addiu   $sp $sp -4
-
-    lw      $a0 12($fp)
-    bnez    $a0 dispatch2    # substr
-    la      $a0 str_const14
-    li      $t1 35
-    jal     _dispatch_abort
-dispatch2:
-    lw      $t1 8($a0)
-    lw      $t1 20($t1)
-    jalr    $t1
-    sw      $a0 12($fp)
-    lw      $a0 12($fp)
-    lw		$fp 12($sp)
-	lw		$s0 8($sp)
-	lw		$ra 4($sp)
-	addiu	$sp $sp 20
 	jr		$ra

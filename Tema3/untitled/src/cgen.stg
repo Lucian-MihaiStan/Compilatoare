@@ -174,3 +174,7 @@ storeIdAttributeVar(defaultValue, offset, pointer) ::= <<
 <defaultValue>
     sw      $a0 <offset>($<pointer>)
 >>
+
+pushStack(offset) ::= <<
+    addiu   $sp $sp <offset>
+>>

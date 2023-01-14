@@ -60,4 +60,7 @@ public class LetSymbol extends Symbol implements Scope {
         return currentScope;
     }
 
+    public Map<String, Symbol> getSymbols() {
+        return symbols;
+    }
 }
