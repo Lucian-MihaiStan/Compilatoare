@@ -21,7 +21,9 @@ import cool.reflection.type.RfString;
 import cool.structures.Scope;
 import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
+import cool.utils.ParserPath;
 import cool.visitor.ASTVisitor;
+import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 
 import java.util.*;
@@ -205,7 +207,33 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfDispatch rfDispatch) {
-        return null;
+
+        ST dispatchTemplate = manager.getTemplate(CodeGenVisitorConstants.DISPATCH_METHOD_PATTERN);
+        if (dispatchTemplate == null)
+            throw new IllegalStateException("Unable to locate dispatch method pattern");
+
+        Token dispatchToken = rfDispatch.getDispatch();
+        String methodDispatchName = dispatchToken.getText();
+        dispatchTemplate
+                .add(CodeGenVisitorConstants.METHOD_NAME, methodDispatchName)
+                .add(CodeGenVisitorConstants.METHOD_ID, manager.getMethodId());
+
+        List<RfExpression> args = rfDispatch.getParameters();
+        Collections.reverse(args);
+
+        StringBuilder argsRender = new StringBuilder();
+        args.forEach(param -> argsRender.append(manager.getTemplate(CodeGenVisitorConstants.DISPATCH_ARG_PATTERN).add(CodeGenVisitorConstants.ARG, param.accept(this)).render()));
+
+        ParserPath parserPath = manager.computeParserPathContext(dispatchToken, rfDispatch.getContext());
+
+        dispatchTemplate
+                .add(CodeGenVisitorConstants.ARGS, argsRender)
+                .add(CodeGenVisitorConstants.PARSER_PATH, String.format(CodeGenVisitorConstants.STR_CONST_FORMAT, parserPath.getStringConstId()))
+                .add(CodeGenVisitorConstants.PARSER_PATH_LINE, parserPath.getLine());
+
+//        rfDispatch.getObjectToCall().get
+
+        return dispatchTemplate;
     }
 
     @Override

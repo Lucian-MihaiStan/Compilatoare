@@ -1,5 +1,7 @@
 package cool.visitor.code.gen;
 
+import cool.compiler.Compiler;
+import cool.parser.CoolParser;
 import cool.structures.DefaultScope;
 import cool.structures.Scope;
 import cool.structures.Symbol;
@@ -8,10 +10,12 @@ import cool.structures.custom.symbols.ClassTypeSymbol;
 import cool.structures.custom.symbols.MethodSymbol;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.utils.Pair;
+import cool.utils.ParserPath;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,7 @@ public class CodeGenManager {
     private final Map<Integer, Integer> intMIPSConstants = new HashMap<>();
 
     private final Map<String, Integer> stringMIPSConstants = new HashMap<>();
+    private int methodId;
 
     public CodeGenManager(String codeGenStgPath) {
         templates = new STGroupFile(codeGenStgPath);
@@ -154,36 +159,9 @@ public class CodeGenManager {
     }
 
     private void addSymbolByName(String className) {
-        if (stringMIPSConstants.containsKey(className))
+        Integer classCount = addStringConstant(className);
+        if (classCount == null)
             return;
-
-        int classCount = strConstNumber++;
-
-        stringMIPSConstants.put(className, classCount);
-
-        int intConstId;
-
-        if (!intMIPSConstants.containsKey(className.length())) {
-            ST intConst = templates.getInstanceOf(CodeGenVisitorConstants.INT_CONST_PATTERN)
-                    .add(CodeGenVisitorConstants.COUNT,  intMIPSConstants.size())
-                    .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.INT.getTag())
-                    .add(CodeGenVisitorConstants.DEFAULT_VALUE, className.length());
-
-            intConstId = intMIPSConstants.size();
-            intConstants.add(CodeGenVisitorConstants.E, intConst);
-            intMIPSConstants.put(className.length(), intConstId);
-        } else {
-            intConstId = intMIPSConstants.get(className.length());
-        }
-
-        ST strConst = templates.getInstanceOf(CodeGenVisitorConstants.STR_CONST_PATTERN)
-                .add(CodeGenVisitorConstants.COUNT, classCount)
-                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.STRING.getTag())
-                .add(CodeGenVisitorConstants.SIZE, (className.length() + 1) / 4 + 5) // TODO Lucian replace this formula here 'cause it's wrong
-                .add(CodeGenVisitorConstants.CLASS_NAME_LENGTH, CodeGenVisitorConstants.INT_CONST + intConstId)
-                .add(CodeGenVisitorConstants.CLASS_NAME, className);
-
-        strConstants.add(CodeGenVisitorConstants.E, strConst);
 
         if (CodeGenVisitorConstants.EMPTY_STRING.equals(className))
             return;
@@ -252,6 +230,44 @@ public class CodeGenManager {
         classObjectsTab.add(CodeGenVisitorConstants.E, objectDeclarationTab);
     }
 
+    private Integer addStringConstant(String className) {
+        if (stringMIPSConstants.containsKey(className))
+            return stringMIPSConstants.get(className);
+
+        int classCount = strConstNumber++;
+
+        stringMIPSConstants.put(className, classCount);
+
+        int intConstId;
+
+        if (!intMIPSConstants.containsKey(className.length())) {
+            ST intConst = templates.getInstanceOf(CodeGenVisitorConstants.INT_CONST_PATTERN)
+                    .add(CodeGenVisitorConstants.COUNT,  intMIPSConstants.size())
+                    .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.INT.getTag())
+                    .add(CodeGenVisitorConstants.DEFAULT_VALUE, className.length());
+
+            intConstId = intMIPSConstants.size();
+            intConstants.add(CodeGenVisitorConstants.E, intConst);
+            intMIPSConstants.put(className.length(), intConstId);
+        } else {
+            intConstId = intMIPSConstants.get(className.length());
+        }
+
+        generateStringConstant(className, classCount, intConstId);
+        return classCount;
+    }
+
+    private void generateStringConstant(String className, int classCount, int intConstId) {
+        ST strConst = templates.getInstanceOf(CodeGenVisitorConstants.STR_CONST_PATTERN)
+                .add(CodeGenVisitorConstants.COUNT, classCount)
+                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.STRING.getTag())
+                .add(CodeGenVisitorConstants.SIZE, (className.length() + 1) / 4 + 5) // TODO Lucian replace this formula here 'cause it's wrong
+                .add(CodeGenVisitorConstants.CLASS_NAME_LENGTH, CodeGenVisitorConstants.INT_CONST + intConstId)
+                .add(CodeGenVisitorConstants.CLASS_NAME, className);
+
+        strConstants.add(CodeGenVisitorConstants.E, strConst);
+    }
+
     public ST getClassObjectsTab() {
         return classObjectsTab;
     }
@@ -277,5 +293,29 @@ public class CodeGenManager {
         intConstants.add(CodeGenVisitorConstants.E, intConst);
 
         return String.valueOf(value);
+    }
+
+    public int getMethodId() {
+        return methodId++;
+    }
+
+    public ParserPath computeParserPathContext(Token dispatchToken, ParserRuleContext context) {
+        if (context == null)
+            throw new IllegalStateException("Null context passed");
+
+        ParserRuleContext currentContext = context;
+
+        while (!(currentContext.getParent() instanceof CoolParser.ProgramContext))
+            currentContext = currentContext.getParent();
+
+        String filePath = Compiler.fileNames.get(currentContext);
+        if (filePath == null)
+            throw new IllegalStateException("Unable to compute the file path for dispatch " + dispatchToken.getText() + " in context " + context);
+        String[] segmentsPath = filePath.split("/");
+        String parserPath = segmentsPath[segmentsPath.length - 1];
+
+        Integer stringConstId = addStringConstant(parserPath);
+
+        return new ParserPath(parserPath, dispatchToken.getLine(), stringConstId);
     }
 }

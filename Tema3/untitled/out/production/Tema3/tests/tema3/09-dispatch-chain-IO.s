@@ -107,6 +107,13 @@ str_const12:
     .word   int_const4
     .asciiz "Bool"
     .align 2
+str_const13:
+    .word   10
+    .word   11
+    .word   String_dispTab
+    .word   int_const7
+    .asciiz "09-dispatch-chain-IO.cl"
+    .align 2
 
 int_const0:
     .word   9
@@ -138,6 +145,16 @@ int_const5:
     .word   4
     .word   Int_dispTab
     .word   3
+int_const7:
+    .word   9
+    .word   4
+    .word   Int_dispTab
+    .word   100
+int_const7:
+    .word   9
+    .word   4
+    .word   Int_dispTab
+    .word   23
 
 bool_const0:
     .word   12
@@ -632,6 +649,18 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
+    la      $a0 100
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+    move    $a0 $s0
+    bnez    $a0 dispatch0    # out_int
+    la      $a0 str_const13
+    li      $t1 30
+    jal     _dispatch_abort
+dispatch0:
+    lw      $t1 8($a0)
+    lw      $t1 ($t1)
+    jalr    $t1
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)

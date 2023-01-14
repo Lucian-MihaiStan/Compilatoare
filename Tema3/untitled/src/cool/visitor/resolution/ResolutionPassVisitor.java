@@ -651,6 +651,7 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             }
         }
 
+
 //        return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
         return methodSymbol.getReturnTypeSymbol();
     }

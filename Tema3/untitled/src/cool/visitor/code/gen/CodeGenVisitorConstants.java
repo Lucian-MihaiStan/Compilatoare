@@ -34,6 +34,8 @@ public interface CodeGenVisitorConstants {
 
     String STR_CONST_PATTERN = "strConst";
 
+    String STR_CONST_FORMAT = "str_const%d";
+
     String INT_CONST =  "int_const";
 
     String INT_CONST_PATTERN = "intConst";
@@ -102,4 +104,22 @@ public interface CodeGenVisitorConstants {
     String DEFAULT_BOOL_PROTOTYPE_VALUE = "\t.word\t0\n";;
 
     String BOOL_CONST_PATTERN = "boolConst";
+
+    String DISPATCH_METHOD_PATTERN = "dispatchMethod";
+
+    String ARG = "arg";
+
+    String ARGS = "args";
+
+    String METHOD_ID = "methodId";
+
+    String PARSER_PATH = "parserPath";
+
+    String PARSER_PATH_LINE = "parserPathLine";
+
+    String OFFSET = "offset";
+
+    String DISPATCH_ARG_PATTERN = "dispatchArg";
+
+
 }
