@@ -408,9 +408,9 @@ String_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
-    .word   String.substr
     .word   String.length
     .word   String.concat
+    .word   String.substr
 
 Bool_dispTab:
     .word   Object.abort
@@ -666,7 +666,7 @@ Main.main:
     jal     _dispatch_abort
 dispatch1:
     lw      $t1 8($a0)
-    lw      $t1 16($t1)
+    lw      $t1 12($t1)
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
@@ -691,7 +691,7 @@ dispatch0:
     jal     _dispatch_abort
 dispatch3:
     lw      $t1 8($a0)
-    lw      $t1 12($t1)
+    lw      $t1 16($t1)
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4

@@ -6,5 +6,4 @@ Loaded: trap.handler.nogc
 The following symbols are undefined:
 main
 
-5Index to substr is too big
-Execution aborted.
+5abcdedeCOOL program successfully executed

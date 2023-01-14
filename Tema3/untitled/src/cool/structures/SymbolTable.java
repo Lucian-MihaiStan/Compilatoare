@@ -32,28 +32,7 @@ public class SymbolTable {
     }
 
     private static void implicitDefinitionOfStringMethods() {
-        // concat definition
-
-        MethodSymbol concat = new MethodSymbol("concat", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.STRING);
-        concat.setReturnTypeSymbol(TypeSymbolConstants.STRING);
-        concat.setResolved(true);
-        concat.setOffset(12);
-
-        IdSymbol xString = new IdSymbol("s", TypeSymbolConstants.STRING_STR);
-        xString.setTypeSymbol(TypeSymbolConstants.STRING);
-
-        concat.add(xString);
-
-        TypeSymbolConstants.STRING.add(concat);
-
-        // length definition
-
-        MethodSymbol length = new MethodSymbol("length", TypeSymbolConstants.INT_STR, TypeSymbolConstants.STRING);
-        length.setReturnTypeSymbol(TypeSymbolConstants.INT);
-        length.setResolved(true);
-        length.setOffset(16);
-
-        TypeSymbolConstants.STRING.add(length);
+        // substr definition
 
         MethodSymbol substr = new MethodSymbol("substr", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.STRING);
         substr.setReturnTypeSymbol(TypeSymbolConstants.STRING);
@@ -73,6 +52,31 @@ public class SymbolTable {
         substr.add(str);
 
         TypeSymbolConstants.STRING.add(substr);
+
+        // concat definition
+
+        MethodSymbol concat = new MethodSymbol("concat", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.STRING);
+        concat.setReturnTypeSymbol(TypeSymbolConstants.STRING);
+        concat.setResolved(true);
+        concat.setOffset(16);
+
+        IdSymbol xString = new IdSymbol("s", TypeSymbolConstants.STRING_STR);
+        xString.setTypeSymbol(TypeSymbolConstants.STRING);
+
+        concat.add(xString);
+
+        TypeSymbolConstants.STRING.add(concat);
+
+        // length definition
+
+        MethodSymbol length = new MethodSymbol("length", TypeSymbolConstants.INT_STR, TypeSymbolConstants.STRING);
+        length.setReturnTypeSymbol(TypeSymbolConstants.INT);
+        length.setResolved(true);
+        length.setOffset(12);
+
+        TypeSymbolConstants.STRING.add(length);
+
+
     }
 
     private static void implicitDefinitionOfIOMethods() {

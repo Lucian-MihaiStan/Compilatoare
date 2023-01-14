@@ -1,4 +1,4 @@
-    .data
+     .data
     .align  2
     .globl  class_nameTab
     .globl  Int_protObj

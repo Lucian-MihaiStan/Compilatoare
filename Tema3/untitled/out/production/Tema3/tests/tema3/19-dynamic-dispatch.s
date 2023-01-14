@@ -377,9 +377,9 @@ String_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
-    .word   String.substr
     .word   String.length
     .word   String.concat
+    .word   String.substr
 
 Bool_dispTab:
     .word   Object.abort

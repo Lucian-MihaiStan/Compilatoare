@@ -670,7 +670,6 @@ dispatch1:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
-
     move    $a0 $s0
     bnez    $a0 dispatch0    # out_int
     la      $a0 str_const14
@@ -683,7 +682,6 @@ dispatch0:
     la      $a0 str_const16
     sw      $a0 0($sp)
     addiu   $sp $sp -4
-
     la      $a0 str_const13
     bnez    $a0 dispatch3    # concat
     la      $a0 str_const14
@@ -695,7 +693,6 @@ dispatch3:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
-
     move    $a0 $s0
     bnez    $a0 dispatch2    # out_string
     la      $a0 str_const14
@@ -711,7 +708,6 @@ dispatch2:
     la      $a0 int_const5
     sw      $a0 0($sp)
     addiu   $sp $sp -4
-
     la      $a0 str_const15
     bnez    $a0 dispatch5    # substr
     la      $a0 str_const14
@@ -723,7 +719,6 @@ dispatch5:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
-
     move    $a0 $s0
     bnez    $a0 dispatch4    # out_string
     la      $a0 str_const14
