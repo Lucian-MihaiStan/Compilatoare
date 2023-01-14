@@ -310,8 +310,8 @@ IO_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
 
 A_dispTab:
     .word   Object.abort
@@ -319,8 +319,8 @@ A_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
 
 B_dispTab:
@@ -329,8 +329,8 @@ B_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -340,8 +340,8 @@ D_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -351,8 +351,8 @@ E_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -362,8 +362,8 @@ Main_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
     .word   Main.main
@@ -374,11 +374,11 @@ C_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
-    .word   C.h
     .word   C.f
+    .word   C.h
 
 F_dispTab:
     .word   Object.abort
@@ -386,8 +386,8 @@ F_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   C.h
     .word   C.f

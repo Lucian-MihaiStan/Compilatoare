@@ -298,8 +298,8 @@ IO_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
 
 A_dispTab:
     .word   Object.abort
@@ -307,8 +307,8 @@ A_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
 
 B_dispTab:
@@ -317,8 +317,8 @@ B_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -328,8 +328,8 @@ D_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -339,8 +339,8 @@ E_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -350,12 +350,12 @@ Main_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
-    .word   Main.charAt
     .word   Main.main
+    .word   Main.charAt
 
 C_dispTab:
     .word   Object.abort
@@ -363,11 +363,11 @@ C_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
-    .word   C.h
     .word   C.f
+    .word   C.h
 
 F_dispTab:
     .word   Object.abort
@@ -375,8 +375,8 @@ F_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   C.h
     .word   C.f
@@ -655,7 +655,7 @@ Main.main:
     jal     _dispatch_abort
 dispatch1:
     lw      $t1 8($a0)
-    lw      $t1 0($t1)
+    lw      $t1 40($t1)
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
@@ -681,6 +681,24 @@ Main.charAt:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
+    la      $a0 int_const3
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+    lw      $a0 16($fp)
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+
+    lw      $a0 12($fp)
+    bnez    $a0 dispatch2    # substr
+    la      $a0 str_const14
+    li      $t1 35
+    jal     _dispatch_abort
+dispatch2:
+    lw      $t1 8($a0)
+    lw      $t1 20($t1)
+    jalr    $t1
+    sw      $a0 12($fp)
+    lw      $a0 12($fp)
     lw		$fp 12($sp)
 	lw		$s0 8($sp)
 	lw		$ra 4($sp)

@@ -57,22 +57,24 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         Scope parent = classScope.getParent();
 
+        int nextMethodOffset = classScope.getParentLastOffsetMethods() * 4;
+
         int j = parent instanceof ClassTypeSymbol ? ((ClassTypeSymbol) parent).getParentLastOffset() + 12 : 12;
         for (RfFeature rfFeature : rfClass.getRfFeatures()) {
             if (rfFeature instanceof RfMethod) {
-                // TODO Lucian you have to continue here for methods offset
+                MethodSymbol methodSymbol = ((RfMethod) rfFeature).getMethodSymbol();
+                if (methodSymbol == null)
+                    throw new IllegalStateException("Unable to compute method symbol for method " + ((RfMethod) rfFeature).getName());
+
+                methodSymbol.setOffset(nextMethodOffset);
+                nextMethodOffset += 4;
                 continue;
             }
 
             if (rfFeature instanceof RfField) {
                 IdSymbol idSymbolName = ((RfField) rfFeature).getIdSymbolName();
-                if (idSymbolName == null) {
+                if (idSymbolName == null)
                     continue;
-//                    if (TypeSymbolConstants.SELF_STR.equals(((RfField) rfFeature).getFieldName().getText()))
-//                        continue;
-//
-//                    throw new IllegalStateException("Unable to locate id symbol");
-                }
                 idSymbolName.setOffset(j);
                 j += 4;
             }

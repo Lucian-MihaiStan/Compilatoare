@@ -200,6 +200,12 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
         // return from the depth traversal
         currentScope = initialScope;
 
+        int i = 12;
+        for (RfArgument arg : rfMethod.getArgs()) {
+            arg.getIdSymbolName().setOffset(i);
+            i += 4;
+        }
+
         return null;
     }
 

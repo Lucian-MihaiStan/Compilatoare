@@ -260,8 +260,8 @@ IO_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
 
 Int_dispTab:
     .word   Object.abort

@@ -298,8 +298,8 @@ IO_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
 
 Int_dispTab:
     .word   Object.abort
@@ -359,8 +359,8 @@ C_dispTab:
     .word   Object.type_name
     .word   Object.copy
     .word   A.f
-    .word   C.h
     .word   C.f
+    .word   C.h
 
 F_dispTab:
     .word   Object.abort

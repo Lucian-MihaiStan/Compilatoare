@@ -209,15 +209,14 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
             }
         }
 
-        if (idSymbol instanceof IdSymbol)
-            idAttributeTemplate.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
-
-        if (isParameter) {
+        if (isParameter && idSymbol instanceof IdSymbol) {
             idAttributeTemplate.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
-            // TODO Lucian continue here
+            idAttributeTemplate.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
+            return idAttributeTemplate;
         }
 
         if (isField && idSymbol instanceof IdSymbol) {
+            idAttributeTemplate.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
             idAttributeTemplate
                     .add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.S0);
             return idAttributeTemplate;
@@ -278,7 +277,7 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
         if (isParameter) {
             template.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
-            // TODO Lucian continue here
+            return template;
         }
 
         if (isField && idSymbol instanceof IdSymbol) {

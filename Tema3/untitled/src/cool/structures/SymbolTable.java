@@ -80,6 +80,14 @@ public class SymbolTable {
     }
 
     private static void implicitDefinitionOfIOMethods() {
+        // in_int
+        MethodSymbol inInt = new MethodSymbol("in_int", TypeSymbolConstants.INT_STR, TypeSymbolConstants.IO);
+        inInt.setReturnTypeSymbol(TypeSymbolConstants.INT);
+        inInt.setResolved(true);
+        inInt.setOffset(24);
+
+        TypeSymbolConstants.IO.add(inInt);
+
         // in_string
         MethodSymbol inString = new MethodSymbol("in_string", TypeSymbolConstants.STRING_STR, TypeSymbolConstants.IO);
         inString.setReturnTypeSymbol(TypeSymbolConstants.STRING);
@@ -87,14 +95,6 @@ public class SymbolTable {
         inString.setOffset(20);
 
         TypeSymbolConstants.IO.add(inString);
-
-        // in_int
-        MethodSymbol inInt = new MethodSymbol("in_int", TypeSymbolConstants.INT_STR, TypeSymbolConstants.IO);
-        inInt.setReturnTypeSymbol(TypeSymbolConstants.INT);
-        inInt.setResolved(true);
-        inString.setOffset(24);
-
-        TypeSymbolConstants.IO.add(inInt);
 
         // out_int definition
         MethodSymbol outInt = new MethodSymbol("out_int", TypeSymbolConstants.SELF_TYPE_STR, TypeSymbolConstants.IO);

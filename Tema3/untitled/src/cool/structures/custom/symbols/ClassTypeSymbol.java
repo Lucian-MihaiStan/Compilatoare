@@ -153,7 +153,19 @@ public class ClassTypeSymbol extends Symbol implements Scope {
         while (currentSymbol != null) {
             final ClassTypeSymbol thisSymbol = currentSymbol;
 
-            thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> methods.add(new Pair<>(thisSymbol, methodSymbol)));
+            if (currentSymbol == this &&
+                    this != TypeSymbolConstants.OBJECT &&
+                    this != TypeSymbolConstants.IO &&
+                    this != TypeSymbolConstants.INT &&
+                    this != TypeSymbolConstants.STRING &&
+                    this != TypeSymbolConstants.BOOL) {
+                List<Pair<ClassTypeSymbol, MethodSymbol>> tmp = new ArrayList<>();
+                methodsSymbols.forEach((methodName, methodsSymbol) -> tmp.add(new Pair<>(thisSymbol, methodsSymbol)));
+                Collections.reverse(tmp);
+                methods.addAll(tmp);
+            } else {
+                thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> methods.add(new Pair<>(thisSymbol, methodSymbol)));
+            }
 
             currentSymbol = (ClassTypeSymbol) currentSymbol.getParent();
         }
@@ -180,4 +192,22 @@ public class ClassTypeSymbol extends Symbol implements Scope {
         return currentTotalAttributes;
     }
 
+    public int getParentLastOffsetMethods() {
+        // inherited ones are included
+        Set<String> allMethods = new HashSet<>();
+
+        Scope currentScopeEval = parentScope;
+
+        while (currentScopeEval instanceof ClassTypeSymbol) {
+            if (currentScopeEval == this)
+                return allMethods.size();
+
+            Collection<MethodSymbol> values = ((ClassTypeSymbol) currentScopeEval).getMethodsSymbols().values();
+            values.forEach(methodSymbol ->  allMethods.add(methodSymbol.getName()));
+
+            currentScopeEval = currentScopeEval.getParent();
+        }
+
+        return allMethods.size();
+    }
 }

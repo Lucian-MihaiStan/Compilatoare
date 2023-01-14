@@ -316,8 +316,8 @@ IO_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
 
 A_dispTab:
     .word   Object.abort
@@ -325,8 +325,8 @@ A_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
 
 B_dispTab:
@@ -335,8 +335,8 @@ B_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -346,8 +346,8 @@ D_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -357,8 +357,8 @@ E_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
 
@@ -368,13 +368,13 @@ Main_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
-    .word   Main.main
-    .word   Main.i
     .word   Main.getA
+    .word   Main.i
+    .word   Main.main
 
 G_dispTab:
     .word   Object.abort
@@ -382,8 +382,8 @@ G_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   B.g
     .word   Main.main
@@ -396,11 +396,11 @@ C_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
-    .word   C.h
     .word   C.f
+    .word   C.h
 
 F_dispTab:
     .word   Object.abort
@@ -408,8 +408,8 @@ F_dispTab:
     .word   Object.copy
     .word   IO.out_string
     .word   IO.out_int
-    .word   IO.in_int
     .word   IO.in_string
+    .word   IO.in_int
     .word   A.f
     .word   C.h
     .word   C.f
@@ -730,7 +730,7 @@ dispatch0:
     jal     _dispatch_abort
 dispatch3:
     lw      $t1 8($a0)
-    lw      $t1 0($t1)
+    lw      $t1 36($t1)
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
@@ -763,7 +763,7 @@ Main.main:
     jal     _dispatch_abort
 dispatch4:
     lw      $t1 8($a0)
-    lw      $t1 0($t1)
+    lw      $t1 40($t1)
     jalr    $t1
     lw		$fp 12($sp)
 	lw		$s0 8($sp)

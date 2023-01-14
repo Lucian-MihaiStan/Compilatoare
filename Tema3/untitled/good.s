@@ -366,8 +366,8 @@ C_dispTab:
     .word   IO.in_string
     .word   IO.in_int
     .word   A.f
-    .word   C.f
     .word   C.h
+    .word   C.f
 
 F_dispTab:
     .word   Object.abort
