@@ -115,10 +115,24 @@ str_const13:
     .align 2
 str_const14:
     .word   10
-    .word   11
+    .word   10
     .word   String_dispTab
     .word   int_const7
-    .asciiz "08-dispatch-block-IO.cl"
+    .asciiz "11-dispatch-String.cl"
+    .align 2
+str_const15:
+    .word   10
+    .word   6
+    .word   String_dispTab
+    .word   int_const8
+    .asciiz "abcde"
+    .align 2
+str_const16:
+    .word   10
+    .word   5
+    .word   String_dispTab
+    .word   int_const2
+    .asciiz "de"
     .align 2
 int_const0:
     .word   9
@@ -159,14 +173,19 @@ int_const7:
     .word   9
     .word   4
     .word   Int_dispTab
-    .word   23
+    .word   21
+int_const8:
+    .word   9
+    .word   4
+    .word   Int_dispTab
+    .word   5
 bool_const0:
-    .word   12
+    .word   11
     .word   4
     .word   Bool_dispTab
     .word   0
 bool_const1:
-    .word   12
+    .word   11
     .word   4
     .word   Bool_dispTab
     .word   1
@@ -296,29 +315,29 @@ IO_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
 
 A_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
 
 B_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
 
@@ -326,10 +345,10 @@ D_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
 
@@ -337,10 +356,10 @@ E_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
 
@@ -348,10 +367,10 @@ Main_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   B.g
     .word   Main.main
@@ -360,10 +379,10 @@ C_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   C.h
     .word   C.f
@@ -372,10 +391,10 @@ F_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
+    .word   IO.out_string
+    .word   IO.out_int
     .word   IO.in_int
     .word   IO.in_string
-    .word   IO.out_int
-    .word   IO.out_string
     .word   A.f
     .word   C.h
     .word   C.f
@@ -640,29 +659,79 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    la      $a0 str_const13
+    la      $a0 str_const15
+    bnez    $a0 dispatch1    # length
+    la      $a0 str_const14
+    li      $t1 31
+    jal     _dispatch_abort
+dispatch1:
+    lw      $t1 8($a0)
+    lw      $t1 16($t1)
+    jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     move    $a0 $s0
-    bnez    $a0 dispatch0    # out_string
+    bnez    $a0 dispatch0    # out_int
     la      $a0 str_const14
     li      $t1 31
     jal     _dispatch_abort
 dispatch0:
     lw      $t1 8($a0)
-    lw      $t1 12($t1)
+    lw      $t1 16($t1)
     jalr    $t1
-    la      $a0 int_const100
+    la      $a0 str_const16
     sw      $a0 0($sp)
     addiu   $sp $sp -4
-    move    $a0 $s0
-    bnez    $a0 dispatch1    # out_int
+
+    la      $a0 str_const13
+    bnez    $a0 dispatch3    # concat
     la      $a0 str_const14
     li      $t1 32
     jal     _dispatch_abort
-dispatch1:
+dispatch3:
     lw      $t1 8($a0)
-    lw      $t1 16($t1)
+    lw      $t1 12($t1)
+    jalr    $t1
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+
+    move    $a0 $s0
+    bnez    $a0 dispatch2    # out_string
+    la      $a0 str_const14
+    li      $t1 32
+    jal     _dispatch_abort
+dispatch2:
+    lw      $t1 8($a0)
+    lw      $t1 12($t1)
+    jalr    $t1
+    la      $a0 int_const2
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+    la      $a0 int_const5
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+
+    la      $a0 str_const15
+    bnez    $a0 dispatch5    # substr
+    la      $a0 str_const14
+    li      $t1 33
+    jal     _dispatch_abort
+dispatch5:
+    lw      $t1 8($a0)
+    lw      $t1 20($t1)
+    jalr    $t1
+    sw      $a0 0($sp)
+    addiu   $sp $sp -4
+
+    move    $a0 $s0
+    bnez    $a0 dispatch4    # out_string
+    la      $a0 str_const14
+    li      $t1 33
+    jal     _dispatch_abort
+dispatch4:
+    lw      $t1 8($a0)
+    lw      $t1 12($t1)
     jalr    $t1
     lw		$fp 12($sp)
 	lw		$s0 8($sp)

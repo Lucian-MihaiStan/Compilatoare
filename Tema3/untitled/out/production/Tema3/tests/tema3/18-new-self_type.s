@@ -168,12 +168,12 @@ int_const7:
     .word   Int_dispTab
     .word   19
 bool_const0:
-    .word   13
+    .word   12
     .word   4
     .word   Bool_dispTab
     .word   0
 bool_const1:
-    .word   13
+    .word   12
     .word   4
     .word   Bool_dispTab
     .word   1
@@ -712,6 +712,7 @@ dispatch1:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     move    $a0 $s0
     bnez    $a0 dispatch0    # out_string
     la      $a0 str_const15
@@ -732,6 +733,7 @@ dispatch3:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     move    $a0 $s0
     bnez    $a0 dispatch2    # out_int
     la      $a0 str_const15

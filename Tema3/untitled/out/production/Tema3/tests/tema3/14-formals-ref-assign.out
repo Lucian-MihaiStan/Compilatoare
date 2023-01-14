@@ -4,6 +4,6 @@ All Rights Reserved.
 See the file README for a full copyright notice.
 Loaded: trap.handler.nogc
 The following symbols are undefined:
-Main.charAt
 main
 
+Abort called from class Main

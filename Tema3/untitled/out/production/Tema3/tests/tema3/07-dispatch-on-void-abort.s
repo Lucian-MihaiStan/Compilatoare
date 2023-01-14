@@ -161,12 +161,12 @@ int_const7:
     .word   Int_dispTab
     .word   28
 bool_const0:
-    .word   5
+    .word   4
     .word   4
     .word   Bool_dispTab
     .word   0
 bool_const1:
-    .word   5
+    .word   4
     .word   4
     .word   Bool_dispTab
     .word   1

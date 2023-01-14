@@ -167,14 +167,25 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (rfField.getRfExpression() != null) {
             Symbol initializationSymbol = rfField.getRfExpression().accept(this);
             // TODO Lucian what is this
-            if (initializationSymbol instanceof SelfSymbol)
+            if (initializationSymbol instanceof SelfSymbol) {
                 initializationSymbol = ((SelfSymbol) initializationSymbol).getScope();
+                if (initializationSymbol == null)
+                    return null;
 
-            if (initializationSymbol == null)
-                return null;
+                if (!(checkInheritanceType((ClassTypeSymbol) fieldSymbolType, (ClassTypeSymbol) initializationSymbol)))
+                    SymbolTable.error(rfField.getContext(), rfField.getRfExpression().getContext().start, new StringBuilder().append("Type ").append(initializationSymbol.getName()).append(" of initialization expression of attribute ").append(fieldName.getText()).append(" is incompatible with declared type ").append(fieldSymbolType.getName()).toString());
 
-            if (!(checkInheritanceType((ClassTypeSymbol) fieldSymbolType, (ClassTypeSymbol) initializationSymbol)))
-                SymbolTable.error(rfField.getContext(), rfField.getRfExpression().getContext().start, new StringBuilder().append("Type ").append(initializationSymbol.getName()).append(" of initialization expression of attribute ").append(fieldName.getText()).append(" is incompatible with declared type ").append(fieldSymbolType.getName()).toString());
+            } else if (initializationSymbol == TypeSymbolConstants.SELF_TYPE) {
+                Symbol resolvedSymbol = (Symbol) currentScope.getParentWithClassType(ClassTypeSymbol.class);
+                if (!(checkInheritanceType((ClassTypeSymbol) fieldSymbolType, (ClassTypeSymbol) resolvedSymbol)))
+                    SymbolTable.error(rfField.getContext(), rfField.getRfExpression().getContext().start, new StringBuilder().append("Type ").append(initializationSymbol.getName()).append(" of initialization expression of attribute ").append(fieldName.getText()).append(" is incompatible with declared type ").append(fieldSymbolType.getName()).toString());
+            } else {
+                if (initializationSymbol == null)
+                    return null;
+
+                if (!(checkInheritanceType((ClassTypeSymbol) fieldSymbolType, (ClassTypeSymbol) initializationSymbol)))
+                    SymbolTable.error(rfField.getContext(), rfField.getRfExpression().getContext().start, new StringBuilder().append("Type ").append(initializationSymbol.getName()).append(" of initialization expression of attribute ").append(fieldName.getText()).append(" is incompatible with declared type ").append(fieldSymbolType.getName()).toString());
+            }
         }
 
         return null;
@@ -679,7 +690,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         rfDispatch.setCallerType(toCallClassSymbol != null ? toCallClassSymbol : symbolToCall);
 
-//        return methodSymbol.getReturnTypeSymbol() == TypeSymbolConstants.SELF_TYPE ? symbolToCall : methodSymbol.getReturnTypeSymbol();
         return methodSymbol.getReturnTypeSymbol();
     }
 
@@ -728,7 +738,18 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
             if (!((IdSymbol) definitionSymbol).isResolved())
                 ((IdSymbol) definitionSymbol).resolve();
 
-            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), (ClassTypeSymbol) parametersSymbols.get(i)))) {
+            List<RfExpression> parameters = rfImplicitDispatch.getParameters();
+
+            ClassTypeSymbol expressionSymbol = (ClassTypeSymbol) parametersSymbols.get(i);
+            if (expressionSymbol == TypeSymbolConstants.SELF_TYPE) {
+                RfExpression rfExpression = parameters.get(i);
+                if (rfExpression instanceof RfDispatch) {
+                    Symbol callerType = ((RfDispatch) rfExpression).getCallerType();
+                    expressionSymbol = (ClassTypeSymbol) callerType;
+                }
+            }
+
+            if (!(checkInheritanceType(((IdSymbol) definitionSymbol).getTypeSymbol(), expressionSymbol))) {
                 String className = symbolToCall.getName();
                 if (TypeSymbolConstants.SELF_STR.equals(className)) {
                     Scope parentWithClassType = currentScope.getParentWithClassType(ClassTypeSymbol.class);
@@ -756,6 +777,11 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 //        rfImplicitDispatch.setCallerType(currentScope != null ? toCallClassSymbol : symbolToCall);
 
         rfImplicitDispatch.setCallerType((Symbol) parentScope);
+
+        Symbol returnTypeSymbol = methodSymbol.getReturnTypeSymbol();
+        if (returnTypeSymbol == TypeSymbolConstants.SELF_TYPE) {
+            // TODO Lucian this could transform into a problem
+        }
 
         return methodSymbol.getReturnTypeSymbol();
     }

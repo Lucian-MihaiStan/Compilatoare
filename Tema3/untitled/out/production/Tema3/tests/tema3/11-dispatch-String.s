@@ -180,12 +180,12 @@ int_const8:
     .word   Int_dispTab
     .word   5
 bool_const0:
-    .word   12
+    .word   11
     .word   4
     .word   Bool_dispTab
     .word   0
 bool_const1:
-    .word   12
+    .word   11
     .word   4
     .word   Bool_dispTab
     .word   1
@@ -670,6 +670,7 @@ dispatch1:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     move    $a0 $s0
     bnez    $a0 dispatch0    # out_int
     la      $a0 str_const14
@@ -682,6 +683,7 @@ dispatch0:
     la      $a0 str_const16
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     la      $a0 str_const13
     bnez    $a0 dispatch3    # concat
     la      $a0 str_const14
@@ -693,6 +695,7 @@ dispatch3:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     move    $a0 $s0
     bnez    $a0 dispatch2    # out_string
     la      $a0 str_const14
@@ -704,9 +707,11 @@ dispatch2:
     jalr    $t1
     la      $a0 int_const2
     sw      $a0 0($sp)
-    addiu   $sp $sp -4    la      $a0 int_const5
+    addiu   $sp $sp -4
+    la      $a0 int_const5
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     la      $a0 str_const15
     bnez    $a0 dispatch5    # substr
     la      $a0 str_const14
@@ -718,6 +723,7 @@ dispatch5:
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
     move    $a0 $s0
     bnez    $a0 dispatch4    # out_string
     la      $a0 str_const14

@@ -158,6 +158,7 @@ dispatchArg(arg) ::= <<
 <arg>
     sw      $a0 0($sp)
     addiu   $sp $sp -4
+
 >>
 
 idAttributeVar(offset, pointer) ::= <<

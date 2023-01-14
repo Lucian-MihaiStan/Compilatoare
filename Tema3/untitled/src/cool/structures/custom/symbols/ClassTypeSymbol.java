@@ -179,4 +179,5 @@ public class ClassTypeSymbol extends Symbol implements Scope {
 
         return currentTotalAttributes;
     }
+
 }

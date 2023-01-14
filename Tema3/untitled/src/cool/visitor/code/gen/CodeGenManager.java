@@ -143,13 +143,13 @@ public class CodeGenManager {
                 .add(CodeGenVisitorConstants.E,
                         templates.getInstanceOf(CodeGenVisitorConstants.BOOL_CONST_PATTERN)
                                 .add(CodeGenVisitorConstants.COUNT, 0)
-                                .add(CodeGenVisitorConstants.TAG_ID, stringMIPSConstants.get(TypeSymbolConstants.BOOL_STR))
+                                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.BOOL.getTag())
                                 .add(CodeGenVisitorConstants.DEFAULT_VALUE, 0)
                 )
                 .add(CodeGenVisitorConstants.E,
                         templates.getInstanceOf(CodeGenVisitorConstants.BOOL_CONST_PATTERN)
                                 .add(CodeGenVisitorConstants.COUNT, 1)
-                                .add(CodeGenVisitorConstants.TAG_ID, stringMIPSConstants.get(TypeSymbolConstants.BOOL_STR))
+                                .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.BOOL.getTag())
                                 .add(CodeGenVisitorConstants.DEFAULT_VALUE,1)
                 );
 
