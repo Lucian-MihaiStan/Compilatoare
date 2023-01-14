@@ -294,6 +294,27 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
             }
         }
 
+        boolean isDeclaredVariable = false;
+
+        if (scope instanceof LetSymbol) {
+            Map<String, Symbol> declaredVariables = ((LetSymbol) scope).getSymbols();
+            idSymbol = declaredVariables.get(symbol);
+            if (idSymbol != null)
+                isDeclaredVariable = true;
+
+            if (idSymbol == null) {
+                Scope parentWithClassType = scope.getParentWithClassType(ClassTypeSymbol.class);
+                idSymbol = parentWithClassType.lookup(symbol);
+                isField = idSymbol != null;
+            }
+        }
+
+        if (isDeclaredVariable && idSymbol instanceof IdSymbol) {
+            template.add(CodeGenVisitorConstants.POINTER, CodeGenVisitorConstants.FP);
+            template.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
+            return template;
+        }
+
         if (idSymbol instanceof IdSymbol)
             template.add(CodeGenVisitorConstants.OFFSET, ((IdSymbol) idSymbol).getOffset());
 

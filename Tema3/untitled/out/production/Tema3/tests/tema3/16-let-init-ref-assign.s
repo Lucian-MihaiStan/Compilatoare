@@ -673,6 +673,8 @@ dispatch0:
     lw      $t1 8($a0)
     lw      $t1 16($t1)
     jalr    $t1
+    la      $a0 int_const117
+    sw      $a0 -4($fp)
     lw      $a0 -4($fp)
     sw      $a0 0($sp)
     addiu   $sp $sp -4
@@ -699,6 +701,8 @@ dispatch2:
     lw      $t1 8($a0)
     lw      $t1 12($t1)
     jalr    $t1
+    la      $a0 str_const15
+    sw      $a0 -8($fp)
     lw      $a0 -8($fp)
     sw      $a0 0($sp)
     addiu   $sp $sp -4
