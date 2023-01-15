@@ -148,6 +148,8 @@ public class ClassTypeSymbol extends Symbol implements Scope {
     public List<Pair<ClassTypeSymbol, MethodSymbol>> gatherMethods() {
         List<Pair<ClassTypeSymbol, MethodSymbol>> methods = new ArrayList<>();
 
+        Set<String> methodNames = new HashSet<>();
+
         ClassTypeSymbol currentSymbol = this;
 
         while (currentSymbol != null) {
@@ -160,11 +162,19 @@ public class ClassTypeSymbol extends Symbol implements Scope {
                     this != TypeSymbolConstants.STRING &&
                     this != TypeSymbolConstants.BOOL) {
                 List<Pair<ClassTypeSymbol, MethodSymbol>> tmp = new ArrayList<>();
-                methodsSymbols.forEach((methodName, methodsSymbol) -> tmp.add(new Pair<>(thisSymbol, methodsSymbol)));
+                methodsSymbols.forEach((methodName, methodsSymbol) -> {
+                    methodNames.add(methodName);
+                    tmp.add(new Pair<>(thisSymbol, methodsSymbol));
+                });
                 Collections.reverse(tmp);
                 methods.addAll(tmp);
             } else {
-                thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> methods.add(new Pair<>(thisSymbol, methodSymbol)));
+                thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> {
+                            if (!methodNames.contains(methodName)) {
+                                methodNames.add(methodName);
+                                methods.add(new Pair<>(thisSymbol, methodSymbol));
+                            }
+                });
             }
 
             currentSymbol = (ClassTypeSymbol) currentSymbol.getParent();

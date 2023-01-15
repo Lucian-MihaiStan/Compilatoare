@@ -178,3 +178,9 @@ storeIdAttributeVar(defaultValue, offset, pointer) ::= <<
 pushStack(offset) ::= <<
     addiu   $sp $sp <offset>
 >>
+
+newConstructor(className) ::= <<
+    la		$a0 <className>_protObj
+    jal		Object.copy
+    jal		<className>_init
+>>

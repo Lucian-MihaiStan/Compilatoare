@@ -334,7 +334,15 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfNewExpression rfNewExpression) {
-        return null;
+        ST newConstructor = manager.getTemplate(CodeGenVisitorConstants.NEW_CONSTRUCTOR);
+        if (newConstructor == null)
+            throw new IllegalStateException("Unable to locate new constructor");
+
+        String className = rfNewExpression.getType().getText();
+
+        newConstructor.add(CodeGenVisitorConstants.CLASS_NAME, className);
+
+        return newConstructor;
     }
 
     @Override

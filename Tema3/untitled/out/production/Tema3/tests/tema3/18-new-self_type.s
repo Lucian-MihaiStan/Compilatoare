@@ -398,7 +398,6 @@ C_dispTab:
     .word   IO.out_int
     .word   IO.in_string
     .word   IO.in_int
-    .word   A.f
     .word   C.f
     .word   C.h
 
@@ -410,7 +409,6 @@ F_dispTab:
     .word   IO.out_int
     .word   IO.in_string
     .word   IO.in_int
-    .word   A.f
     .word   C.h
     .word   C.f
 
@@ -701,6 +699,9 @@ Main.i:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
+    la		$a0 SELF_TYPE_protObj
+    jal		Object.copy
+    jal		SELF_TYPE_init
     sw      $a0 20($s0)
     lw      $a0 20($s0)
     bnez    $a0 dispatch1    # type_name
@@ -756,7 +757,9 @@ Main.main:
     sw		$ra 4($sp)
     addiu	$fp $sp 4
     move	$s0 $a0
-    move    $a0 $s0
+    la		$a0 G_protObj
+    jal		Object.copy
+    jal		G_init
     bnez    $a0 dispatch4    # i
     la      $a0 str_const15
     li      $t1 40

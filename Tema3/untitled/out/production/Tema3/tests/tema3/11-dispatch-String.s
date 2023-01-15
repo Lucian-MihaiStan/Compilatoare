@@ -383,7 +383,6 @@ C_dispTab:
     .word   IO.out_int
     .word   IO.in_string
     .word   IO.in_int
-    .word   A.f
     .word   C.f
     .word   C.h
 
@@ -395,7 +394,6 @@ F_dispTab:
     .word   IO.out_int
     .word   IO.in_string
     .word   IO.in_int
-    .word   A.f
     .word   C.h
     .word   C.f
 

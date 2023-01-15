@@ -141,4 +141,6 @@ public interface CodeGenVisitorConstants {
 
     String LOAD_ADDRESS_BOOL = "\tla\t\t$a0 bool_const0";
 
+    String NEW_CONSTRUCTOR = "newConstructor";
+
 }

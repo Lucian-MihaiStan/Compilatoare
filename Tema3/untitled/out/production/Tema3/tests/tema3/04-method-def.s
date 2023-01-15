@@ -346,7 +346,6 @@ C_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
-    .word   A.f
     .word   C.f
     .word   C.h
 
@@ -354,7 +353,6 @@ F_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
-    .word   A.f
     .word   C.h
     .word   C.f
 

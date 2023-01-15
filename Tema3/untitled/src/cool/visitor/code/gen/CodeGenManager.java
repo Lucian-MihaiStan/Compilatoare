@@ -211,6 +211,7 @@ public class CodeGenManager {
 
         classPrototypesTab.add(CodeGenVisitorConstants.E, classPrototypeObject);
 
+        // TODO Lucian here you should check that methods are not overridden
         List<Pair<ClassTypeSymbol, MethodSymbol>> methods = ((ClassTypeSymbol) classSymbol).gatherMethods();
 
         ST classDispatchTable = templates.getInstanceOf(CodeGenVisitorConstants.CLASS_DISPATCH_TABLE)

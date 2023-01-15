@@ -4,6 +4,8 @@ All Rights Reserved.
 See the file README for a full copyright notice.
 Loaded: trap.handler.nogc
 The following symbols are undefined:
+SELF_TYPE_init
 main
+SELF_TYPE_protObj
 
-Main100COOL program successfully executed
+[0x00400a70]	0x3c010000  lui $1, 0 [SELF_TYPE_protObj]   ; 702: la		$a0 SELF_TYPE_protObj
