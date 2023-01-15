@@ -63,9 +63,9 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         for (RfFeature rfFeature : rfClass.getRfFeatures()) {
             if (rfFeature instanceof RfMethod) {
                 MethodSymbol methodSymbol = ((RfMethod) rfFeature).getMethodSymbol();
+                // if continue here means it duplicates
                 if (methodSymbol == null)
-                    throw new IllegalStateException("Unable to compute method symbol for method " + ((RfMethod) rfFeature).getName());
-
+                    continue;
                 methodSymbol.setOffset(nextMethodOffset);
                 nextMethodOffset += 4;
                 continue;

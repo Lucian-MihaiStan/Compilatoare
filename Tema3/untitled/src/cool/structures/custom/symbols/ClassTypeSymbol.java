@@ -173,7 +173,12 @@ public class ClassTypeSymbol extends Symbol implements Scope {
                     methods.addAll(tmp);
 
                 } else {
-                    thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> methods.add(new Pair<>(thisSymbol, methodSymbol)));
+                    thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> {
+                        if (!methodNames.contains(methodName)) {
+                            methods.add(new Pair<>(thisSymbol, methodSymbol));
+                            methodNames.add(methodName);
+                        }
+                    });
                 }
 
             }

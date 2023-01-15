@@ -202,6 +202,8 @@ public class DefinitionPassVisitor implements ASTVisitor<Void> {
 
         int i = 12;
         for (RfArgument arg : rfMethod.getArgs()) {
+            if (arg.getIdSymbolName() == null)
+                continue;
             arg.getIdSymbolName().setOffset(i);
             i += 4;
         }
