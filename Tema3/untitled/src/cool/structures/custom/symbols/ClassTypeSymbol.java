@@ -1,16 +1,11 @@
 package cool.structures.custom.symbols;
 
-import com.sun.jdi.Method;
 import cool.structures.Scope;
 import cool.structures.Symbol;
-import cool.structures.SymbolTable;
 import cool.structures.custom.symbols.constants.TypeSymbolConstants;
 import cool.utils.Pair;
-import cool.visitor.code.gen.CodeGenVisitorConstants;
 
-import java.lang.reflect.Type;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ClassTypeSymbol extends Symbol implements Scope {
     private Scope parentScope;
@@ -155,12 +150,7 @@ public class ClassTypeSymbol extends Symbol implements Scope {
         while (currentSymbol != null) {
             final ClassTypeSymbol thisSymbol = currentSymbol;
 
-            if (currentSymbol == this &&
-                    this != TypeSymbolConstants.OBJECT &&
-                    this != TypeSymbolConstants.IO &&
-                    this != TypeSymbolConstants.INT &&
-                    this != TypeSymbolConstants.STRING &&
-                    this != TypeSymbolConstants.BOOL) {
+            if (currentSymbol == this && isNotDefaultClass(this)) {
                 List<Pair<ClassTypeSymbol, MethodSymbol>> tmp = new ArrayList<>();
                 methodsSymbols.forEach((methodName, methodsSymbol) -> {
                     methodNames.add(methodName);
@@ -169,12 +159,23 @@ public class ClassTypeSymbol extends Symbol implements Scope {
                 Collections.reverse(tmp);
                 methods.addAll(tmp);
             } else {
-                thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> {
-                            if (!methodNames.contains(methodName)) {
-                                methodNames.add(methodName);
-                                methods.add(new Pair<>(thisSymbol, methodSymbol));
-                            }
-                });
+                if (isNotDefaultClass(thisSymbol)) {
+                    List<Pair<ClassTypeSymbol, MethodSymbol>> tmp = new ArrayList<>();
+
+                    thisSymbol.getMethodsSymbols().forEach((methodName, methodsSymbol) -> {
+                        if (!methodNames.contains(methodName)) {
+                            tmp.add(new Pair<>(thisSymbol, methodsSymbol));
+                            methodNames.add(methodName);
+                        }
+                    });
+
+                    Collections.reverse(tmp);
+                    methods.addAll(tmp);
+
+                } else {
+                    thisSymbol.getMethodsSymbols().forEach((methodName, methodSymbol) -> methods.add(new Pair<>(thisSymbol, methodSymbol)));
+                }
+
             }
 
             currentSymbol = (ClassTypeSymbol) currentSymbol.getParent();
@@ -182,6 +183,14 @@ public class ClassTypeSymbol extends Symbol implements Scope {
 
         Collections.reverse(methods);
         return methods;
+    }
+
+    public boolean isNotDefaultClass(ClassTypeSymbol thisSymbol) {
+        return thisSymbol != TypeSymbolConstants.OBJECT &&
+                thisSymbol != TypeSymbolConstants.IO &&
+                thisSymbol != TypeSymbolConstants.INT &&
+                thisSymbol != TypeSymbolConstants.STRING &&
+                thisSymbol != TypeSymbolConstants.BOOL;
     }
 
     public Map<String, MethodSymbol> getMethodsSymbols() {

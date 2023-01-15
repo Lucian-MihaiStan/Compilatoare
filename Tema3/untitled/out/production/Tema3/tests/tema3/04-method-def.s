@@ -353,8 +353,8 @@ F_dispTab:
     .word   Object.abort
     .word   Object.type_name
     .word   Object.copy
-    .word   C.h
     .word   C.f
+    .word   C.h
 
     .globl  heap_start
 heap_start:

@@ -30,6 +30,7 @@ import cool.visitor.ASTVisitor;
 import org.antlr.v4.runtime.Token;
 import org.stringtemplate.v4.ST;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -334,11 +335,21 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
 
     @Override
     public ST visit(RfNewExpression rfNewExpression) {
+        String className = rfNewExpression.getType().getText();
+        if (className == null)
+            throw new IllegalStateException("Unable to locate class name in parser");
+
+        if (TypeSymbolConstants.SELF_TYPE_STR.equals(className)) {
+            ST newSelfTypeConstructor = manager.getTemplate(CodeGenVisitorConstants.NEW_SELF_TYPE_CONSTRUCTOR);
+            if (newSelfTypeConstructor == null)
+                throw new IllegalStateException("Unable to locate new self type constructor in patterns");
+
+            return newSelfTypeConstructor;
+        }
+
         ST newConstructor = manager.getTemplate(CodeGenVisitorConstants.NEW_CONSTRUCTOR);
         if (newConstructor == null)
             throw new IllegalStateException("Unable to locate new constructor");
-
-        String className = rfNewExpression.getType().getText();
 
         newConstructor.add(CodeGenVisitorConstants.CLASS_NAME, className);
 
