@@ -137,19 +137,23 @@ literal(addressConstant) ::= <<
     la      $a0 <addressConstant>
 >>
 
-dispatchMethod(methodName, args, methodId, parserPath, parserPathLine, offset, caller) ::= <<
+dispatchMethod(methodName, args, methodId, parserPath, parserPathLine, offset, caller, static) ::= <<
 <args>
 <if (caller)>
 <caller>
 <else>
     move    $a0 $s0
 <endif>
-    bnez    $a0 dispatch<methodId>    # <methodName>
+    bnez    $a0 dispatch<methodId>      # <methodName>
     la      $a0 <parserPath>
     li      $t1 <parserPathLine>
     jal     _dispatch_abort
 dispatch<methodId>:
+<if (static)>
+    la      $t1  <static>_dispTab
+<else>
     lw      $t1 8($a0)
+<endif>
     lw      $t1 <offset>($t1)
     jalr    $t1
 >>

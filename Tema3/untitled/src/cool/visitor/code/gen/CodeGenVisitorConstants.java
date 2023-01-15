@@ -144,4 +144,6 @@ public interface CodeGenVisitorConstants {
     String NEW_CONSTRUCTOR = "newConstructor";
 
     String NEW_SELF_TYPE_CONSTRUCTOR = "newSelfTypeConstructor";
+
+    String STATIC = "static";
 }

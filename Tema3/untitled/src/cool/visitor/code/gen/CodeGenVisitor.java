@@ -400,6 +400,10 @@ public class CodeGenVisitor implements ASTVisitor<ST> {
                 dispatchTemplate.add(CodeGenVisitorConstants.CALLER, objectToCallST);
         }
 
+        Token atType = rfDispatch.getAtType();
+        if (atType != null)
+            dispatchTemplate.add(CodeGenVisitorConstants.STATIC, atType.getText());
+
         return dispatchTemplate;
     }
 

@@ -611,7 +611,7 @@ Main.main:
     addiu	$fp $sp 4
     move	$s0 $a0
     lw      $a0 20($s0)
-    bnez    $a0 dispatch0    # abort
+    bnez    $a0 dispatch0      # abort
     la      $a0 str_const14
     li      $t1 28
     jal     _dispatch_abort

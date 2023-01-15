@@ -656,7 +656,7 @@ Main.main:
     sw      $a0 -12($fp)
 
     lw      $a0 -4($fp)
-    bnez    $a0 dispatch1    # f
+    bnez    $a0 dispatch1      # f
     la      $a0 str_const14
     li      $t1 34
     jal     _dispatch_abort
@@ -668,7 +668,7 @@ dispatch1:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch0    # out_int
+    bnez    $a0 dispatch0      # out_int
     la      $a0 str_const14
     li      $t1 34
     jal     _dispatch_abort
@@ -677,7 +677,7 @@ dispatch0:
     lw      $t1 16($t1)
     jalr    $t1
     lw      $a0 -8($fp)
-    bnez    $a0 dispatch3    # f
+    bnez    $a0 dispatch3      # f
     la      $a0 str_const14
     li      $t1 35
     jal     _dispatch_abort
@@ -689,7 +689,7 @@ dispatch3:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch2    # out_int
+    bnez    $a0 dispatch2      # out_int
     la      $a0 str_const14
     li      $t1 35
     jal     _dispatch_abort
@@ -698,19 +698,19 @@ dispatch2:
     lw      $t1 16($t1)
     jalr    $t1
     lw      $a0 -12($fp)
-    bnez    $a0 dispatch5    # f
+    bnez    $a0 dispatch5      # f
     la      $a0 str_const14
     li      $t1 36
     jal     _dispatch_abort
 dispatch5:
-    lw      $t1 8($a0)
+    la      $t1  A_dispTab
     lw      $t1 28($t1)
     jalr    $t1
     sw      $a0 0($sp)
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch4    # out_int
+    bnez    $a0 dispatch4      # out_int
     la      $a0 str_const14
     li      $t1 36
     jal     _dispatch_abort

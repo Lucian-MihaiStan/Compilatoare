@@ -647,7 +647,7 @@ Main.main:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch1    # charAt
+    bnez    $a0 dispatch1      # charAt
     la      $a0 str_const14
     li      $t1 30
     jal     _dispatch_abort
@@ -659,7 +659,7 @@ dispatch1:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch0    # out_string
+    bnez    $a0 dispatch0      # out_string
     la      $a0 str_const14
     li      $t1 30
     jal     _dispatch_abort
@@ -687,7 +687,7 @@ Main.charAt:
     addiu   $sp $sp -4
 
     lw      $a0 12($fp)
-    bnez    $a0 dispatch2    # substr
+    bnez    $a0 dispatch2      # substr
     la      $a0 str_const14
     li      $t1 35
     jal     _dispatch_abort

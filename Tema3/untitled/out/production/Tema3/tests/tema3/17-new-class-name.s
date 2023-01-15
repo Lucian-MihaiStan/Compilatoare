@@ -660,7 +660,7 @@ Main.main:
     sw      $a0 -4($fp)
 
     lw      $a0 -4($fp)
-    bnez    $a0 dispatch1    # type_name
+    bnez    $a0 dispatch1      # type_name
     la      $a0 str_const14
     li      $t1 34
     jal     _dispatch_abort
@@ -672,7 +672,7 @@ dispatch1:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch0    # out_string
+    bnez    $a0 dispatch0      # out_string
     la      $a0 str_const14
     li      $t1 34
     jal     _dispatch_abort
@@ -681,7 +681,7 @@ dispatch0:
     lw      $t1 12($t1)
     jalr    $t1
     lw      $a0 -4($fp)
-    bnez    $a0 dispatch3    # getA
+    bnez    $a0 dispatch3      # getA
     la      $a0 str_const14
     li      $t1 35
     jal     _dispatch_abort
@@ -693,7 +693,7 @@ dispatch3:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch2    # out_int
+    bnez    $a0 dispatch2      # out_int
     la      $a0 str_const14
     li      $t1 35
     jal     _dispatch_abort

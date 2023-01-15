@@ -656,7 +656,7 @@ Main.main:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch0    # i
+    bnez    $a0 dispatch0      # i
     la      $a0 str_const14
     li      $t1 39
     jal     _dispatch_abort

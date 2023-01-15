@@ -663,7 +663,7 @@ Main.main:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch0    # out_int
+    bnez    $a0 dispatch0      # out_int
     la      $a0 str_const14
     li      $t1 33
     jal     _dispatch_abort
@@ -678,7 +678,7 @@ dispatch0:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch1    # out_int
+    bnez    $a0 dispatch1      # out_int
     la      $a0 str_const14
     li      $t1 35
     jal     _dispatch_abort
@@ -691,7 +691,7 @@ dispatch1:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch2    # out_string
+    bnez    $a0 dispatch2      # out_string
     la      $a0 str_const14
     li      $t1 37
     jal     _dispatch_abort
@@ -706,7 +706,7 @@ dispatch2:
     addiu   $sp $sp -4
 
     move    $a0 $s0
-    bnez    $a0 dispatch3    # out_string
+    bnez    $a0 dispatch3      # out_string
     la      $a0 str_const14
     li      $t1 39
     jal     _dispatch_abort
