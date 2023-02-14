@@ -168,7 +168,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
         if (rfField.getRfExpression() != null) {
             Symbol initializationSymbol = rfField.getRfExpression().accept(this);
-            // TODO Lucian what is this
             if (initializationSymbol instanceof SelfSymbol) {
                 initializationSymbol = ((SelfSymbol) initializationSymbol).getScope();
                 if (initializationSymbol == null)
@@ -361,7 +360,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (idToken == null)
             throw new IllegalStateException("Unable to locate the name of id " + rfId);
 
-        // TODO Lucian
         if (TypeSymbolConstants.SELF_STR.equals(idToken.getText()))
             return new SelfSymbol(TypeSymbolConstants.SELF_STR, currentScope);
 
@@ -470,7 +468,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         if (expression == null)
             throw new IllegalStateException("Unable to locate expression of assignment " + rfAssignment);
 
-        // TODO Lucian
         if (TypeSymbolConstants.SELF_STR.equals(id.getText()))
             return TypeSymbolConstants.BOOL;
 
@@ -579,6 +576,10 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
 
             if (symbolToCall == null)
                 return null;
+
+            if (symbolToCall instanceof SelfSymbol) {
+                symbolToCall = ((SelfSymbol) symbolToCall).getScope();
+            }
 
             if (!checkInheritanceType((ClassTypeSymbol) atTypeSymbol, (ClassTypeSymbol) symbolToCall)) {
                 SymbolTable.error(rfDispatch.getContext(), atType, new StringBuilder().append("Type ").append(atType.getText()).append(" of static dispatch is not a superclass of type ").append(symbolToCall.getName()).toString());
@@ -781,9 +782,6 @@ public class ResolutionPassVisitor implements ASTVisitor<Symbol> {
         rfImplicitDispatch.setCallerType((Symbol) parentScope);
 
         Symbol returnTypeSymbol = methodSymbol.getReturnTypeSymbol();
-        if (returnTypeSymbol == TypeSymbolConstants.SELF_TYPE) {
-            // TODO Lucian this could transform into a problem
-        }
 
         return methodSymbol.getReturnTypeSymbol();
     }

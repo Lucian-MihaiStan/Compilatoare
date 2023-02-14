@@ -211,7 +211,6 @@ public class CodeGenManager {
 
         classPrototypesTab.add(CodeGenVisitorConstants.E, classPrototypeObject);
 
-        // TODO Lucian here you should check that methods are not overridden
         List<Pair<ClassTypeSymbol, MethodSymbol>> methods = ((ClassTypeSymbol) classSymbol).gatherMethods();
 
         ST classDispatchTable = templates.getInstanceOf(CodeGenVisitorConstants.CLASS_DISPATCH_TABLE)
@@ -288,7 +287,7 @@ public class CodeGenManager {
         ST strConst = templates.getInstanceOf(CodeGenVisitorConstants.STR_CONST_PATTERN)
                 .add(CodeGenVisitorConstants.COUNT, classCount)
                 .add(CodeGenVisitorConstants.TAG_ID, TypeSymbolConstants.STRING.getTag())
-                .add(CodeGenVisitorConstants.SIZE, (className.length() + 1) / 4 + 5) // TODO Lucian replace this formula here 'cause it's wrong
+                .add(CodeGenVisitorConstants.SIZE, (className.length() + 1) / 4 + 5)
                 .add(CodeGenVisitorConstants.CLASS_NAME_LENGTH, CodeGenVisitorConstants.INT_CONST + intConstId)
                 .add(CodeGenVisitorConstants.CLASS_NAME, className);
 
